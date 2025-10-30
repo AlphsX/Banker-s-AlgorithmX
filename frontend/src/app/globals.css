@@ -20,6 +20,18 @@
   --gray-200: 210 14% 80%;
   --gray-100: 210 20% 90%;
   --gray-50: 210 20% 96%;
+  
+  /* Table colors for light mode */
+  --table-bg: #ffffff;
+  --table-border: #e1e1e1;
+  --page-bg: #f9fafb;
+}
+
+.dark {
+  /* Table colors for dark mode */
+  --table-bg: #121416;
+  --table-border: #25292d;
+  --page-bg: #121416;
 }
 
 .dark {

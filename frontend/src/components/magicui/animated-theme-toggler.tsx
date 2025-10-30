@@ -68,6 +68,7 @@ export const AnimatedThemeToggler = ({
               ? "opacity-100 rotate-0 scale-100"
               : "opacity-0 rotate-[-360deg] scale-0"
           } theme-toggle-glow-moon`}
+          style={{ color: showMoonIcon ? '#c5cbd3' : 'currentColor' }}
         >
           <Moon size={20} />
         </div>

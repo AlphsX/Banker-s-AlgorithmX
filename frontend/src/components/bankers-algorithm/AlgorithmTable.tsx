@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import { AlgorithmStep } from "@/types/bankers-algorithm";
+import { AnimatedFinishBadge } from "./AnimatedFinishBadge";
 
 interface AlgorithmTableProps {
   processCount: number;
@@ -9,6 +11,8 @@ interface AlgorithmTableProps {
   max: number[][];
   need: number[][];
   finish: boolean[];
+  algorithmSteps: AlgorithmStep[];
+  isCalculating: boolean;
   onAllocationChange: (
     process: number,
     resource: number,
@@ -24,6 +28,8 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
   max,
   need,
   finish,
+  algorithmSteps,
+  isCalculating,
   onAllocationChange,
   onMaxChange,
 }) => {
@@ -31,14 +37,20 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
 
   return (
     <div
-      className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden"
-      style={{ border: "1px solid #e1e1e1" }}
+      className="bg-white rounded-xl overflow-hidden"
+      style={{ 
+        backgroundColor: 'var(--table-bg)',
+        border: '1px solid var(--table-border)'
+      }}
     >
       <div className="overflow-x-auto">
-        <table className="w-full min-w-max bg-white dark:bg-gray-800">
+        <table 
+          className="w-full min-w-max bg-white"
+          style={{ backgroundColor: 'var(--table-bg)' }}
+        >
           <thead>
             {/* Main header row */}
-            <tr style={{ borderBottom: "1px solid #e1e1e1" }}>
+            <tr style={{ borderBottom: "1px solid var(--table-border)" }}>
               <th className="text-left px-6 py-4 font-semibold text-gray-900 dark:text-gray-100 min-w-[100px]">
                 Processes
               </th>
@@ -65,13 +77,13 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                 style={{
                   borderBottom:
                     processIndex < processCount - 1
-                      ? "1px solid #e1e1e1"
+                      ? "1px solid var(--table-border)"
                       : "none",
                 }}
               >
                 {/* Process name */}
                 <td className="px-6 py-6 font-semibold text-gray-900 dark:text-gray-100">
-                  P{processIndex + 1}
+                  P{processIndex}
                 </td>
 
                 {/* Allocation section */}
@@ -105,7 +117,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                               );
                             }}
                             className="w-12 h-10 text-center rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm"
-                            style={{ border: "1px solid #e1e1e1" }}
+                            style={{ border: "1px solid var(--table-border)" }}
                             placeholder="0"
                           />
                         </div>
@@ -145,7 +157,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                               );
                             }}
                             className="w-12 h-10 text-center rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm"
-                            style={{ border: "1px solid #e1e1e1" }}
+                            style={{ border: "1px solid var(--table-border)" }}
                             placeholder="0"
                           />
                         </div>
@@ -172,7 +184,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                           {/* Read-only field */}
                           <div
                             className="w-12 h-10 flex items-center justify-center rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm"
-                            style={{ border: "1px solid #e1e1e1" }}
+                            style={{ border: "1px solid var(--table-border)" }}
                           >
                             {need[processIndex][resourceIndex]}
                           </div>
@@ -184,15 +196,12 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
 
                 {/* Finish column */}
                 <td className="px-6 py-6 text-center">
-                  <span
-                    className={`text-sm font-medium ${
-                      finish[processIndex]
-                        ? "text-green-600 dark:text-green-400"
-                        : "text-red-600 dark:text-red-400"
-                    }`}
-                  >
-                    {finish[processIndex] ? "true" : "false"}
-                  </span>
+                  <AnimatedFinishBadge
+                    processIndex={processIndex}
+                    finalFinishState={finish[processIndex]}
+                    algorithmSteps={algorithmSteps}
+                    isCalculating={isCalculating}
+                  />
                 </td>
               </tr>
             ))}

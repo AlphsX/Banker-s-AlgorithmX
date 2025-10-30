@@ -323,7 +323,8 @@ export default function BankersAlgorithmPage() {
 
       <div
         ref={mainContainerRef}
-        className="swipe-container flex h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-50 transition-all duration-300"
+        className="swipe-container flex h-screen bg-gray-50 text-gray-900 dark:text-gray-50 transition-all duration-300"
+        style={{ backgroundColor: "var(--page-bg, #f9fafb)" }}
       >
         {/* Mobile Sidebar Overlay */}
         <div
@@ -404,7 +405,7 @@ export default function BankersAlgorithmPage() {
                     className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
                   />
                   <button
-                    className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800/60 transition-colors flex items-center justify-center"
+                    className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsSidebarOpen(!isSidebarOpen);
@@ -507,7 +508,7 @@ export default function BankersAlgorithmPage() {
                     className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
                   />
                   <button
-                    className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800/60 transition-colors flex items-center justify-center"
+                    className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsDesktopSidebarCollapsed(!isDesktopSidebarCollapsed);
@@ -541,7 +542,7 @@ export default function BankersAlgorithmPage() {
                   className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
                 />
                 <button
-                  className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800/60 transition-colors flex items-center justify-center"
+                  className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsDesktopSidebarCollapsed(!isDesktopSidebarCollapsed);
@@ -564,7 +565,10 @@ export default function BankersAlgorithmPage() {
         {/* Main Content */}
         <div className="flex-1 flex flex-col relative">
           {/* Top Bar - Clean and minimal */}
-          <header className="bg-white dark:bg-gray-900">
+          <header
+            className="bg-white"
+            style={{ backgroundColor: "var(--page-bg)" }}
+          >
             <div className="px-4 sm:px-6 py-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4 min-w-0 flex-1">
@@ -588,7 +592,7 @@ export default function BankersAlgorithmPage() {
 
                   {/* Title */}
                   <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                    Banker&apos;s AlgorithmX
+                    Banker&apos;s Algorithm
                   </h1>
                 </div>
 
@@ -602,7 +606,7 @@ export default function BankersAlgorithmPage() {
                     className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 disabled:bg-gray-400 disabled:cursor-not-allowed text-white dark:text-black rounded-full font-medium transition-colors duration-200 touch-manipulation min-h-[40px]"
                   >
                     {algorithmState.isCalculating ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white dark:border-black"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-white dark:border-black/30 dark:border-t-black"></div>
                     ) : (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -654,7 +658,10 @@ export default function BankersAlgorithmPage() {
           </header>
 
           {/* Main Algorithm Interface */}
-          <div className="flex-1 overflow-y-auto bg-white dark:bg-gray-900">
+          <div
+            className="flex-1 overflow-y-auto bg-white"
+            style={{ backgroundColor: "var(--page-bg)" }}
+          >
             <div className="max-w-7xl mx-auto p-6 space-y-6">
               {/* Algorithm Table */}
               <AlgorithmTable
@@ -664,6 +671,8 @@ export default function BankersAlgorithmPage() {
                 max={algorithmState.max}
                 need={algorithmState.need}
                 finish={algorithmState.finish}
+                algorithmSteps={algorithmState.algorithmSteps}
+                isCalculating={algorithmState.isCalculating}
                 onAllocationChange={updateAllocation}
                 onMaxChange={updateMax}
               />
@@ -676,7 +685,7 @@ export default function BankersAlgorithmPage() {
                   className="w-full px-6 py-3 bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 disabled:bg-gray-400 disabled:cursor-not-allowed text-white dark:text-black rounded-full font-medium transition-colors duration-200 flex items-center justify-center space-x-2 touch-manipulation min-h-[48px]"
                 >
                   {algorithmState.isCalculating ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white dark:border-black"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white/30 border-t-white dark:border-black/30 dark:border-t-black"></div>
                   ) : (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
