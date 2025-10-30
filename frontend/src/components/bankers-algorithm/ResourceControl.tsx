@@ -33,7 +33,7 @@ export const ResourceControl: React.FC<ResourceControlProps> = ({
       <div className="flex items-center space-x-3">
         <button
           onClick={handleDecrement}
-          className="w-8 h-8 rounded-full bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold text-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
+          className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
           disabled={resourceCount <= 1}
           title="Decrease resource count"
           aria-label="Decrease resource count"
@@ -48,7 +48,7 @@ export const ResourceControl: React.FC<ResourceControlProps> = ({
         </span>
         <button
           onClick={handleIncrement}
-          className="w-8 h-8 rounded-full bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold text-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
+          className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
           disabled={resourceCount >= 10}
           title="Increase resource count"
           aria-label="Increase resource count"

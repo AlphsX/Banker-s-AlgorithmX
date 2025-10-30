@@ -20,11 +20,51 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
   onRequestSubmit,
   isProcessing,
 }) => {
-  const [selectedProcess, setSelectedProcess] = useState<number>(0);
-  const [requestVector, setRequestVector] = useState<number[]>(() =>
-    new Array(resourceCount).fill(0)
-  );
+  // Load saved data from localStorage
+  const [selectedProcess, setSelectedProcess] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bankers-request-process');
+      return saved ? Math.min(parseInt(saved), processCount - 1) : 0;
+    }
+    return 0;
+  });
+  
+  const [requestVector, setRequestVector] = useState<number[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bankers-request-vector');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed)) {
+            const newVector = new Array(resourceCount).fill(0);
+            const copyLength = Math.min(parsed.length, resourceCount);
+            for (let i = 0; i < copyLength; i++) {
+              newVector[i] = parsed[i] || 0;
+            }
+            return newVector;
+          }
+        } catch (e) {
+          // If parsing fails, fall back to default
+        }
+      }
+    }
+    return new Array(resourceCount).fill(0);
+  });
+  
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+
+  // Save to localStorage when values change
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bankers-request-process', selectedProcess.toString());
+    }
+  }, [selectedProcess]);
+
+  React.useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('bankers-request-vector', JSON.stringify(requestVector));
+    }
+  }, [requestVector]);
 
   // Update request vector when resource count changes
   React.useEffect(() => {
@@ -142,19 +182,39 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
 
       {/* Process Selection */}
       <div className="space-y-1">
-        <select
-          id="process-select"
-          value={selectedProcess}
-          onChange={(e) => setSelectedProcess(parseInt(e.target.value))}
-          disabled={isProcessing}
-          className="w-full h-10 px-3 text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation font-medium"
-        >
-          {processOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            id="process-select"
+            value={selectedProcess}
+            onChange={(e) => setSelectedProcess(parseInt(e.target.value))}
+            disabled={isProcessing}
+            className="w-full h-10 px-3 pr-8 text-sm bg-white border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation font-medium appearance-none"
+            style={{
+              backgroundColor: 'var(--input-bg, #ffffff)',
+              borderColor: 'var(--input-border, #e1e1e1)',
+              color: 'var(--foreground)'
+            }}
+          >
+            {processOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          {/* Dropdown Arrow */}
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <svg
+              className="w-4 h-4 text-gray-400"
+              style={{ color: 'var(--text-secondary, #9ca3af)' }}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+
       </div>
 
       {/* Request Vector Inputs */}
@@ -177,7 +237,8 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
               <div key={index} className="space-y-1">
                 <label
                   htmlFor={`resource-${index}`}
-                  className="text-sm font-medium text-gray-600 dark:text-gray-400 text-center block"
+                  className="text-sm font-medium text-center block"
+                  style={{ color: 'var(--text-secondary, #6b7280)' }}
                 >
                   {resourceLabels[index] || `R${index}`}
                 </label>
@@ -195,7 +256,12 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
                     handleRequestVectorChange(index, e.target.value)
                   }
                   disabled={isProcessing}
-                  className="w-full h-10 px-3 text-center text-sm bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation font-medium"
+                  className="w-full h-10 px-3 text-center text-sm bg-white border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation font-medium"
+                  style={{
+                    backgroundColor: 'var(--input-bg, #ffffff)',
+                    borderColor: 'var(--input-border, #e1e1e1)',
+                    color: 'var(--foreground)'
+                  }}
                   placeholder="0"
                 />
               </div>
@@ -227,7 +293,12 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
         <button
           onClick={handleReset}
           disabled={isProcessing}
-          className="px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:bg-gray-200 disabled:cursor-not-allowed border border-gray-300 dark:border-gray-600 rounded-full transition-colors duration-200 touch-manipulation"
+          className="px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-full transition-colors duration-200 touch-manipulation disabled:bg-gray-200 disabled:cursor-not-allowed"
+          style={{
+            backgroundColor: 'var(--button-bg, #ffffff)',
+            borderColor: 'var(--button-border, #e1e1e1)',
+            color: 'var(--foreground)'
+          }}
         >
           Reset
         </button>

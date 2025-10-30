@@ -91,7 +91,10 @@ export function StepByStepResults({
                   }`}
                 >
                   <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-6 h-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center">
+                    <div className="flex-shrink-0 w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center"
+                      style={{
+                        backgroundColor: 'var(--button-bg, #f3f4f6)'
+                      }}>
                       <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                         {step.stepNumber}
                       </span>

@@ -76,7 +76,8 @@ export const AvailableResourcesInput: React.FC<AvailableResourcesInputProps> = (
           return (
             <div key={index} className="space-y-1">
               <label 
-                className="text-sm font-medium text-gray-600 dark:text-gray-400 text-center block"
+                className="text-sm font-medium text-center block"
+                style={{ color: 'var(--text-secondary, #6b7280)' }}
                 htmlFor={`available-resource-${index}`}
               >
                 {resourceLabels[index] || `R${index}`}
@@ -95,11 +96,16 @@ export const AvailableResourcesInput: React.FC<AvailableResourcesInputProps> = (
                 onBlur={(e) => {
                   handleInputBlur(index, e.target.value);
                 }}
-                className={`w-full h-10 px-3 text-center text-sm border rounded-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 font-medium transition-colors duration-200 touch-manipulation ${
+                className={`w-full h-10 px-3 text-center text-sm border rounded-full bg-white text-gray-900 font-medium transition-colors duration-200 touch-manipulation ${
                   error
-                    ? 'border-red-500 dark:border-red-400 focus:ring-red-500 dark:focus:ring-red-400'
-                    : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500 dark:focus:ring-blue-400'
+                    ? 'border-red-500 focus:ring-red-500'
+                    : 'border-gray-300 focus:ring-blue-500'
                 } focus:outline-none focus:ring-2 focus:ring-opacity-50`}
+                style={{
+                  backgroundColor: 'var(--input-bg, #ffffff)',
+                  borderColor: error ? '#ef4444' : 'var(--input-border, #e1e1e1)',
+                  color: 'var(--foreground)'
+                }}
                 aria-label={`Available resources for resource type ${index}`}
                 aria-describedby={error ? `error-${index}` : undefined}
               />

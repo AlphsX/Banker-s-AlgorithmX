@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 
 interface ProcessControlProps {
   processCount: number;
@@ -33,14 +33,14 @@ export const ProcessControl: React.FC<ProcessControlProps> = ({
       <div className="flex items-center space-x-3">
         <button
           onClick={handleDecrement}
-          className="w-8 h-8 rounded-full bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold text-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
+          className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
           disabled={processCount <= 1}
           title="Decrease process count"
           aria-label="Decrease process count"
         >
           −
         </button>
-        <span 
+        <span
           className="w-8 text-center text-lg font-semibold text-gray-900 dark:text-gray-100"
           aria-label={`Current process count: ${processCount}`}
         >
@@ -48,7 +48,7 @@ export const ProcessControl: React.FC<ProcessControlProps> = ({
         </span>
         <button
           onClick={handleIncrement}
-          className="w-8 h-8 rounded-full bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold text-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
+          className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
           disabled={processCount >= 10}
           title="Increase process count"
           aria-label="Increase process count"

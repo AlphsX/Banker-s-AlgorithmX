@@ -97,7 +97,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                           className="flex flex-col items-center"
                         >
                           {/* Resource label positioned at top center */}
-                          <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+                          <div className="text-xs font-medium mb-2" style={{ color: 'var(--text-secondary, #6b7280)' }}>
                             {resourceLabels[resourceIndex] ||
                               `R${resourceIndex}`}
                           </div>
@@ -116,8 +116,12 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                 Math.max(0, value)
                               );
                             }}
-                            className="w-12 h-10 text-center rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm"
-                            style={{ border: "1px solid var(--table-border)" }}
+                            className="w-12 h-10 text-center rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm"
+                            style={{ 
+                              border: "1px solid var(--table-border)",
+                              backgroundColor: 'var(--input-bg, #ffffff)',
+                              color: 'var(--foreground)'
+                            }}
                             placeholder="0"
                           />
                         </div>
@@ -137,7 +141,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                           className="flex flex-col items-center"
                         >
                           {/* Resource label positioned at top center */}
-                          <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+                          <div className="text-xs font-medium mb-2" style={{ color: 'var(--text-secondary, #6b7280)' }}>
                             {resourceLabels[resourceIndex] ||
                               `R${resourceIndex}`}
                           </div>
@@ -156,8 +160,12 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                 Math.max(0, value)
                               );
                             }}
-                            className="w-12 h-10 text-center rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm"
-                            style={{ border: "1px solid var(--table-border)" }}
+                            className="w-12 h-10 text-center rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm"
+                            style={{ 
+                              border: "1px solid var(--table-border)",
+                              backgroundColor: 'var(--input-bg, #ffffff)',
+                              color: 'var(--foreground)'
+                            }}
                             placeholder="0"
                           />
                         </div>
@@ -177,14 +185,18 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                           className="flex flex-col items-center"
                         >
                           {/* Resource label positioned at top center */}
-                          <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
+                          <div className="text-xs font-medium mb-2" style={{ color: 'var(--text-secondary, #6b7280)' }}>
                             {resourceLabels[resourceIndex] ||
                               `R${resourceIndex}`}
                           </div>
                           {/* Read-only field */}
                           <div
-                            className="w-12 h-10 flex items-center justify-center rounded-xl bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-sm"
-                            style={{ border: "1px solid var(--table-border)" }}
+                            className="w-12 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-700 text-sm"
+                            style={{
+                              backgroundColor: 'var(--need-bg, #f9fafb)',
+                              color: 'var(--text-secondary, #6b7280)',
+                              border: "1px solid var(--table-border)"
+                            }}
                           >
                             {need[processIndex][resourceIndex]}
                           </div>

@@ -343,9 +343,13 @@ export default function BankersAlgorithmPage() {
             }}
           ></div>
           <div
-            className={`relative w-64 bg-[#fdfdfd] dark:bg-gray-800 border-r border-[#f2f2f2] dark:border-gray-700 flex flex-col z-10 transition-transform duration-300 ease-out shadow-xl ${
+            className={`relative w-64 bg-[#fdfdfd] border-r border-[#f2f2f2] flex flex-col z-10 transition-transform duration-300 ease-out shadow-xl ${
               isSidebarOpen ? "translate-x-0" : "-translate-x-full"
             }`}
+            style={{ 
+              backgroundColor: 'var(--sidebar-bg, #fdfdfd)',
+              borderColor: 'var(--sidebar-border, #f2f2f2)'
+            }}
           >
             {/* Mobile Sidebar Header */}
             <div className="p-6">
@@ -383,10 +387,16 @@ export default function BankersAlgorithmPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="relative">
-                    <div className="h-9 w-9 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-700">
-                      <User className="h-5 w-5 text-gray-600 dark:text-gray-400 mx-auto" />
+                    <div className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
+                      style={{
+                        backgroundColor: 'var(--button-bg, #f3f4f6)',
+                        borderColor: 'var(--button-border, #e5e7eb)'
+                      }}>
+                      <User className="h-5 w-5 text-gray-600 mx-auto" 
+                        style={{ color: 'var(--foreground, #4b5563)' }} />
                     </div>
-                    <div className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 dark:bg-green-400 rounded-full border-2 border-white dark:border-gray-900"></div>
+                    <div className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"
+                      style={{ borderColor: 'var(--sidebar-bg, #ffffff)' }}></div>
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
@@ -402,10 +412,10 @@ export default function BankersAlgorithmPage() {
                     isDarkMode={isDarkMode}
                     toggleDarkMode={toggleDarkMode}
                     isUsingSystemPreference={isUsingSystemPreference}
-                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
+                    className="btn-hover p-2 rounded-lg transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
                   />
                   <button
-                    className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
+                    className="btn-hover w-10 h-10 rounded-full transition-colors flex items-center justify-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsSidebarOpen(!isSidebarOpen);
@@ -413,9 +423,9 @@ export default function BankersAlgorithmPage() {
                     title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
                   >
                     {isSidebarOpen ? (
-                      <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-400 mx-auto" />
+                      <ChevronLeft className="h-5 w-5 mx-auto" style={{ color: 'var(--text-secondary, #6b7280)' }} />
                     ) : (
-                      <ChevronRight className="h-5 w-5 text-gray-600 dark:text-gray-400 mx-auto" />
+                      <ChevronRight className="h-5 w-5 mx-auto" style={{ color: 'var(--text-secondary, #6b7280)' }} />
                     )}
                   </button>
                 </div>
@@ -427,12 +437,16 @@ export default function BankersAlgorithmPage() {
         {/* Desktop Sidebar */}
         <div
           ref={sidebarRef}
-          className={`hidden md:flex bg-[#fdfdfd] dark:bg-gray-800 border-r border-[#f2f2f2] dark:border-gray-700 flex-col transition-all duration-300 shadow-sm
+          className={`hidden md:flex bg-[#fdfdfd] border-r border-[#f2f2f2] flex-col transition-all duration-300 shadow-sm
           ${
             isDesktopSidebarCollapsed
               ? "w-16 cursor-e-resize"
               : "w-64 cursor-w-resize"
           } overflow-hidden`}
+          style={{ 
+            backgroundColor: 'var(--sidebar-bg, #fdfdfd)',
+            borderColor: 'var(--sidebar-border, #f2f2f2)'
+          }}
           onClick={(e) => {
             const target = e.target as HTMLElement;
             const isInteractiveElement = target.closest(
@@ -486,10 +500,16 @@ export default function BankersAlgorithmPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="relative">
-                    <div className="h-9 w-9 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-700">
-                      <User className="h-5 w-5 text-gray-600 dark:text-gray-400 mx-auto" />
+                    <div className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
+                      style={{
+                        backgroundColor: 'var(--button-bg, #f3f4f6)',
+                        borderColor: 'var(--button-border, #e5e7eb)'
+                      }}>
+                      <User className="h-5 w-5 text-gray-600 mx-auto" 
+                        style={{ color: 'var(--foreground, #4b5563)' }} />
                     </div>
-                    <div className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 dark:bg-green-400 rounded-full border-2 border-white dark:border-gray-900"></div>
+                    <div className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"
+                      style={{ borderColor: 'var(--sidebar-bg, #ffffff)' }}></div>
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
@@ -505,10 +525,10 @@ export default function BankersAlgorithmPage() {
                     isDarkMode={isDarkMode}
                     toggleDarkMode={toggleDarkMode}
                     isUsingSystemPreference={isUsingSystemPreference}
-                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
+                    className="btn-hover p-2 rounded-lg transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
                   />
                   <button
-                    className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
+                    className="btn-hover w-10 h-10 rounded-full transition-colors flex items-center justify-center"
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsDesktopSidebarCollapsed(!isDesktopSidebarCollapsed);
@@ -520,9 +540,9 @@ export default function BankersAlgorithmPage() {
                     }
                   >
                     {isDesktopSidebarCollapsed ? (
-                      <ChevronRight className="h-5 w-5 text-gray-600 dark:text-gray-400 mx-auto" />
+                      <ChevronRight className="h-5 w-5 mx-auto" style={{ color: 'var(--text-secondary, #6b7280)' }} />
                     ) : (
-                      <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-400 mx-auto" />
+                      <ChevronLeft className="h-5 w-5 mx-auto" style={{ color: 'var(--text-secondary, #6b7280)' }} />
                     )}
                   </button>
                 </div>
@@ -530,19 +550,25 @@ export default function BankersAlgorithmPage() {
             ) : (
               <div className="flex flex-col items-center space-y-3">
                 <div className="relative" title="User">
-                  <div className="h-9 w-9 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-700">
-                    <User className="h-5 w-5 text-gray-600 dark:text-gray-400 mx-auto" />
+                  <div className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
+                    style={{
+                      backgroundColor: 'var(--button-bg, #f3f4f6)',
+                      borderColor: 'var(--button-border, #e5e7eb)'
+                    }}>
+                    <User className="h-5 w-5 text-gray-600 mx-auto" 
+                      style={{ color: 'var(--foreground, #4b5563)' }} />
                   </div>
-                  <div className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 dark:bg-green-400 rounded-full border-2 border-white dark:border-gray-900"></div>
+                  <div className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"
+                    style={{ borderColor: 'var(--sidebar-bg, #ffffff)' }}></div>
                 </div>
                 <AnimatedThemeToggler
                   isDarkMode={isDarkMode}
                   toggleDarkMode={toggleDarkMode}
                   isUsingSystemPreference={isUsingSystemPreference}
-                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
+                  className="btn-hover p-2 rounded-lg transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
                 />
                 <button
-                  className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center"
+                  className="btn-hover w-10 h-10 rounded-full transition-colors flex items-center justify-center"
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsDesktopSidebarCollapsed(!isDesktopSidebarCollapsed);
@@ -552,9 +578,9 @@ export default function BankersAlgorithmPage() {
                   }
                 >
                   {isDesktopSidebarCollapsed ? (
-                    <ChevronRight className="h-5 w-5 text-gray-600 dark:text-gray-400 mx-auto" />
+                    <ChevronRight className="h-5 w-5 mx-auto" style={{ color: 'var(--text-secondary, #6b7280)' }} />
                   ) : (
-                    <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-400 mx-auto" />
+                    <ChevronLeft className="h-5 w-5 mx-auto" style={{ color: 'var(--text-secondary, #6b7280)' }} />
                   )}
                 </button>
               </div>
@@ -574,7 +600,7 @@ export default function BankersAlgorithmPage() {
                 <div className="flex items-center space-x-4 min-w-0 flex-1">
                   {/* Mobile Menu Toggle */}
                   <button
-                    className="md:hidden p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center touch-manipulation min-h-[44px] min-w-[44px]"
+                    className="btn-hover md:hidden p-2 rounded-full transition-colors flex items-center justify-center touch-manipulation min-h-[44px] min-w-[44px]"
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                     title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
                   >
@@ -584,7 +610,7 @@ export default function BankersAlgorithmPage() {
                       viewBox="0 0 20 20"
                       fill="currentColor"
                       xmlns="http://www.w3.org/2000/svg"
-                      className="text-gray-600 dark:text-gray-400"
+                      style={{ color: 'var(--text-secondary, #6b7280)' }}
                     >
                       <path d="M11.6663 12.6686L11.801 12.6823C12.1038 12.7445 12.3313 13.0125 12.3313 13.3337C12.3311 13.6547 12.1038 13.9229 11.801 13.985L11.6663 13.9987H3.33325C2.96609 13.9987 2.66839 13.7008 2.66821 13.3337C2.66821 12.9664 2.96598 12.6686 3.33325 12.6686H11.6663ZM16.6663 6.00163L16.801 6.0153C17.1038 6.07747 17.3313 6.34546 17.3313 6.66667C17.3313 6.98788 17.1038 7.25586 16.801 7.31803L16.6663 7.33171H3.33325C2.96598 7.33171 2.66821 7.03394 2.66821 6.66667C2.66821 6.2994 2.96598 6.00163 3.33325 6.00163H16.6663Z"></path>
                     </svg>
@@ -635,7 +661,22 @@ export default function BankersAlgorithmPage() {
                     disabled={
                       algorithmState.isCalculating || isProcessingRequest
                     }
-                    className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:bg-gray-200 disabled:cursor-not-allowed text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-full font-medium transition-colors duration-200 touch-manipulation min-h-[40px]"
+                    className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-full font-medium transition-colors duration-200 touch-manipulation min-h-[40px] disabled:bg-gray-200 disabled:cursor-not-allowed"
+                    style={{
+                      backgroundColor: 'var(--button-bg, #ffffff)',
+                      borderColor: 'var(--button-border, #e1e1e1)',
+                      color: 'var(--foreground)'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!e.currentTarget.disabled) {
+                        e.currentTarget.style.backgroundColor = 'var(--button-bg, #f9fafb)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!e.currentTarget.disabled) {
+                        e.currentTarget.style.backgroundColor = 'var(--button-bg, #ffffff)';
+                      }
+                    }}
                   >
                     <svg
                       width="16"
@@ -711,7 +752,12 @@ export default function BankersAlgorithmPage() {
                 <button
                   onClick={resetAlgorithm}
                   disabled={algorithmState.isCalculating || isProcessingRequest}
-                  className="w-full px-6 py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:bg-gray-200 disabled:cursor-not-allowed text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-full font-medium transition-colors duration-200 flex items-center justify-center space-x-2 touch-manipulation min-h-[48px]"
+                  className="w-full px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-full font-medium transition-colors duration-200 flex items-center justify-center space-x-2 touch-manipulation min-h-[48px] disabled:bg-gray-200 disabled:cursor-not-allowed"
+                  style={{
+                    backgroundColor: 'var(--button-bg, #ffffff)',
+                    borderColor: 'var(--button-border, #e1e1e1)',
+                    color: 'var(--foreground)'
+                  }}
                 >
                   <svg
                     width="16"
