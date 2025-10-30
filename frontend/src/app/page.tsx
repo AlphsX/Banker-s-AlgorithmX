@@ -18,9 +18,16 @@ import { ToastContainer, useToast } from "@/components/ui";
 import { useAppLoading } from "@/hooks/useAppLoading";
 
 // Import Banker's Algorithm types and calculator
-import { BankersAlgorithmState, ResourceRequest } from "@/types/bankers-algorithm";
+import {
+  BankersAlgorithmState,
+  ResourceRequest,
+} from "@/types/bankers-algorithm";
 import { BankersAlgorithmCalculator } from "@/lib/bankers-algorithm-calculator";
-import { SystemControls, AlgorithmTable, StepByStepResults } from "@/components/bankers-algorithm";
+import {
+  SystemControls,
+  AlgorithmTable,
+  StepByStepResults,
+} from "@/components/bankers-algorithm";
 
 // Updated Logo Icon Component for Banker's Algorithm with theme-dependent colors matching favicon
 const LogoIcon = ({ className }: { className?: string }) => (
@@ -52,13 +59,16 @@ export default function BankersAlgorithmPage() {
 
   // Sidebar state management
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isDesktopSidebarCollapsed, setIsDesktopSidebarCollapsed] = useState(false);
+  const [isDesktopSidebarCollapsed, setIsDesktopSidebarCollapsed] =
+    useState(false);
 
   // Banker's Algorithm state
-  const [algorithmState, setAlgorithmState] = useState<BankersAlgorithmState>(() => {
-    const calculator = new BankersAlgorithmCalculator();
-    return calculator.createDefaultState();
-  });
+  const [algorithmState, setAlgorithmState] = useState<BankersAlgorithmState>(
+    () => {
+      const calculator = new BankersAlgorithmCalculator();
+      return calculator.createDefaultState();
+    }
+  );
 
   const sidebarRef = useRef<HTMLDivElement>(null);
   const mainContainerRef = useRef<HTMLDivElement>(null);
@@ -74,7 +84,9 @@ export default function BankersAlgorithmPage() {
 
   const focusInput = useCallback(() => {
     // Focus on first input field in the algorithm table
-    const firstInput = document.querySelector('input[type="number"]') as HTMLInputElement;
+    const firstInput = document.querySelector(
+      'input[type="number"]'
+    ) as HTMLInputElement;
     if (firstInput) {
       firstInput.focus();
     }
@@ -94,81 +106,100 @@ export default function BankersAlgorithmPage() {
     onToggleTools: () => {}, // Not used in this context
   });
 
-
-
   // Update process count
-  const updateProcessCount = useCallback((newCount: number) => {
-    const minCount = 1;
-    const maxCount = 10;
-    const validCount = Math.max(minCount, Math.min(maxCount, newCount));
-    
-    const newState = calculator.resizeMatrices(
-      algorithmState,
-      validCount,
-      algorithmState.resourceCount
-    );
-    setAlgorithmState(newState);
-  }, [algorithmState, calculator]);
+  const updateProcessCount = useCallback(
+    (newCount: number) => {
+      const minCount = 1;
+      const maxCount = 10;
+      const validCount = Math.max(minCount, Math.min(maxCount, newCount));
+
+      const newState = calculator.resizeMatrices(
+        algorithmState,
+        validCount,
+        algorithmState.resourceCount
+      );
+      setAlgorithmState(newState);
+    },
+    [algorithmState, calculator]
+  );
 
   // Update resource count
-  const updateResourceCount = useCallback((newCount: number) => {
-    const minCount = 1;
-    const maxCount = 10;
-    const validCount = Math.max(minCount, Math.min(maxCount, newCount));
-    
-    const newState = calculator.resizeMatrices(
-      algorithmState,
-      algorithmState.processCount,
-      validCount
-    );
-    setAlgorithmState(newState);
-  }, [algorithmState, calculator]);
+  const updateResourceCount = useCallback(
+    (newCount: number) => {
+      const minCount = 1;
+      const maxCount = 10;
+      const validCount = Math.max(minCount, Math.min(maxCount, newCount));
+
+      const newState = calculator.resizeMatrices(
+        algorithmState,
+        algorithmState.processCount,
+        validCount
+      );
+      setAlgorithmState(newState);
+    },
+    [algorithmState, calculator]
+  );
 
   // Update available resources
-  const updateAvailable = useCallback((index: number, value: number) => {
-    const newAvailable = [...algorithmState.available];
-    newAvailable[index] = Math.max(0, value);
-    
-    setAlgorithmState(prev => ({
-      ...prev,
-      available: newAvailable
-    }));
-  }, [algorithmState.available]);
+  const updateAvailable = useCallback(
+    (index: number, value: number) => {
+      const newAvailable = [...algorithmState.available];
+      newAvailable[index] = Math.max(0, value);
+
+      setAlgorithmState((prev) => ({
+        ...prev,
+        available: newAvailable,
+      }));
+    },
+    [algorithmState.available]
+  );
 
   // Update allocation matrix
-  const updateAllocation = useCallback((processIndex: number, resourceIndex: number, value: number) => {
-    const newAllocation = algorithmState.allocation.map(row => [...row]);
-    newAllocation[processIndex][resourceIndex] = Math.max(0, value);
-    
-    // Recalculate need matrix
-    const newNeed = calculator.calculateNeedMatrix(algorithmState.max, newAllocation);
-    
-    setAlgorithmState(prev => ({
-      ...prev,
-      allocation: newAllocation,
-      need: newNeed
-    }));
-  }, [algorithmState.allocation, algorithmState.max, calculator]);
+  const updateAllocation = useCallback(
+    (processIndex: number, resourceIndex: number, value: number) => {
+      const newAllocation = algorithmState.allocation.map((row) => [...row]);
+      newAllocation[processIndex][resourceIndex] = Math.max(0, value);
+
+      // Recalculate need matrix
+      const newNeed = calculator.calculateNeedMatrix(
+        algorithmState.max,
+        newAllocation
+      );
+
+      setAlgorithmState((prev) => ({
+        ...prev,
+        allocation: newAllocation,
+        need: newNeed,
+      }));
+    },
+    [algorithmState.allocation, algorithmState.max, calculator]
+  );
 
   // Update max matrix
-  const updateMax = useCallback((processIndex: number, resourceIndex: number, value: number) => {
-    const newMax = algorithmState.max.map(row => [...row]);
-    newMax[processIndex][resourceIndex] = Math.max(0, value);
-    
-    // Recalculate need matrix
-    const newNeed = calculator.calculateNeedMatrix(newMax, algorithmState.allocation);
-    
-    setAlgorithmState(prev => ({
-      ...prev,
-      max: newMax,
-      need: newNeed
-    }));
-  }, [algorithmState.max, algorithmState.allocation, calculator]);
+  const updateMax = useCallback(
+    (processIndex: number, resourceIndex: number, value: number) => {
+      const newMax = algorithmState.max.map((row) => [...row]);
+      newMax[processIndex][resourceIndex] = Math.max(0, value);
+
+      // Recalculate need matrix
+      const newNeed = calculator.calculateNeedMatrix(
+        newMax,
+        algorithmState.allocation
+      );
+
+      setAlgorithmState((prev) => ({
+        ...prev,
+        max: newMax,
+        need: newNeed,
+      }));
+    },
+    [algorithmState.max, algorithmState.allocation, calculator]
+  );
 
   // Check safety
   const checkSafety = useCallback(() => {
-    setAlgorithmState(prev => ({ ...prev, isCalculating: true }));
-    
+    setAlgorithmState((prev) => ({ ...prev, isCalculating: true }));
+
     // Add a small delay to show loading state
     setTimeout(() => {
       const safetyResult = calculator.checkSafety(
@@ -176,59 +207,78 @@ export default function BankersAlgorithmPage() {
         algorithmState.allocation,
         algorithmState.need
       );
-      
-      setAlgorithmState(prev => ({
+
+      setAlgorithmState((prev) => ({
         ...prev,
         finish: safetyResult.finalFinishState,
         safeSequence: safetyResult.safeSequence,
         algorithmSteps: safetyResult.steps,
-        isCalculating: false
+        isCalculating: false,
       }));
     }, 300);
-  }, [algorithmState.available, algorithmState.allocation, algorithmState.need, calculator]);
+  }, [
+    algorithmState.available,
+    algorithmState.allocation,
+    algorithmState.need,
+    calculator,
+  ]);
 
   // Process resource request
   const [isProcessingRequest, setIsProcessingRequest] = useState(false);
-  
-  const processResourceRequest = useCallback((request: ResourceRequest) => {
-    setIsProcessingRequest(true);
-    
-    // Add a small delay to show loading state
-    setTimeout(() => {
-      const requestResult = calculator.processRequest(request, algorithmState);
-      
-      if (requestResult.canGrant && requestResult.newState) {
-        // Request can be granted - update state
-        setAlgorithmState(requestResult.newState);
-        
-        // Show success message
-        showSuccess(
-          'Request Granted',
-          `Process P${request.processId} request [${request.requestVector.join(', ')}] has been granted successfully. System remains in safe state.`,
-          6000
+
+  const processResourceRequest = useCallback(
+    (request: ResourceRequest) => {
+      setIsProcessingRequest(true);
+
+      // Add a small delay to show loading state
+      setTimeout(() => {
+        const requestResult = calculator.processRequest(
+          request,
+          algorithmState
         );
-      } else {
-        // Request cannot be granted - show error
-        showError(
-          'Request Denied',
-          `Process P${request.processId} request [${request.requestVector.join(', ')}] cannot be granted: ${requestResult.errorMessage}`,
-          8000
-        );
-        
-        // Show the simulation steps even for denied requests to help user understand why
-        if (requestResult.simulationSteps) {
-          setAlgorithmState(prev => ({
-            ...prev,
-            algorithmSteps: requestResult.simulationSteps || [],
-            safeSequence: [],
-            finish: prev.finish.map(() => false)
-          }));
+
+        if (requestResult.canGrant && requestResult.newState) {
+          // Request can be granted - update state
+          setAlgorithmState(requestResult.newState);
+
+          // Show success message
+          showSuccess(
+            "Request Granted",
+            `Process P${
+              request.processId
+            } request [${request.requestVector.join(
+              ", "
+            )}] has been granted successfully. System remains in safe state.`,
+            6000
+          );
+        } else {
+          // Request cannot be granted - show error
+          showError(
+            "Request Denied",
+            `Process P${
+              request.processId
+            } request [${request.requestVector.join(
+              ", "
+            )}] cannot be granted: ${requestResult.errorMessage}`,
+            8000
+          );
+
+          // Show the simulation steps even for denied requests to help user understand why
+          if (requestResult.simulationSteps) {
+            setAlgorithmState((prev) => ({
+              ...prev,
+              algorithmSteps: requestResult.simulationSteps || [],
+              safeSequence: [],
+              finish: prev.finish.map(() => false),
+            }));
+          }
         }
-      }
-      
-      setIsProcessingRequest(false);
-    }, 500); // Slightly longer delay to show the processing state
-  }, [algorithmState, calculator, showSuccess, showError]);
+
+        setIsProcessingRequest(false);
+      }, 500); // Slightly longer delay to show the processing state
+    },
+    [algorithmState, calculator, showSuccess, showError]
+  );
 
   // Setup swipe gestures for mobile sidebar
   const { attachToElement } = useSwipeGesture({
@@ -273,7 +323,7 @@ export default function BankersAlgorithmPage() {
 
       <div
         ref={mainContainerRef}
-        className="swipe-container flex h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-gray-1000 dark:via-gray-950 dark:to-gray-900 text-gray-900 dark:text-gray-50 transition-all duration-500"
+        className="swipe-container flex h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-50 transition-all duration-300"
       >
         {/* Mobile Sidebar Overlay */}
         <div
@@ -292,14 +342,14 @@ export default function BankersAlgorithmPage() {
             }}
           ></div>
           <div
-            className={`relative w-64 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-r border-gray-200/30 dark:border-gray-700/30 flex flex-col z-10 transition-transform duration-300 ease-out ${
+            className={`relative w-64 bg-[#fdfdfd] dark:bg-gray-800 border-r border-[#f2f2f2] dark:border-gray-700 flex flex-col z-10 transition-transform duration-300 ease-out shadow-xl ${
               isSidebarOpen ? "translate-x-0" : "-translate-x-full"
             }`}
           >
             {/* Mobile Sidebar Header */}
             <div className="p-6">
-              <div className="flex items-center justify-start">
-                <div className="relative">
+              <div className="flex items-center">
+                <div className="flex items-center">
                   <div
                     className="flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-200"
                     onClick={(e) => {
@@ -307,7 +357,7 @@ export default function BankersAlgorithmPage() {
                       resetAlgorithm();
                     }}
                   >
-                    <LogoIcon className="h-6 w-6 mx-auto" />
+                    <LogoIcon className="h-6 w-6" />
                   </div>
                 </div>
               </div>
@@ -346,7 +396,13 @@ export default function BankersAlgorithmPage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-1">
+                <div className="flex items-center space-x-2">
+                  <AnimatedThemeToggler
+                    isDarkMode={isDarkMode}
+                    toggleDarkMode={toggleDarkMode}
+                    isUsingSystemPreference={isUsingSystemPreference}
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
+                  />
                   <button
                     className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800/60 transition-colors flex items-center justify-center"
                     onClick={(e) => {
@@ -370,8 +426,7 @@ export default function BankersAlgorithmPage() {
         {/* Desktop Sidebar */}
         <div
           ref={sidebarRef}
-          className={`hidden md:flex bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-r 
-          border-gray-200/30 dark:border-gray-700/30 flex-col transition-all duration-300 
+          className={`hidden md:flex bg-[#fdfdfd] dark:bg-gray-800 border-r border-[#f2f2f2] dark:border-gray-700 flex-col transition-all duration-300 shadow-sm
           ${
             isDesktopSidebarCollapsed
               ? "w-16 cursor-e-resize"
@@ -390,23 +445,21 @@ export default function BankersAlgorithmPage() {
           }}
         >
           {/* Sidebar Header */}
-          <div className="p-4">
+          <div className="p-6">
             <div className="flex items-center justify-center">
               <div
                 className={`flex items-center w-full ${
                   isDesktopSidebarCollapsed ? "justify-center" : "justify-start"
                 }`}
               >
-                <div className="relative">
-                  <div
-                    className="flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-200"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      resetAlgorithm();
-                    }}
-                  >
-                    <LogoIcon className="h-6 w-6 mx-auto" />
-                  </div>
+                <div
+                  className="flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-200"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    resetAlgorithm();
+                  }}
+                >
+                  <LogoIcon className="h-6 w-6" />
                 </div>
               </div>
             </div>
@@ -439,14 +492,20 @@ export default function BankersAlgorithmPage() {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                      User
+                      Anonymous
                     </p>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       Online
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center space-x-1">
+                <div className="flex items-center space-x-2">
+                  <AnimatedThemeToggler
+                    isDarkMode={isDarkMode}
+                    toggleDarkMode={toggleDarkMode}
+                    isUsingSystemPreference={isUsingSystemPreference}
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
+                  />
                   <button
                     className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800/60 transition-colors flex items-center justify-center"
                     onClick={(e) => {
@@ -475,26 +534,28 @@ export default function BankersAlgorithmPage() {
                   </div>
                   <div className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 dark:bg-green-400 rounded-full border-2 border-white dark:border-gray-900"></div>
                 </div>
-                <div className="flex flex-col items-center space-y-1">
-                  <button
-                    className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800/60 transition-colors flex items-center justify-center"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsDesktopSidebarCollapsed(!isDesktopSidebarCollapsed);
-                    }}
-                    title={
-                      isDesktopSidebarCollapsed
-                        ? "Open sidebar"
-                        : "Close sidebar"
-                    }
-                  >
-                    {isDesktopSidebarCollapsed ? (
-                      <ChevronRight className="h-5 w-5 text-gray-600 dark:text-gray-400 mx-auto" />
-                    ) : (
-                      <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-400 mx-auto" />
-                    )}
-                  </button>
-                </div>
+                <AnimatedThemeToggler
+                  isDarkMode={isDarkMode}
+                  toggleDarkMode={toggleDarkMode}
+                  isUsingSystemPreference={isUsingSystemPreference}
+                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
+                />
+                <button
+                  className="w-10 h-10 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800/60 transition-colors flex items-center justify-center"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsDesktopSidebarCollapsed(!isDesktopSidebarCollapsed);
+                  }}
+                  title={
+                    isDesktopSidebarCollapsed ? "Open sidebar" : "Close sidebar"
+                  }
+                >
+                  {isDesktopSidebarCollapsed ? (
+                    <ChevronRight className="h-5 w-5 text-gray-600 dark:text-gray-400 mx-auto" />
+                  ) : (
+                    <ChevronLeft className="h-5 w-5 text-gray-600 dark:text-gray-400 mx-auto" />
+                  )}
+                </button>
               </div>
             )}
           </div>
@@ -502,14 +563,14 @@ export default function BankersAlgorithmPage() {
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col relative">
-          {/* Top Bar - Enhanced responsive design */}
-          <header className="relative">
-            <div className="relative z-10 px-3 sm:px-6 py-3 sm:py-4">
+          {/* Top Bar - Clean and minimal */}
+          <header className="bg-white dark:bg-gray-900">
+            <div className="px-4 sm:px-6 py-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2 sm:space-x-4 min-w-0 flex-1">
+                <div className="flex items-center space-x-4 min-w-0 flex-1">
                   {/* Mobile Menu Toggle */}
                   <button
-                    className="md:hidden p-2 rounded-xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-gray-200/40 dark:border-gray-700/40 hover:bg-white/90 dark:hover:bg-gray-700/90 transition-all duration-200 shadow hover:shadow-md flex items-center justify-center touch-manipulation min-h-[44px] min-w-[44px]"
+                    className="md:hidden p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors flex items-center justify-center touch-manipulation min-h-[44px] min-w-[44px]"
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                     title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
                   >
@@ -519,33 +580,82 @@ export default function BankersAlgorithmPage() {
                       viewBox="0 0 20 20"
                       fill="currentColor"
                       xmlns="http://www.w3.org/2000/svg"
-                      className="text-gray-700 dark:text-gray-200"
+                      className="text-gray-600 dark:text-gray-400"
                     >
                       <path d="M11.6663 12.6686L11.801 12.6823C12.1038 12.7445 12.3313 13.0125 12.3313 13.3337C12.3311 13.6547 12.1038 13.9229 11.801 13.985L11.6663 13.9987H3.33325C2.96609 13.9987 2.66839 13.7008 2.66821 13.3337C2.66821 12.9664 2.96598 12.6686 3.33325 12.6686H11.6663ZM16.6663 6.00163L16.801 6.0153C17.1038 6.07747 17.3313 6.34546 17.3313 6.66667C17.3313 6.98788 17.1038 7.25586 16.801 7.31803L16.6663 7.33171H3.33325C2.96598 7.33171 2.66821 7.03394 2.66821 6.66667C2.66821 6.2994 2.96598 6.00163 3.33325 6.00163H16.6663Z"></path>
                     </svg>
                   </button>
 
-                  <h1 className="text-base sm:text-xl font-bold text-gray-900 dark:text-gray-100 truncate">
-                    <span className="hidden sm:inline">Banker&apos;s Algorithm Calculator</span>
-                    <span className="sm:hidden">Banker&apos;s Algorithm</span>
+                  {/* Title */}
+                  <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    Banker&apos;s AlgorithmX
                   </h1>
                 </div>
 
-                <div className="flex items-center space-x-2 flex-shrink-0">
-                  <AnimatedThemeToggler
-                    isDarkMode={isDarkMode}
-                    toggleDarkMode={toggleDarkMode}
-                    isUsingSystemPreference={isUsingSystemPreference}
-                    className="p-2 rounded-xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-gray-200/40 dark:border-gray-700/40 hover:bg-white/90 dark:hover:bg-gray-700/90 transition-all duration-200 shadow hover:shadow-md flex items-center justify-center touch-manipulation min-h-[44px] min-w-[44px]"
-                  />
+                <div className="flex items-center space-x-3 flex-shrink-0">
+                  {/* Action Buttons */}
+                  <button
+                    onClick={checkSafety}
+                    disabled={
+                      algorithmState.isCalculating || isProcessingRequest
+                    }
+                    className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 disabled:bg-gray-400 disabled:cursor-not-allowed text-white dark:text-black rounded-full font-medium transition-colors duration-200 touch-manipulation min-h-[40px]"
+                  >
+                    {algorithmState.isCalculating ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white dark:border-black"></div>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="size-4"
+                      >
+                        <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                      </svg>
+                    )}
+                    <span className="text-sm">
+                      {algorithmState.isCalculating
+                        ? "Calculating..."
+                        : "Check Safety"}
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={resetAlgorithm}
+                    disabled={
+                      algorithmState.isCalculating || isProcessingRequest
+                    }
+                    className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:bg-gray-200 disabled:cursor-not-allowed text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-full font-medium transition-colors duration-200 touch-manipulation min-h-[40px]"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="stroke-[2] size-4"
+                    >
+                      <path
+                        d="M4 20V15H4.31241M4.31241 15H9M4.31241 15C5.51251 18.073 8.50203 20.25 12 20.25C15.8582 20.25 19.0978 17.6016 20 14.0236M20 4V9H19.6876M19.6876 9H15M19.6876 9C18.4875 5.92698 15.498 3.75 12 3.75C8.14184 3.75 4.90224 6.3984 4 9.9764"
+                        stroke="currentColor"
+                      ></path>
+                    </svg>
+                    <span className="text-sm">Refresh</span>
+                  </button>
                 </div>
               </div>
             </div>
           </header>
 
           {/* Main Algorithm Interface */}
-          <div className="flex-1 overflow-y-auto p-3 sm:p-6">
-            <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
+          <div className="flex-1 overflow-y-auto bg-white dark:bg-gray-900">
+            <div className="max-w-7xl mx-auto p-6 space-y-6">
               {/* Algorithm Table */}
               <AlgorithmTable
                 processCount={algorithmState.processCount}
@@ -558,24 +668,56 @@ export default function BankersAlgorithmPage() {
                 onMaxChange={updateMax}
               />
 
-              {/* Action Buttons - Enhanced mobile layout */}
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+              {/* Mobile Action Buttons - Only show on mobile */}
+              <div className="sm:hidden flex flex-col gap-3">
                 <button
                   onClick={checkSafety}
                   disabled={algorithmState.isCalculating || isProcessingRequest}
-                  className="w-full sm:w-auto px-6 py-3 sm:py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-colors duration-200 shadow hover:shadow-md flex items-center justify-center space-x-2 touch-manipulation min-h-[48px]"
+                  className="w-full px-6 py-3 bg-black dark:bg-white hover:bg-gray-800 dark:hover:bg-gray-100 disabled:bg-gray-400 disabled:cursor-not-allowed text-white dark:text-black rounded-full font-medium transition-colors duration-200 flex items-center justify-center space-x-2 touch-manipulation min-h-[48px]"
                 >
-                  {algorithmState.isCalculating && (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  {algorithmState.isCalculating ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white dark:border-black"></div>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="size-4"
+                    >
+                      <polygon points="6 3 20 12 6 21 6 3"></polygon>
+                    </svg>
                   )}
-                  <span className="text-sm sm:text-base">{algorithmState.isCalculating ? 'Calculating...' : 'Check Safety'}</span>
+                  <span className="text-sm">
+                    {algorithmState.isCalculating
+                      ? "Calculating..."
+                      : "Check Safety"}
+                  </span>
                 </button>
                 <button
                   onClick={resetAlgorithm}
                   disabled={algorithmState.isCalculating || isProcessingRequest}
-                  className="w-full sm:w-auto px-6 py-3 sm:py-3 bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-xl font-medium transition-colors duration-200 shadow hover:shadow-md touch-manipulation min-h-[48px]"
+                  className="w-full px-6 py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:bg-gray-200 disabled:cursor-not-allowed text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-full font-medium transition-colors duration-200 flex items-center justify-center space-x-2 touch-manipulation min-h-[48px]"
                 >
-                  <span className="text-sm sm:text-base">Refresh</span>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="stroke-[2] size-4"
+                  >
+                    <path
+                      d="M4 20V15H4.31241M4.31241 15H9M4.31241 15C5.51251 18.073 8.50203 20.25 12 20.25C15.8582 20.25 19.0978 17.6016 20 14.0236M20 4V9H19.6876M19.6876 9H15M19.6876 9C18.4875 5.92698 15.498 3.75 12 3.75C8.14184 3.75 4.90224 6.3984 4 9.9764"
+                      stroke="currentColor"
+                    ></path>
+                  </svg>
+                  <span className="text-sm">Refresh</span>
                 </button>
               </div>
 

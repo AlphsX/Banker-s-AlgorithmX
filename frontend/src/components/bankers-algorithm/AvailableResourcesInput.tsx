@@ -66,19 +66,20 @@ export const AvailableResourcesInput: React.FC<AvailableResourcesInputProps> = (
 
   return (
     <div className="space-y-2">
-      <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
-        Available Resources
+      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        Available
       </label>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-3 gap-3">
         {available.map((value, index) => {
           const error = getErrorForIndex(index);
+          const resourceLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
           return (
             <div key={index} className="space-y-1">
               <label 
-                className="text-xs text-gray-500 dark:text-gray-400"
+                className="text-sm font-medium text-gray-600 dark:text-gray-400 text-center block"
                 htmlFor={`available-resource-${index}`}
               >
-                R{index}
+                {resourceLabels[index] || `R${index}`}
               </label>
               <input
                 id={`available-resource-${index}`}
@@ -94,7 +95,7 @@ export const AvailableResourcesInput: React.FC<AvailableResourcesInputProps> = (
                 onBlur={(e) => {
                   handleInputBlur(index, e.target.value);
                 }}
-                className={`w-full px-2 py-2 sm:py-1 text-sm border rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 transition-colors duration-200 touch-manipulation ${
+                className={`w-full h-10 px-3 text-center text-sm border rounded-full bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 font-medium transition-colors duration-200 touch-manipulation ${
                   error
                     ? 'border-red-500 dark:border-red-400 focus:ring-red-500 dark:focus:ring-red-400'
                     : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500 dark:focus:ring-blue-400'
@@ -115,9 +116,7 @@ export const AvailableResourcesInput: React.FC<AvailableResourcesInputProps> = (
           );
         })}
       </div>
-      <div className="text-xs text-gray-500 dark:text-gray-400">
-        Enter the number of available instances for each resource type
-      </div>
+
     </div>
   );
 };

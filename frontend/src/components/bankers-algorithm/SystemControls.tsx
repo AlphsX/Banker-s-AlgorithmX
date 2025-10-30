@@ -37,10 +37,10 @@ export const SystemControls: React.FC<SystemControlsProps> = ({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 pt-2 pb-4">
-      <div className="space-y-6">
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+    <div className="flex-1 px-6 py-2">
+      <div className="space-y-4">
+        <div className="space-y-3">
+          <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">
             System Controls
           </h3>
           
@@ -62,7 +62,7 @@ export const SystemControls: React.FC<SystemControlsProps> = ({
 
         {/* Request Panel */}
         {onRequestSubmit && (
-          <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+          <div className="pt-2">
             <RequestPanel
               processCount={processCount}
               resourceCount={resourceCount}

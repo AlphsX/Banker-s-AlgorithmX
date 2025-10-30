@@ -27,28 +27,28 @@ export const ResourceControl: React.FC<ResourceControlProps> = ({
 
   return (
     <div className="space-y-2">
-      <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
+      <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
         Resources
       </label>
       <div className="flex items-center space-x-3">
         <button
           onClick={handleDecrement}
-          className="w-10 h-10 sm:w-8 sm:h-8 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 active:bg-gray-400 dark:active:bg-gray-500 flex items-center justify-center text-sm font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
+          className="w-8 h-8 rounded-full bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold text-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
           disabled={resourceCount <= 1}
           title="Decrease resource count"
           aria-label="Decrease resource count"
         >
-          -
+          −
         </button>
         <span 
-          className="w-10 sm:w-8 text-center text-sm font-medium"
+          className="w-8 text-center text-lg font-semibold text-gray-900 dark:text-gray-100"
           aria-label={`Current resource count: ${resourceCount}`}
         >
           {resourceCount}
         </span>
         <button
           onClick={handleIncrement}
-          className="w-10 h-10 sm:w-8 sm:h-8 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 active:bg-gray-400 dark:active:bg-gray-500 flex items-center justify-center text-sm font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
+          className="w-8 h-8 rounded-full bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold text-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
           disabled={resourceCount >= 10}
           title="Increase resource count"
           aria-label="Increase resource count"
