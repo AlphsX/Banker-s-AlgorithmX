@@ -1,7 +1,3 @@
-/**
- * Utility functions for matrix calculations and validation
- */
-
 import { ValidationError } from '@/types/bankers-algorithm';
 
 /**
@@ -174,6 +170,7 @@ export function validateAllocationConstraints(
 
 /**
  * Validates a resource request against need and available vectors
+ * Implements the validation rules from the Banker's Algorithm
  */
 export function validateResourceRequest(
   request: number[],
@@ -190,11 +187,11 @@ export function validateResourceRequest(
     return errors;
   }
   
-  // Validate request values are non-negative
+  // Validate request values are non-negative integers
   const requestErrors = validateVectorValues(request);
   errors.push(...requestErrors);
   
-  // Check if request exceeds need
+  // Rule 1: Request must not exceed need (Request[i] <= Need[i])
   for (let i = 0; i < request.length; i++) {
     if (request[i] > need[i]) {
       errors.push({
@@ -204,7 +201,7 @@ export function validateResourceRequest(
     }
   }
   
-  // Check if request exceeds available
+  // Rule 2: Request must not exceed available resources (Request[i] <= Available[i])
   for (let i = 0; i < request.length; i++) {
     if (request[i] > available[i]) {
       errors.push({
@@ -215,4 +212,101 @@ export function validateResourceRequest(
   }
   
   return errors;
+}
+
+/**
+ * Calculates the sum of all elements in a vector
+ */
+export function vectorSum(vector: number[]): number {
+  return vector.reduce((sum, value) => sum + value, 0);
+}
+
+/**
+ * Calculates the sum of each column in a matrix (total allocated per resource)
+ */
+export function matrixColumnSums(matrix: number[][]): number[] {
+  if (matrix.length === 0) return [];
+  
+  const cols = matrix[0].length;
+  const sums = createZeroVector(cols);
+  
+  for (let i = 0; i < matrix.length; i++) {
+    for (let j = 0; j < cols; j++) {
+      sums[j] += matrix[i][j];
+    }
+  }
+  
+  return sums;
+}
+
+/**
+ * Checks if a matrix is rectangular (all rows have the same length)
+ */
+export function isMatrixRectangular(matrix: number[][]): boolean {
+  if (matrix.length === 0) return true;
+  
+  const expectedCols = matrix[0].length;
+  return matrix.every(row => row.length === expectedCols);
+}
+
+/**
+ * Formats a matrix for display purposes
+ */
+export function formatMatrix(matrix: number[][], precision: number = 0): string {
+  return matrix.map(row => 
+    '[' + row.map(val => val.toFixed(precision)).join(', ') + ']'
+  ).join('\n');
+}
+
+/**
+ * Formats a vector for display purposes
+ */
+export function formatVector(vector: number[], precision: number = 0): string {
+  return '[' + vector.map(val => val.toFixed(precision)).join(', ') + ']';
+}
+
+/**
+ * Checks if two vectors are equal
+ */
+export function vectorsEqual(a: number[], b: number[]): boolean {
+  if (a.length !== b.length) return false;
+  return a.every((val, index) => val === b[index]);
+}
+
+/**
+ * Checks if two matrices are equal
+ */
+export function matricesEqual(a: number[][], b: number[][]): boolean {
+  if (a.length !== b.length) return false;
+  return a.every((row, i) => vectorsEqual(row, b[i]));
+}
+
+/**
+ * Creates an identity matrix of given size
+ */
+export function createIdentityMatrix(size: number): number[][] {
+  const matrix = createZeroMatrix(size, size);
+  for (let i = 0; i < size; i++) {
+    matrix[i][i] = 1;
+  }
+  return matrix;
+}
+
+/**
+ * Transposes a matrix
+ */
+export function transposeMatrix(matrix: number[][]): number[][] {
+  if (matrix.length === 0) return [];
+  
+  const rows = matrix.length;
+  const cols = matrix[0].length;
+  const transposed = createZeroMatrix(cols, rows);
+  
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      transposed[j][i] = matrix[i][j];
+    }
+  }
+  
+  return transposed;
 }

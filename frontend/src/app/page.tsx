@@ -96,14 +96,65 @@ export default function BankersAlgorithmPage() {
     const newState = calculator.createFreshState();
     setAlgorithmState(newState);
     focusInput();
-  }, [focusInput, calculator]);
+    showSuccess(
+      "System Reset",
+      "Algorithm state has been reset to initial values.",
+      3000
+    );
+  }, [focusInput, calculator, showSuccess]);
+
+  // Load default example
+  const loadDefaultExample = useCallback(() => {
+    const defaultState = calculator.createDefaultState();
+    setAlgorithmState(defaultState);
+    showSuccess(
+      "Example Loaded",
+      "Loaded classical Banker's Algorithm example from textbook.",
+      4000
+    );
+  }, [calculator, showSuccess]);
+
+  // Complete a process (simulate process finishing its task)
+  const completeProcess = useCallback(
+    (processId: number) => {
+      try {
+        const newState = calculator.completeProcess(algorithmState, processId);
+
+        if (newState !== algorithmState) {
+          setAlgorithmState({
+            ...newState,
+            lastUpdated: new Date(),
+          });
+
+          showSuccess(
+            "Process Completed",
+            `Process P${processId} has completed execution and released all resources.`,
+            5000
+          );
+        } else {
+          showError(
+            "Cannot Complete Process",
+            `Process P${processId} cannot be completed yet. It still has unfinished tasks.`,
+            5000
+          );
+        }
+      } catch (error) {
+        showError(
+          "Process Completion Error",
+          error instanceof Error ? error.message : "Failed to complete process",
+          5000
+        );
+      }
+    },
+    [algorithmState, calculator, showSuccess, showError]
+  );
 
   useKeyboardShortcuts({
     onToggleSidebar: toggleSidebar,
     onToggleTheme: toggleDarkMode,
     onFocusInput: focusInput,
     onNewChat: resetAlgorithm, // Repurpose new chat for reset
-    onToggleTools: () => {}, // Not used in this context
+    onToggleTools: loadDefaultExample, // Load example with Ctrl+Shift+T
   });
 
   // Update process count
@@ -196,8 +247,22 @@ export default function BankersAlgorithmPage() {
     [algorithmState.max, algorithmState.allocation, calculator]
   );
 
-  // Check safety
+  // Check safety with enhanced validation
   const checkSafety = useCallback(() => {
+    // First validate the system state
+    const validationErrors = calculator.validateSystemData(algorithmState);
+
+    if (validationErrors.length > 0) {
+      showError(
+        "System Validation Failed",
+        `Please fix the following issues: ${validationErrors
+          .map((e) => e.message)
+          .join(", ")}`,
+        8000
+      );
+      return;
+    }
+
     setAlgorithmState((prev) => ({ ...prev, isCalculating: true }));
 
     // Add a small delay to show loading state
@@ -213,17 +278,31 @@ export default function BankersAlgorithmPage() {
         finish: safetyResult.finalFinishState,
         safeSequence: safetyResult.safeSequence,
         algorithmSteps: safetyResult.steps,
+        isSafe: safetyResult.isSafe,
         isCalculating: false,
+        lastUpdated: new Date(),
       }));
-    }, 300);
-  }, [
-    algorithmState.available,
-    algorithmState.allocation,
-    algorithmState.need,
-    calculator,
-  ]);
 
-  // Process resource request
+      // Show result notification
+      if (safetyResult.isSafe) {
+        showSuccess(
+          "System is SAFE",
+          `Safe execution sequence found: ${safetyResult.safeSequence.join(
+            " → "
+          )}`,
+          6000
+        );
+      } else {
+        showError(
+          "System is UNSAFE",
+          "The current system state could lead to deadlock. Please review resource allocation.",
+          8000
+        );
+      }
+    }, 300);
+  }, [algorithmState, calculator, showSuccess, showError]);
+
+  // Process resource request with enhanced error handling
   const [isProcessingRequest, setIsProcessingRequest] = useState(false);
 
   const processResourceRequest = useCallback(
@@ -239,27 +318,32 @@ export default function BankersAlgorithmPage() {
 
         if (requestResult.canGrant && requestResult.newState) {
           // Request can be granted - update state
-          setAlgorithmState(requestResult.newState);
+          setAlgorithmState({
+            ...requestResult.newState,
+            lastUpdated: new Date(),
+          });
 
-          // Show success message
+          // Show success message with detailed information
           showSuccess(
-            "Request Granted",
-            `Process P${
-              request.processId
-            } request [${request.requestVector.join(
-              ", "
-            )}] has been granted successfully. System remains in safe state.`,
+            "Request Granted ✅",
+            requestResult.errorMessage ||
+              `Process P${
+                request.processId
+              } allocated [${request.requestVector.join(
+                ", "
+              )}]. System remains safe.`,
             6000
           );
         } else {
-          // Request cannot be granted - show error
+          // Request cannot be granted - show detailed error
           showError(
-            "Request Denied",
-            `Process P${
-              request.processId
-            } request [${request.requestVector.join(
-              ", "
-            )}] cannot be granted: ${requestResult.errorMessage}`,
+            "Request Denied ❌",
+            requestResult.errorMessage ||
+              `Process P${
+                request.processId
+              } request [${request.requestVector.join(
+                ", "
+              )}] cannot be granted.`,
             8000
           );
 
@@ -270,12 +354,14 @@ export default function BankersAlgorithmPage() {
               algorithmSteps: requestResult.simulationSteps || [],
               safeSequence: [],
               finish: prev.finish.map(() => false),
+              isSafe: false,
+              lastUpdated: new Date(),
             }));
           }
         }
 
         setIsProcessingRequest(false);
-      }, 500); // Slightly longer delay to show the processing state
+      }, 500);
     },
     [algorithmState, calculator, showSuccess, showError]
   );
@@ -346,9 +432,9 @@ export default function BankersAlgorithmPage() {
             className={`relative w-64 bg-[#fdfdfd] border-r border-[#f2f2f2] flex flex-col z-10 transition-transform duration-300 ease-out shadow-xl ${
               isSidebarOpen ? "translate-x-0" : "-translate-x-full"
             }`}
-            style={{ 
-              backgroundColor: 'var(--sidebar-bg, #fdfdfd)',
-              borderColor: 'var(--sidebar-border, #f2f2f2)'
+            style={{
+              backgroundColor: "var(--sidebar-bg, #fdfdfd)",
+              borderColor: "var(--sidebar-border, #f2f2f2)",
             }}
           >
             {/* Mobile Sidebar Header */}
@@ -387,16 +473,22 @@ export default function BankersAlgorithmPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="relative">
-                    <div className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
+                    <div
+                      className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
                       style={{
-                        backgroundColor: 'var(--button-bg, #f3f4f6)',
-                        borderColor: 'var(--button-border, #e5e7eb)'
-                      }}>
-                      <User className="h-5 w-5 text-gray-600 mx-auto" 
-                        style={{ color: 'var(--foreground, #4b5563)' }} />
+                        backgroundColor: "var(--button-bg, #f3f4f6)",
+                        borderColor: "var(--button-border, #e5e7eb)",
+                      }}
+                    >
+                      <User
+                        className="h-5 w-5 text-gray-600 mx-auto"
+                        style={{ color: "var(--foreground, #4b5563)" }}
+                      />
                     </div>
-                    <div className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"
-                      style={{ borderColor: 'var(--sidebar-bg, #ffffff)' }}></div>
+                    <div
+                      className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"
+                      style={{ borderColor: "var(--sidebar-bg, #ffffff)" }}
+                    ></div>
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
@@ -423,9 +515,15 @@ export default function BankersAlgorithmPage() {
                     title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
                   >
                     {isSidebarOpen ? (
-                      <ChevronLeft className="h-5 w-5 mx-auto" style={{ color: 'var(--text-secondary, #6b7280)' }} />
+                      <ChevronLeft
+                        className="h-5 w-5 mx-auto"
+                        style={{ color: "var(--text-secondary, #6b7280)" }}
+                      />
                     ) : (
-                      <ChevronRight className="h-5 w-5 mx-auto" style={{ color: 'var(--text-secondary, #6b7280)' }} />
+                      <ChevronRight
+                        className="h-5 w-5 mx-auto"
+                        style={{ color: "var(--text-secondary, #6b7280)" }}
+                      />
                     )}
                   </button>
                 </div>
@@ -443,9 +541,9 @@ export default function BankersAlgorithmPage() {
               ? "w-16 cursor-e-resize"
               : "w-64 cursor-w-resize"
           } overflow-hidden`}
-          style={{ 
-            backgroundColor: 'var(--sidebar-bg, #fdfdfd)',
-            borderColor: 'var(--sidebar-border, #f2f2f2)'
+          style={{
+            backgroundColor: "var(--sidebar-bg, #fdfdfd)",
+            borderColor: "var(--sidebar-border, #f2f2f2)",
           }}
           onClick={(e) => {
             const target = e.target as HTMLElement;
@@ -500,16 +598,22 @@ export default function BankersAlgorithmPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="relative">
-                    <div className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
+                    <div
+                      className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
                       style={{
-                        backgroundColor: 'var(--button-bg, #f3f4f6)',
-                        borderColor: 'var(--button-border, #e5e7eb)'
-                      }}>
-                      <User className="h-5 w-5 text-gray-600 mx-auto" 
-                        style={{ color: 'var(--foreground, #4b5563)' }} />
+                        backgroundColor: "var(--button-bg, #f3f4f6)",
+                        borderColor: "var(--button-border, #e5e7eb)",
+                      }}
+                    >
+                      <User
+                        className="h-5 w-5 text-gray-600 mx-auto"
+                        style={{ color: "var(--foreground, #4b5563)" }}
+                      />
                     </div>
-                    <div className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"
-                      style={{ borderColor: 'var(--sidebar-bg, #ffffff)' }}></div>
+                    <div
+                      className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"
+                      style={{ borderColor: "var(--sidebar-bg, #ffffff)" }}
+                    ></div>
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
@@ -540,9 +644,15 @@ export default function BankersAlgorithmPage() {
                     }
                   >
                     {isDesktopSidebarCollapsed ? (
-                      <ChevronRight className="h-5 w-5 mx-auto" style={{ color: 'var(--text-secondary, #6b7280)' }} />
+                      <ChevronRight
+                        className="h-5 w-5 mx-auto"
+                        style={{ color: "var(--text-secondary, #6b7280)" }}
+                      />
                     ) : (
-                      <ChevronLeft className="h-5 w-5 mx-auto" style={{ color: 'var(--text-secondary, #6b7280)' }} />
+                      <ChevronLeft
+                        className="h-5 w-5 mx-auto"
+                        style={{ color: "var(--text-secondary, #6b7280)" }}
+                      />
                     )}
                   </button>
                 </div>
@@ -550,16 +660,22 @@ export default function BankersAlgorithmPage() {
             ) : (
               <div className="flex flex-col items-center space-y-3">
                 <div className="relative" title="User">
-                  <div className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
+                  <div
+                    className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
                     style={{
-                      backgroundColor: 'var(--button-bg, #f3f4f6)',
-                      borderColor: 'var(--button-border, #e5e7eb)'
-                    }}>
-                    <User className="h-5 w-5 text-gray-600 mx-auto" 
-                      style={{ color: 'var(--foreground, #4b5563)' }} />
+                      backgroundColor: "var(--button-bg, #f3f4f6)",
+                      borderColor: "var(--button-border, #e5e7eb)",
+                    }}
+                  >
+                    <User
+                      className="h-5 w-5 text-gray-600 mx-auto"
+                      style={{ color: "var(--foreground, #4b5563)" }}
+                    />
                   </div>
-                  <div className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"
-                    style={{ borderColor: 'var(--sidebar-bg, #ffffff)' }}></div>
+                  <div
+                    className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"
+                    style={{ borderColor: "var(--sidebar-bg, #ffffff)" }}
+                  ></div>
                 </div>
                 <AnimatedThemeToggler
                   isDarkMode={isDarkMode}
@@ -578,9 +694,15 @@ export default function BankersAlgorithmPage() {
                   }
                 >
                   {isDesktopSidebarCollapsed ? (
-                    <ChevronRight className="h-5 w-5 mx-auto" style={{ color: 'var(--text-secondary, #6b7280)' }} />
+                    <ChevronRight
+                      className="h-5 w-5 mx-auto"
+                      style={{ color: "var(--text-secondary, #6b7280)" }}
+                    />
                   ) : (
-                    <ChevronLeft className="h-5 w-5 mx-auto" style={{ color: 'var(--text-secondary, #6b7280)' }} />
+                    <ChevronLeft
+                      className="h-5 w-5 mx-auto"
+                      style={{ color: "var(--text-secondary, #6b7280)" }}
+                    />
                   )}
                 </button>
               </div>
@@ -610,7 +732,7 @@ export default function BankersAlgorithmPage() {
                       viewBox="0 0 20 20"
                       fill="currentColor"
                       xmlns="http://www.w3.org/2000/svg"
-                      style={{ color: 'var(--text-secondary, #6b7280)' }}
+                      style={{ color: "var(--text-secondary, #6b7280)" }}
                     >
                       <path d="M11.6663 12.6686L11.801 12.6823C12.1038 12.7445 12.3313 13.0125 12.3313 13.3337C12.3311 13.6547 12.1038 13.9229 11.801 13.985L11.6663 13.9987H3.33325C2.96609 13.9987 2.66839 13.7008 2.66821 13.3337C2.66821 12.9664 2.96598 12.6686 3.33325 12.6686H11.6663ZM16.6663 6.00163L16.801 6.0153C17.1038 6.07747 17.3313 6.34546 17.3313 6.66667C17.3313 6.98788 17.1038 7.25586 16.801 7.31803L16.6663 7.33171H3.33325C2.96598 7.33171 2.66821 7.03394 2.66821 6.66667C2.66821 6.2994 2.96598 6.00163 3.33325 6.00163H16.6663Z"></path>
                     </svg>
@@ -656,6 +778,34 @@ export default function BankersAlgorithmPage() {
                     </span>
                   </button>
 
+                  {/* <button
+                    onClick={loadDefaultExample}
+                    disabled={
+                      algorithmState.isCalculating || isProcessingRequest
+                    }
+                    className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-full font-medium transition-colors duration-200 touch-manipulation min-h-[40px]"
+                    title="Load textbook example"
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="size-4"
+                    >
+                      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                      <polyline points="14,2 14,8 20,8" />
+                      <line x1="16" y1="13" x2="8" y2="13" />
+                      <line x1="16" y1="17" x2="8" y2="17" />
+                      <polyline points="10,9 9,9 8,9" />
+                    </svg>
+                    <span className="text-sm">Example</span>
+                  </button> */}
+
                   <button
                     onClick={resetAlgorithm}
                     disabled={
@@ -663,20 +813,23 @@ export default function BankersAlgorithmPage() {
                     }
                     className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-full font-medium transition-colors duration-200 touch-manipulation min-h-[40px] disabled:bg-gray-200 disabled:cursor-not-allowed"
                     style={{
-                      backgroundColor: 'var(--button-bg, #ffffff)',
-                      borderColor: 'var(--button-border, #e1e1e1)',
-                      color: 'var(--foreground)'
+                      backgroundColor: "var(--button-bg, #ffffff)",
+                      borderColor: "var(--button-border, #e1e1e1)",
+                      color: "var(--foreground)",
                     }}
                     onMouseEnter={(e) => {
                       if (!e.currentTarget.disabled) {
-                        e.currentTarget.style.backgroundColor = 'var(--button-bg, #f9fafb)';
+                        e.currentTarget.style.backgroundColor =
+                          "var(--button-bg, #f9fafb)";
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (!e.currentTarget.disabled) {
-                        e.currentTarget.style.backgroundColor = 'var(--button-bg, #ffffff)';
+                        e.currentTarget.style.backgroundColor =
+                          "var(--button-bg, #ffffff)";
                       }
                     }}
+                    title="Reset to empty state"
                   >
                     <svg
                       width="16"
@@ -691,7 +844,7 @@ export default function BankersAlgorithmPage() {
                         stroke="currentColor"
                       ></path>
                     </svg>
-                    <span className="text-sm">Refresh</span>
+                    <span className="text-sm">Reset</span>
                   </button>
                 </div>
               </div>
@@ -749,31 +902,63 @@ export default function BankersAlgorithmPage() {
                       : "Check Safety"}
                   </span>
                 </button>
-                <button
-                  onClick={resetAlgorithm}
-                  disabled={algorithmState.isCalculating || isProcessingRequest}
-                  className="w-full px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-full font-medium transition-colors duration-200 flex items-center justify-center space-x-2 touch-manipulation min-h-[48px] disabled:bg-gray-200 disabled:cursor-not-allowed"
-                  style={{
-                    backgroundColor: 'var(--button-bg, #ffffff)',
-                    borderColor: 'var(--button-border, #e1e1e1)',
-                    color: 'var(--foreground)'
-                  }}
-                >
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="stroke-[2] size-4"
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={loadDefaultExample}
+                    disabled={
+                      algorithmState.isCalculating || isProcessingRequest
+                    }
+                    className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-full font-medium transition-colors duration-200 flex items-center justify-center space-x-2 touch-manipulation min-h-[48px]"
                   >
-                    <path
-                      d="M4 20V15H4.31241M4.31241 15H9M4.31241 15C5.51251 18.073 8.50203 20.25 12 20.25C15.8582 20.25 19.0978 17.6016 20 14.0236M20 4V9H19.6876M19.6876 9H15M19.6876 9C18.4875 5.92698 15.498 3.75 12 3.75C8.14184 3.75 4.90224 6.3984 4 9.9764"
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
                       stroke="currentColor"
-                    ></path>
-                  </svg>
-                  <span className="text-sm">Refresh</span>
-                </button>
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="size-4"
+                    >
+                      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
+                      <polyline points="14,2 14,8 20,8" />
+                      <line x1="16" y1="13" x2="8" y2="13" />
+                      <line x1="16" y1="17" x2="8" y2="17" />
+                      <polyline points="10,9 9,9 8,9" />
+                    </svg>
+                    <span className="text-sm">Example</span>
+                  </button>
+
+                  <button
+                    onClick={resetAlgorithm}
+                    disabled={
+                      algorithmState.isCalculating || isProcessingRequest
+                    }
+                    className="flex-1 px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-full font-medium transition-colors duration-200 flex items-center justify-center space-x-2 touch-manipulation min-h-[48px] disabled:bg-gray-200 disabled:cursor-not-allowed"
+                    style={{
+                      backgroundColor: "var(--button-bg, #ffffff)",
+                      borderColor: "var(--button-border, #e1e1e1)",
+                      color: "var(--foreground)",
+                    }}
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="stroke-[2] size-4"
+                    >
+                      <path
+                        d="M4 20V15H4.31241M4.31241 15H9M4.31241 15C5.51251 18.073 8.50203 20.25 12 20.25C15.8582 20.25 19.0978 17.6016 20 14.0236M20 4V9H19.6876M19.6876 9H15M19.6876 9C18.4875 5.92698 15.498 3.75 12 3.75C8.14184 3.75 4.90224 6.3984 4 9.9764"
+                        stroke="currentColor"
+                      ></path>
+                    </svg>
+                    <span className="text-sm">Reset</span>
+                  </button>
+                </div>
               </div>
 
               {/* Step-by-Step Results */}
@@ -781,7 +966,10 @@ export default function BankersAlgorithmPage() {
                 steps={algorithmState.algorithmSteps}
                 safeSequence={algorithmState.safeSequence}
                 isCalculating={algorithmState.isCalculating}
-                isSafe={algorithmState.safeSequence.length > 0}
+                isSafe={
+                  algorithmState.isSafe ??
+                  algorithmState.safeSequence.length > 0
+                }
               />
             </div>
           </div>
