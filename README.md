@@ -434,6 +434,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-*Built with ❤️ using modern web technologies and classical computer science algorithms*
+*Built with ༝༚༝༚ using modern web technologies and classical computer science algorithms*
 
 **🌟 If this project helped you understand the Banker's Algorithm, please consider giving it a star!**

@@ -75,6 +75,9 @@ export default function BankersAlgorithmPage() {
 
   // Initialize calculator - use useMemo to avoid recreating on every render
   const calculator = useMemo(() => new BankersAlgorithmCalculator(), []);
+  
+  // Track if initial preview has been shown
+  const hasShownInitialPreview = useRef(false);
 
   // Keyboard shortcuts
   const toggleSidebar = useCallback(() => {
@@ -93,15 +96,26 @@ export default function BankersAlgorithmPage() {
   }, []);
 
   const resetAlgorithm = useCallback(() => {
-    const newState = calculator.createFreshState();
+    // Preserve current process and resource counts
+    const currentProcessCount = algorithmState.processCount;
+    const currentResourceCount = algorithmState.resourceCount;
+    
+    // Create fresh state with preserved counts
+    const freshState = calculator.createFreshState();
+    const newState = calculator.resizeMatrices(
+      freshState,
+      currentProcessCount,
+      currentResourceCount
+    );
+    
     setAlgorithmState(newState);
     focusInput();
     showSuccess(
       "System Reset",
-      "Algorithm state has been reset to initial values.",
+      "Matrix values have been reset while preserving process and resource counts.",
       3000
     );
-  }, [focusInput, calculator, showSuccess]);
+  }, [focusInput, calculator, showSuccess, algorithmState.processCount, algorithmState.resourceCount]);
 
   // Load default example
   const loadDefaultExample = useCallback(() => {
@@ -301,6 +315,20 @@ export default function BankersAlgorithmPage() {
       }
     }, 300);
   }, [algorithmState, calculator, showSuccess, showError]);
+
+  // Auto-preview on initial page load (only once)
+  useEffect(() => {
+    if (!hasShownInitialPreview.current) {
+      const runInitialPreview = () => {
+        setTimeout(() => {
+          checkSafety();
+          hasShownInitialPreview.current = true;
+        }, 1000);
+      };
+      
+      runInitialPreview();
+    }
+  }, [checkSafety]);
 
   // Process resource request with enhanced error handling
   const [isProcessingRequest, setIsProcessingRequest] = useState(false);
@@ -773,38 +801,10 @@ export default function BankersAlgorithmPage() {
                     )}
                     <span className="text-sm">
                       {algorithmState.isCalculating
-                        ? "Calculating..."
+                        ? "Analyzing..."
                         : "Check Safety"}
                     </span>
                   </button>
-
-                  {/* <button
-                    onClick={loadDefaultExample}
-                    disabled={
-                      algorithmState.isCalculating || isProcessingRequest
-                    }
-                    className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-full font-medium transition-colors duration-200 touch-manipulation min-h-[40px]"
-                    title="Load textbook example"
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="size-4"
-                    >
-                      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-                      <polyline points="14,2 14,8 20,8" />
-                      <line x1="16" y1="13" x2="8" y2="13" />
-                      <line x1="16" y1="17" x2="8" y2="17" />
-                      <polyline points="10,9 9,9 8,9" />
-                    </svg>
-                    <span className="text-sm">Example</span>
-                  </button> */}
 
                   <button
                     onClick={resetAlgorithm}

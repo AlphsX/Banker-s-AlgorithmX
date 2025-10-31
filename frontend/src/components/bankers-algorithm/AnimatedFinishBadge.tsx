@@ -19,7 +19,7 @@ export const AnimatedFinishBadge: React.FC<AnimatedFinishBadgeProps> = ({
 }) => {
   const [currentFinishState, setCurrentFinishState] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [hasAnimated, setHasAnimated] = useState(false);
+
   const animationRef = useRef<NodeJS.Timeout | null>(null);
 
   // Reset state when calculation starts or when no steps
@@ -27,7 +27,6 @@ export const AnimatedFinishBadge: React.FC<AnimatedFinishBadgeProps> = ({
     if (isCalculating || !algorithmSteps || algorithmSteps.length === 0) {
       setCurrentFinishState(false);
       setIsAnimating(false);
-      setHasAnimated(false);
       if (animationRef.current) {
         clearTimeout(animationRef.current);
       }
@@ -38,48 +37,49 @@ export const AnimatedFinishBadge: React.FC<AnimatedFinishBadgeProps> = ({
   useEffect(() => {
     if (algorithmSteps && algorithmSteps.length > 0 && !isCalculating) {
       setCurrentFinishState(false);
-      setHasAnimated(false);
 
       // Create animation timeline that matches StepByStepResults exactly
       const animateSteps = async () => {
         for (let i = 0; i < algorithmSteps.length; i++) {
           const step = algorithmSteps[i];
-          
+
           // Wait for the step to appear (400ms delay as in StepByStepResults)
           await new Promise((resolve) => setTimeout(resolve, 400));
-          
+
           // Debug logging
           console.log(`P${processIndex} - Step ${i + 1}:`, {
             description: step.description,
             processChecked: step.processChecked,
-            canFinish: step.canFinish
+            canFinish: step.canFinish,
           });
-          
-          // Check multiple patterns for process finishing
-          const isProcessFinishingStep = (
-            (step.description.includes("finishes and releases resources") && step.processChecked) ||
-            (step.description.includes("can finish") && step.canFinish === true && step.processChecked) ||
-            (step.description.includes("Work = Work + Allocation") && step.processChecked)
-          );
-          
-          if (isProcessFinishingStep) {
+
+          // Check for process finishing step (step 3 with resource allocation)
+          const isProcessFinishingStep =
+            step.stepNumber === 3 &&
+            step.processChecked &&
+            step.canFinish === true &&
+            (step.description.includes("work =") || 
+             step.description.includes("Work ="));
+
+          if (isProcessFinishingStep && step.processChecked) {
             const processName = step.processChecked;
-            const processNum = parseInt(processName.replace('P', ''));
-            
-            console.log(`P${processIndex} - Found finishing step for ${processName} (${processNum})`);
-            
+            const processNum = parseInt(processName.replace("P", ""));
+
+            console.log(
+              `P${processIndex} - Found finishing step for ${processName} (${processNum})`
+            );
+
             // If this is our process, mark it as finished with animation
             if (processNum === processIndex) {
               console.log(`P${processIndex} - Animating finish!`);
               setCurrentFinishState(true);
-              setHasAnimated(true);
               setIsAnimating(true);
-              
+
               // Remove bounce animation after completion, keep the badge visible
               animationRef.current = setTimeout(() => {
                 setIsAnimating(false);
               }, 800); // Match animation duration
-              
+
               break; // Exit loop once this process is finished
             }
           }
@@ -99,7 +99,13 @@ export const AnimatedFinishBadge: React.FC<AnimatedFinishBadgeProps> = ({
 
   // Fallback to final state if no animation occurred
   useEffect(() => {
-    if (!isCalculating && algorithmSteps && algorithmSteps.length > 0 && !currentFinishState && finalFinishState) {
+    if (
+      !isCalculating &&
+      algorithmSteps &&
+      algorithmSteps.length > 0 &&
+      !currentFinishState &&
+      finalFinishState
+    ) {
       const timer = setTimeout(() => {
         setCurrentFinishState(finalFinishState);
       }, algorithmSteps.length * 400 + 500); // Wait for all steps plus buffer
@@ -112,8 +118,8 @@ export const AnimatedFinishBadge: React.FC<AnimatedFinishBadgeProps> = ({
     <div className="relative">
       <div
         className={`transition-all duration-300 ease-out transform ${
-          isAnimating 
-            ? "animate-finish-badge-bounce" 
+          isAnimating
+            ? "animate-finish-badge-bounce"
             : currentFinishState
             ? "scale-100 opacity-100"
             : "scale-100 opacity-100"
@@ -121,12 +127,12 @@ export const AnimatedFinishBadge: React.FC<AnimatedFinishBadgeProps> = ({
       >
         <BooleanBadge value={currentFinishState} />
       </div>
-      
+
       {/* Loading indicator when calculating */}
       {isCalculating && (
-        <div 
+        <div
           className="absolute inset-0 flex items-center justify-center rounded-full backdrop-blur-sm"
-          style={{ backgroundColor: 'var(--table-bg, #ffffff)' }}
+          style={{ backgroundColor: "var(--table-bg, #ffffff)" }}
         >
           <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600 dark:border-gray-600 dark:border-t-gray-300"></div>
         </div>

@@ -19,7 +19,7 @@ export interface BankersAlgorithmState {
 }
 
 export interface AlgorithmStep {
-  stepNumber: number;
+  stepNumber: number | string;
   description: string;
   workVector: number[];
   processChecked?: string;

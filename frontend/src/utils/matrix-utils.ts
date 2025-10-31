@@ -1,3 +1,9 @@
+/**
+ * Matrix and Vector Operations Utility
+ * Optimized mathematical operations for the Banker's Algorithm
+ * Based on the matrix operations from GreeksforGreeks implementation
+ */
+
 import { ValidationError } from '@/types/bankers-algorithm';
 
 /**

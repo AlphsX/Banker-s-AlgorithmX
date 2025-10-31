@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AlgorithmStep } from "@/types/bankers-algorithm";
 import { BooleanBadge } from "@/components/ui/BooleanBadge";
 
@@ -18,6 +18,22 @@ export function StepByStepResults({
 }: StepByStepResultsProps) {
   const [visibleSteps, setVisibleSteps] = useState<number>(0);
   const [animationComplete, setAnimationComplete] = useState(false);
+  const [showCompletionDot, setShowCompletionDot] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState<number | null>(null);
+  const startTimeRef = useRef<number | null>(null);
+  const previewStartTimeRef = useRef<number | null>(null);
+  const isFirstPreviewRef = useRef<boolean>(true);
+
+  // Track timing when calculation starts
+  useEffect(() => {
+    if (isCalculating) {
+      const now = Date.now();
+
+      startTimeRef.current = now;
+      setElapsedTime(null);
+      setShowCompletionDot(false);
+    }
+  }, [isCalculating]);
 
   // Reset animation when new steps are provided
   useEffect(() => {
@@ -29,15 +45,44 @@ export function StepByStepResults({
       const animateSteps = async () => {
         for (let i = 0; i <= steps.length; i++) {
           await new Promise((resolve) => setTimeout(resolve, 400));
+
+          // Start preview timer when first step becomes visible (only once)
+          if (i === 1 && isFirstPreviewRef.current) {
+            previewStartTimeRef.current = Date.now();
+            isFirstPreviewRef.current = false;
+          }
+
           setVisibleSteps(i);
         }
         setAnimationComplete(true);
+
+        // Show completion dot after 200ms delay
+        await new Promise((resolve) => setTimeout(resolve, 200));
+
+        // Calculate final elapsed time and show completion dot
+        let finalTime = 0;
+
+        // Use preview timer for first-time preview, regular timer for subsequent calculations
+        if (previewStartTimeRef.current && !startTimeRef.current) {
+          // First preview - use preview timer
+          finalTime = Date.now() - previewStartTimeRef.current;
+        } else if (startTimeRef.current) {
+          // Regular calculation - use regular timer
+          finalTime = Date.now() - startTimeRef.current;
+        }
+
+        if (finalTime > 0) {
+          setElapsedTime(finalTime);
+        }
+        setShowCompletionDot(true);
       };
 
       animateSteps();
     } else if (steps.length === 0) {
       setVisibleSteps(0);
       setAnimationComplete(false);
+      setShowCompletionDot(false);
+      setElapsedTime(null);
     }
   }, [steps, isCalculating]);
 
@@ -49,16 +94,26 @@ export function StepByStepResults({
   return (
     <div
       className="bg-white rounded-xl overflow-hidden"
-      style={{ 
-        backgroundColor: 'var(--table-bg)',
-        border: '1px solid var(--table-border)'
+      style={{
+        backgroundColor: "var(--table-bg)",
+        border: "1px solid var(--table-border)",
       }}
     >
       <div className="p-6">
         {/* Step Header */}
         <div className="mb-6">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            Step
+            Steps
+            <span
+              className={`ml-1 transition-opacity duration-300 text-gray-400 dark:text-gray-500 ${
+                showCompletionDot ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              •
+              {showCompletionDot && elapsedTime !== null && (
+                <span className="ml-1 text-sm font-mono">{elapsedTime}ms</span>
+              )}
+            </span>
           </h2>
         </div>
 
@@ -68,7 +123,7 @@ export function StepByStepResults({
             <div className="flex items-center space-x-3">
               <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-gray-600 dark:border-gray-600 dark:border-t-gray-300"></div>
               <span className="text-gray-600 dark:text-gray-400">
-                Calculating safety...
+                Analyzing safety...
               </span>
             </div>
           </div>
@@ -91,10 +146,12 @@ export function StepByStepResults({
                   }`}
                 >
                   <div className="flex items-start space-x-3">
-                    <div className="flex-shrink-0 w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center"
+                    <div
+                      className="flex-shrink-0 w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center"
                       style={{
-                        backgroundColor: 'var(--button-bg, #f3f4f6)'
-                      }}>
+                        backgroundColor: "var(--button-bg, #f3f4f6)",
+                      }}
+                    >
                       <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                         {step.stepNumber}
                       </span>
@@ -140,7 +197,11 @@ export function StepByStepResults({
                       viewBox="0 0 16 16"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      className="text-gray-900 dark:text-white"
+                      className={
+                        safeSequence.length > 0 // Result Icon
+                          ? "text-gray-900 dark:text-white" // text-green-600 dark:text-green-400
+                          : "text-red-600 dark:text-red-400"
+                      }
                     >
                       <path
                         clipRule="evenodd"
@@ -152,27 +213,42 @@ export function StepByStepResults({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm text-gray-900 dark:text-gray-100 leading-relaxed">
-                      <span className="font-medium">
-                        Hence, the SAFE Sequence is as follows:{" "}
-                      </span>
-                      <div className="inline-flex items-center space-x-2 mt-1 flex-wrap">
-                        {safeSequence.map((process, index) => (
-                          <div
-                            key={process}
-                            className="inline-flex items-center space-x-2"
-                          >
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                              {process}
-                            </span>
-                            {index < safeSequence.length - 1 && (
-                              <span className="text-green-600 dark:text-green-400 font-medium text-lg">
-                                →
-                              </span>
-                            )}
+                      {safeSequence.length > 0 ? (
+                        <>
+                          <span className="font-medium">
+                            Hence, the SAFE Sequence is as follows:{" "}
+                          </span>
+                          <div className="inline-flex items-center space-x-2 mt-1 flex-wrap">
+                            {safeSequence.map((process, index) => (
+                              <div
+                                key={process}
+                                className="inline-flex items-center space-x-2"
+                              >
+                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                  {process}
+                                </span>
+                                {index < safeSequence.length - 1 && (
+                                  <span className="text-green-600 dark:text-green-400 font-medium text-lg">
+                                    →
+                                  </span>
+                                )}
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                      <span className="font-medium">.</span>
+                          <span className="font-medium">.</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="font-medium text-red-600 dark:text-red-400">
+                            System is UNSAFE • No safe sequence exists.
+                          </span>
+                          <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                            The system cannot find a sequence where all
+                            processes can complete their execution without
+                            potential deadlock.
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
