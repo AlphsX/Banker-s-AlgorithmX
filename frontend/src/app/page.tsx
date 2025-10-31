@@ -109,7 +109,7 @@ export default function BankersAlgorithmPage() {
     setAlgorithmState(defaultState);
     showSuccess(
       "Example Loaded",
-      "Loaded classical Banker's Algorithm example from textbook.",
+      "Classical Banker's Algorithm example has been loaded successfully.",
       4000
     );
   }, [calculator, showSuccess]);
@@ -286,7 +286,7 @@ export default function BankersAlgorithmPage() {
       // Show result notification
       if (safetyResult.isSafe) {
         showSuccess(
-          "System is SAFE",
+          "System is Safe",
           `Safe execution sequence found: ${safetyResult.safeSequence.join(
             " → "
           )}`,
@@ -294,7 +294,7 @@ export default function BankersAlgorithmPage() {
         );
       } else {
         showError(
-          "System is UNSAFE",
+          "System is Unsafe",
           "The current system state could lead to deadlock. Please review resource allocation.",
           8000
         );
@@ -325,7 +325,7 @@ export default function BankersAlgorithmPage() {
 
           // Show success message with detailed information
           showSuccess(
-            "Request Granted ✅",
+            "Request Granted",
             requestResult.errorMessage ||
               `Process P${
                 request.processId
@@ -337,7 +337,7 @@ export default function BankersAlgorithmPage() {
         } else {
           // Request cannot be granted - show detailed error
           showError(
-            "Request Denied ❌",
+            "Request Denied",
             requestResult.errorMessage ||
               `Process P${
                 request.processId
