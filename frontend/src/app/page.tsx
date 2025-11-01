@@ -482,22 +482,24 @@ export default function BankersAlgorithmPage() {
               </div>
             </div>
 
-            {/* Mobile System Controls */}
-            <SystemControls
-              processCount={algorithmState.processCount}
-              resourceCount={algorithmState.resourceCount}
-              available={algorithmState.available}
-              need={algorithmState.need}
-              onProcessCountChange={updateProcessCount}
-              onResourceCountChange={updateResourceCount}
-              onAvailableChange={updateAvailable}
-              onRequestSubmit={processResourceRequest}
-              isProcessingRequest={isProcessingRequest}
-              isCollapsed={false}
-            />
+            {/* Mobile System Controls - Scrollable Content */}
+            <div className="flex-1 overflow-y-auto">
+              <SystemControls
+                processCount={algorithmState.processCount}
+                resourceCount={algorithmState.resourceCount}
+                available={algorithmState.available}
+                need={algorithmState.need}
+                onProcessCountChange={updateProcessCount}
+                onResourceCountChange={updateResourceCount}
+                onAvailableChange={updateAvailable}
+                onRequestSubmit={processResourceRequest}
+                isProcessingRequest={isProcessingRequest}
+                isCollapsed={false}
+              />
+            </div>
 
             {/* Mobile Sidebar Footer - Always at bottom */}
-            <div className="p-4 mt-auto">
+            <div className="p-4 flex-shrink-0">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="relative">
@@ -606,22 +608,24 @@ export default function BankersAlgorithmPage() {
             </div>
           </div>
 
-          {/* Desktop System Controls */}
-          <SystemControls
-            processCount={algorithmState.processCount}
-            resourceCount={algorithmState.resourceCount}
-            available={algorithmState.available}
-            need={algorithmState.need}
-            onProcessCountChange={updateProcessCount}
-            onResourceCountChange={updateResourceCount}
-            onAvailableChange={updateAvailable}
-            onRequestSubmit={processResourceRequest}
-            isProcessingRequest={isProcessingRequest}
-            isCollapsed={isDesktopSidebarCollapsed}
-          />
+          {/* Desktop System Controls - Scrollable Content */}
+          <div className="flex-1 overflow-y-auto">
+            <SystemControls
+              processCount={algorithmState.processCount}
+              resourceCount={algorithmState.resourceCount}
+              available={algorithmState.available}
+              need={algorithmState.need}
+              onProcessCountChange={updateProcessCount}
+              onResourceCountChange={updateResourceCount}
+              onAvailableChange={updateAvailable}
+              onRequestSubmit={processResourceRequest}
+              isProcessingRequest={isProcessingRequest}
+              isCollapsed={isDesktopSidebarCollapsed}
+            />
+          </div>
 
           {/* Sidebar Footer - Always at bottom */}
-          <div className="mt-auto p-4">
+          <div className="flex-shrink-0 p-4">
             {!isDesktopSidebarCollapsed ? (
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -904,33 +908,6 @@ export default function BankersAlgorithmPage() {
                 </button>
 
                 <div className="flex gap-3">
-                  <button
-                    onClick={loadDefaultExample}
-                    disabled={
-                      algorithmState.isCalculating || isProcessingRequest
-                    }
-                    className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-full font-medium transition-colors duration-200 flex items-center justify-center space-x-2 touch-manipulation min-h-[48px]"
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="size-4"
-                    >
-                      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
-                      <polyline points="14,2 14,8 20,8" />
-                      <line x1="16" y1="13" x2="8" y2="13" />
-                      <line x1="16" y1="17" x2="8" y2="17" />
-                      <polyline points="10,9 9,9 8,9" />
-                    </svg>
-                    <span className="text-sm">Example</span>
-                  </button>
-
                   <button
                     onClick={resetAlgorithm}
                     disabled={
