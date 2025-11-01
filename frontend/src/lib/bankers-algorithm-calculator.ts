@@ -21,7 +21,6 @@ import {
   validateMatrixValues,
   validateVectorValues,
   validateAllocationConstraints,
-  validateResourceRequest,
   createZeroMatrix,
   createZeroVector,
 } from "@/utils/matrix-utils";
@@ -208,6 +207,13 @@ export class BankersAlgorithmCalculator {
       };
     }
 
+    if (allocation.length === 0 || !allocation[processId]) {
+      return {
+        canGrant: false,
+        errorMessage: "Invalid system state: allocation matrix is malformed",
+      };
+    }
+
     // Step (1): Check if Request[i] <= Need[i]
     let step1Valid = true;
     for (let j = 0; j < requestVector.length; j++) {
@@ -219,9 +225,9 @@ export class BankersAlgorithmCalculator {
 
     requestSteps.push({
       stepNumber: 1,
-      description: `Check if Request[P${processId}] <= Need[P${processId}]: (${requestVector.join(
+      description: `Check if Request[P${processId}] ≤ Need[P${processId}]: (${requestVector.join(
         ", "
-      )}) ${step1Valid ? "<=" : ">"} (${need[processId].join(", ")})`,
+      )}) ${step1Valid ? "≤" : "≰"} (${need[processId].join(", ")})`,
       workVector: cloneVector(available),
       canFinish: step1Valid,
       isHighlighted: step1Valid,
@@ -230,7 +236,11 @@ export class BankersAlgorithmCalculator {
     if (!step1Valid) {
       return {
         canGrant: false,
-        errorMessage: `Request DENIED: Process P${processId} request exceeds declared maximum need`,
+        errorMessage: `Request DENIED: Process P${processId} request [${requestVector.join(
+          ", "
+        )}] exceeds declared maximum need [${need[processId].join(
+          ", "
+        )}]. A process cannot request more resources than it declared as its maximum requirement.`,
         simulationSteps: requestSteps,
       };
     }
@@ -246,9 +256,9 @@ export class BankersAlgorithmCalculator {
 
     requestSteps.push({
       stepNumber: 2,
-      description: `Check if Request[P${processId}] <= Available: (${requestVector.join(
+      description: `Check if Request[P${processId}] ≤ Available: (${requestVector.join(
         ", "
-      )}) ${step2Valid ? "<=" : ">"} (${available.join(", ")})`,
+      )}) ${step2Valid ? "≤" : "≰"} (${available.join(", ")})`,
       workVector: cloneVector(available),
       canFinish: step2Valid,
       isHighlighted: step2Valid,
@@ -257,7 +267,11 @@ export class BankersAlgorithmCalculator {
     if (!step2Valid) {
       return {
         canGrant: false,
-        errorMessage: `Request DENIED: Insufficient resources available`,
+        errorMessage: `Request DENIED: Insufficient resources available. Process P${processId} requested [${requestVector.join(
+          ", "
+        )}] but only [${available.join(
+          ", "
+        )}] resources are currently available. Process must wait until more resources become available.`,
         simulationSteps: requestSteps,
       };
     }
@@ -323,15 +337,19 @@ export class BankersAlgorithmCalculator {
         canGrant: true,
         newState,
         simulationSteps: allSteps,
-        errorMessage: `Request GRANTED: Process P${processId} allocated [${requestVector.join(
+        errorMessage: `Request GRANTED: Process P${processId} successfully allocated [${requestVector.join(
           ", "
-        )}]. System remains in safe state.`,
+        )}] resources. System remains in SAFE state with execution sequence: ${safetyResult.safeSequence.join(
+          " → "
+        )}.`,
       };
     } else {
       // Request would lead to unsafe state - deny it
       return {
         canGrant: false,
-        errorMessage: `Request DENIED: Granting this request would lead to an UNSAFE state (potential deadlock). Process P${processId} must wait.`,
+        errorMessage: `Request DENIED: Granting request [${requestVector.join(
+          ", "
+        )}] to Process P${processId} would lead to an UNSAFE state (potential deadlock). The system cannot guarantee that all processes can complete their execution. Process must wait for a safer system state.`,
         simulationSteps: allSteps,
       };
     }
@@ -610,20 +628,9 @@ export class BankersAlgorithmCalculator {
     // Validate allocation constraints (Allocation <= Maximum)
     errors.push(...validateAllocationConstraints(state.allocation, state.max));
 
-    // Validate resource consistency (total allocated + available should be consistent)
-    if (state.allocation.length > 0 && state.allocation[0]) {
-      for (let j = 0; j < state.resourceCount; j++) {
-        let totalAllocated = 0;
-        for (let i = 0; i < state.processCount; i++) {
-          if (state.allocation[i] && state.allocation[i][j] !== undefined) {
-            totalAllocated += state.allocation[i][j];
-          }
-        }
-
-        // Note: We can't validate total resources without knowing the initial total
-        // This would require additional system information
-      }
-    }
+    // Note: Resource consistency validation (total allocated + available)
+    // would require knowing the initial total resources, which is not available
+    // in the current system state structure
 
     return errors;
   }

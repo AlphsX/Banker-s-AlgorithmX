@@ -15,8 +15,8 @@ interface RequestPanelProps {
 export const RequestPanel: React.FC<RequestPanelProps> = ({
   processCount,
   resourceCount,
-  need,
-  available,
+  need: _need,
+  available: _available,
   onRequestSubmit,
   isProcessing,
 }) => {
@@ -43,7 +43,7 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
             }
             return newVector;
           }
-        } catch (e) {
+        } catch {
           // If parsing fails, fall back to default
         }
       }
@@ -116,30 +116,11 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
       errors.push("Request must have at least one non-zero value");
     }
 
-    // Validate against Need matrix - request cannot exceed need
-    if (need[selectedProcess]) {
-      for (let i = 0; i < requestVector.length; i++) {
-        if (requestVector[i] > need[selectedProcess][i]) {
-          const resourceLabel = String.fromCharCode(97 + i);
-          errors.push(
-            `Request for resource ${resourceLabel} (${requestVector[i]}) exceeds need (${need[selectedProcess][i]})`
-          );
-        }
-      }
-    }
-
-    // Validate against Available vector - request cannot exceed available resources
-    for (let i = 0; i < requestVector.length; i++) {
-      if (requestVector[i] > available[i]) {
-        const resourceLabel = String.fromCharCode(97 + i);
-        errors.push(
-          `Request for resource ${resourceLabel} (${requestVector[i]}) exceeds available (${available[i]})`
-        );
-      }
-    }
+    // Only validate basic constraints - let the algorithm handle resource availability and need validation
+    // This allows testing requests that exceed available resources or declared needs
 
     return errors;
-  }, [requestVector, selectedProcess, need, available]);
+  }, [requestVector]);
 
   const handleSubmit = useCallback(() => {
     const errors = validateRequest();
@@ -168,11 +149,7 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
     label: `P${i}`,
   }));
 
-  // Generate resource labels (a, b, c, etc.)
-  const resourceLabels = Array.from(
-    { length: resourceCount },
-    (_, i) => String.fromCharCode(97 + i) // 'a', 'b', 'c', etc.
-  );
+
 
   return (
     <div className="space-y-3">
@@ -247,10 +224,7 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
                   type="number"
                   inputMode="numeric"
                   min="0"
-                  max={Math.min(
-                    need[selectedProcess]?.[index] || 0,
-                    available[index] || 0
-                  )}
+                  max="999"
                   value={value}
                   onChange={(e) =>
                     handleRequestVectorChange(index, e.target.value)

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { AlgorithmStep } from "@/types/bankers-algorithm";
 import { BooleanBadge } from "@/components/ui/BooleanBadge";
 
@@ -9,35 +9,44 @@ interface StepByStepResultsProps {
   safeSequence: string[];
   isCalculating: boolean;
   isSafe: boolean;
+  isProcessingRequest?: boolean;
 }
 
 export function StepByStepResults({
   steps,
   safeSequence,
   isCalculating,
+  isProcessingRequest = false,
 }: StepByStepResultsProps) {
   const [visibleSteps, setVisibleSteps] = useState<number>(0);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [showCompletionDot, setShowCompletionDot] = useState(false);
   const [elapsedTime, setElapsedTime] = useState<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
-  const previewStartTimeRef = useRef<number | null>(null);
-  const isFirstPreviewRef = useRef<boolean>(true);
 
-  // Track timing when calculation starts
+  // Reset all states when starting new calculation
+  const resetStates = useCallback(() => {
+    setVisibleSteps(0);
+    setAnimationComplete(false);
+    setShowCompletionDot(false);
+    setElapsedTime(null);
+    startTimeRef.current = null;
+  }, []);
+
+  // Reset and start timing when calculation begins
   useEffect(() => {
-    if (isCalculating) {
-      const now = Date.now();
+    if (isCalculating || isProcessingRequest) {
+      // First reset everything completely
+      resetStates();
 
-      startTimeRef.current = now;
-      setElapsedTime(null);
-      setShowCompletionDot(false);
+      // Then start new timer
+      startTimeRef.current = Date.now();
     }
-  }, [isCalculating]);
+  }, [isCalculating, isProcessingRequest, resetStates]);
 
-  // Reset animation when new steps are provided
+  // Start animation when calculation completes and steps are available
   useEffect(() => {
-    if (steps.length > 0 && !isCalculating) {
+    if (steps.length > 0 && !isCalculating && !isProcessingRequest) {
       setVisibleSteps(0);
       setAnimationComplete(false);
 
@@ -45,13 +54,6 @@ export function StepByStepResults({
       const animateSteps = async () => {
         for (let i = 0; i <= steps.length; i++) {
           await new Promise((resolve) => setTimeout(resolve, 400));
-
-          // Start preview timer when first step becomes visible (only once)
-          if (i === 1 && isFirstPreviewRef.current) {
-            previewStartTimeRef.current = Date.now();
-            isFirstPreviewRef.current = false;
-          }
-
           setVisibleSteps(i);
         }
         setAnimationComplete(true);
@@ -59,16 +61,13 @@ export function StepByStepResults({
         // Show completion dot after 200ms delay
         await new Promise((resolve) => setTimeout(resolve, 200));
 
-        // Calculate final elapsed time and show completion dot
+        // Calculate final elapsed time from when calculation started
         let finalTime = 0;
 
-        // Use preview timer for first-time preview, regular timer for subsequent calculations
-        if (previewStartTimeRef.current && !startTimeRef.current) {
-          // First preview - use preview timer
-          finalTime = Date.now() - previewStartTimeRef.current;
-        } else if (startTimeRef.current) {
-          // Regular calculation - use regular timer
+        if (startTimeRef.current) {
           finalTime = Date.now() - startTimeRef.current;
+          // Clear the timer reference to prevent reuse
+          startTimeRef.current = null;
         }
 
         if (finalTime > 0) {
@@ -78,16 +77,14 @@ export function StepByStepResults({
       };
 
       animateSteps();
-    } else if (steps.length === 0) {
-      setVisibleSteps(0);
-      setAnimationComplete(false);
-      setShowCompletionDot(false);
-      setElapsedTime(null);
+    } else if (steps.length === 0 && !isCalculating && !isProcessingRequest) {
+      // Reset everything when no steps and not calculating
+      resetStates();
     }
-  }, [steps, isCalculating]);
+  }, [steps, isCalculating, isProcessingRequest, resetStates]);
 
   // Don't render if no steps or still calculating
-  if (steps.length === 0 && !isCalculating) {
+  if (steps.length === 0 && !isCalculating && !isProcessingRequest) {
     return null;
   }
 
@@ -118,19 +115,19 @@ export function StepByStepResults({
         </div>
 
         {/* Loading State */}
-        {isCalculating && (
+        {(isCalculating || isProcessingRequest) && (
           <div className="flex items-center justify-center py-12">
             <div className="flex items-center space-x-3">
               <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-gray-600 dark:border-gray-600 dark:border-t-gray-300"></div>
               <span className="text-gray-600 dark:text-gray-400">
-                Analyzing safety...
+                {isProcessingRequest ? "Processing request..." : "Analyzing safety..."}
               </span>
             </div>
           </div>
         )}
 
         {/* Results Content */}
-        {!isCalculating && steps.length > 0 && (
+        {!isCalculating && !isProcessingRequest && steps.length > 0 && (
           <div className="space-y-4">
             {/* Algorithm Steps */}
             {steps.map((step, index) => {

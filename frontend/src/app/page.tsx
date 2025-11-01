@@ -966,6 +966,7 @@ export default function BankersAlgorithmPage() {
                 steps={algorithmState.algorithmSteps}
                 safeSequence={algorithmState.safeSequence}
                 isCalculating={algorithmState.isCalculating}
+                isProcessingRequest={isProcessingRequest}
                 isSafe={
                   algorithmState.isSafe ??
                   algorithmState.safeSequence.length > 0
