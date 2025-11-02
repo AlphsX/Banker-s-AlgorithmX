@@ -418,9 +418,9 @@ The Banker's Algorithm was developed by Edsger Dijkstra in 1965 as part of his w
 - Performance Optimization and Testing
 
 **Contact**: 
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your LinkedIn Profile](https://linkedin.com/in/yourprofile)
-- Email: your.email@example.com
+- GitHub: [@yourusername](https://github.com/AlphsX)
+<!-- - LinkedIn: [Your LinkedIn Profile](https://linkedin.com/in/yourprofile) -->
+<!-- - Email: your.email@example.com -->
 
 **Open Source Philosophy**: Committed to creating high-quality educational tools that make complex computer science concepts accessible to students and professionals worldwide. This project represents the intersection of theoretical computer science and practical software engineering.
 
