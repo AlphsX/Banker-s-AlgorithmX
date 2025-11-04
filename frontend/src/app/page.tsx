@@ -277,7 +277,19 @@ export default function BankersAlgorithmPage() {
       return;
     }
 
-    setAlgorithmState((prev) => ({ ...prev, isCalculating: true }));
+    // Clear previous calculation data before starting new calculation
+    setAlgorithmState((prev) => ({ 
+      ...prev, 
+      isCalculating: true,
+      // Clear previous calculation results
+      algorithmSteps: [],
+      safeSequence: [],
+      finish: Array(prev.processCount).fill(false),
+      isSafe: undefined,
+    }));
+    
+    // Clear request result since this is just a safety check
+    setRequestResult({ isRequest: false });
 
     // Add a small delay to show loading state
     setTimeout(() => {
@@ -332,10 +344,26 @@ export default function BankersAlgorithmPage() {
 
   // Process resource request with enhanced error handling
   const [isProcessingRequest, setIsProcessingRequest] = useState(false);
+  const [requestResult, setRequestResult] = useState<{
+    isRequest: boolean;
+    wasGranted?: boolean;
+    processId?: number;
+    requestVector?: number[];
+  }>({ isRequest: false });
 
   const processResourceRequest = useCallback(
     (request: ResourceRequest) => {
       setIsProcessingRequest(true);
+
+      // Clear previous calculation data before starting new request processing
+      setAlgorithmState((prev) => ({
+        ...prev,
+        // Clear previous calculation results
+        algorithmSteps: [],
+        safeSequence: [],
+        finish: Array(prev.processCount).fill(false),
+        isSafe: undefined,
+      }));
 
       // Add a small delay to show loading state
       setTimeout(() => {
@@ -345,10 +373,29 @@ export default function BankersAlgorithmPage() {
         );
 
         if (requestResult.canGrant && requestResult.newState) {
-          // Request can be granted - update state
+          // Request can be granted - update state with enhanced final step
+          const enhancedSteps = [...(requestResult.simulationSteps || [])];
+          
+          // Add request result information to the final step
+          if (enhancedSteps.length > 0) {
+            const lastStep = enhancedSteps[enhancedSteps.length - 1];
+            if (lastStep.description.includes("System is SAFE")) {
+              lastStep.description += `\n\n✅ REQUEST GRANTED: Process P${request.processId} successfully allocated [${request.requestVector.join(", ")}] resources. The system remains in a safe state.`;
+            }
+          }
+
           setAlgorithmState({
             ...requestResult.newState,
+            algorithmSteps: enhancedSteps,
             lastUpdated: new Date(),
+          });
+          
+          // Set request result state
+          setRequestResult({ 
+            isRequest: true, 
+            wasGranted: true,
+            processId: request.processId,
+            requestVector: request.requestVector
           });
 
           // Show success message with detailed information
@@ -363,7 +410,25 @@ export default function BankersAlgorithmPage() {
             6000
           );
         } else {
-          // Request cannot be granted - show detailed error
+          // Request cannot be granted - show detailed error with enhanced final step
+          const enhancedSteps = [...(requestResult.simulationSteps || [])];
+          
+          // Add request result information to the final step
+          if (enhancedSteps.length > 0) {
+            const lastStep = enhancedSteps[enhancedSteps.length - 1];
+            if (lastStep.description.includes("System is UNSAFE")) {
+              lastStep.description += `\n\n❌ REQUEST DENIED: Process P${request.processId} request [${request.requestVector.join(", ")}] cannot be granted as it would lead to an unsafe state (potential deadlock).`;
+            }
+          }
+
+          // Set request result state
+          setRequestResult({ 
+            isRequest: true, 
+            wasGranted: false,
+            processId: request.processId,
+            requestVector: request.requestVector
+          });
+
           showError(
             "Request Denied",
             requestResult.errorMessage ||
@@ -379,7 +444,7 @@ export default function BankersAlgorithmPage() {
           if (requestResult.simulationSteps) {
             setAlgorithmState((prev) => ({
               ...prev,
-              algorithmSteps: requestResult.simulationSteps || [],
+              algorithmSteps: enhancedSteps,
               safeSequence: [],
               finish: prev.finish.map(() => false),
               isSafe: false,
@@ -948,6 +1013,7 @@ export default function BankersAlgorithmPage() {
                   algorithmState.isSafe ??
                   algorithmState.safeSequence.length > 0
                 }
+                requestResult={requestResult}
               />
             </div>
           </div>

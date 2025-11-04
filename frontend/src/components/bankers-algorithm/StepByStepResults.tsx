@@ -10,6 +10,12 @@ interface StepByStepResultsProps {
   isCalculating: boolean;
   isSafe: boolean;
   isProcessingRequest?: boolean;
+  requestResult?: {
+    isRequest: boolean;
+    wasGranted?: boolean;
+    processId?: number;
+    requestVector?: number[];
+  };
 }
 
 export function StepByStepResults({
@@ -17,6 +23,7 @@ export function StepByStepResults({
   safeSequence,
   isCalculating,
   isProcessingRequest = false,
+  requestResult,
 }: StepByStepResultsProps) {
   const [visibleSteps, setVisibleSteps] = useState<number>(0);
   const [animationComplete, setAnimationComplete] = useState(false);
@@ -155,7 +162,10 @@ export function StepByStepResults({
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm text-gray-900 dark:text-gray-100 leading-relaxed">
-                        {step.description}
+                        {/* Filter out request result information from step description */}
+                        {step.description.split(/\n\n[✅❌]/).length > 1 
+                          ? step.description.split(/\n\n[✅❌]/)[0]
+                          : step.description}
                       </div>
                       {step.workVector && step.workVector.length > 0 && (
                         <div className="mt-1 text-sm text-gray-600 dark:text-gray-400 font-mono">
@@ -210,42 +220,104 @@ export function StepByStepResults({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-sm text-gray-900 dark:text-gray-100 leading-relaxed">
-                      {safeSequence.length > 0 ? (
-                        <>
-                          <span className="font-medium">
-                            Hence, the SAFE Sequence is as follows:{" "}
-                          </span>
-                          <div className="inline-flex items-center space-x-2 mt-1 flex-wrap">
-                            {safeSequence.map((process, index) => (
-                              <div
-                                key={process}
-                                className="inline-flex items-center space-x-2"
-                              >
-                                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                                  {process}
+                      {(() => {
+                        // Check if this is a request result by looking for request information in the last step
+                        const lastStep = steps.length > 0 ? steps[steps.length - 1] : null;
+                        
+                        // Check for request results using both prop and step description
+                        const hasRequestGranted = requestResult?.isRequest && requestResult?.wasGranted === true || 
+                                                 lastStep?.description.includes("✅ REQUEST GRANTED:");
+                        const hasRequestDenied = requestResult?.isRequest && requestResult?.wasGranted === false || 
+                                                lastStep?.description.includes("❌ REQUEST DENIED:");
+                        
+
+                        
+                        // If this is a request result, show custom message format
+                        if (hasRequestGranted && requestResult?.processId !== undefined && requestResult?.requestVector) {
+                          return (
+                            <>
+                              <span className="font-medium text-green-600 dark:text-green-400">
+                                Request GRANTED • Process P{requestResult.processId} successfully allocated [{requestResult.requestVector.join(", ")}] resources.
+                              </span>
+                              <div className="mt-2">
+                                <span className="font-medium">
+                                  System remains in SAFE state with execution sequence:{" "}
                                 </span>
-                                {index < safeSequence.length - 1 && (
-                                  <span className="text-green-600 dark:text-green-400 font-medium text-lg">
-                                    →
-                                  </span>
-                                )}
+                                <div className="inline-flex items-center space-x-2 mt-1 flex-wrap">
+                                  {safeSequence.map((process, index) => (
+                                    <div
+                                      key={process}
+                                      className="inline-flex items-center space-x-2"
+                                    >
+                                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                        {process}
+                                      </span>
+                                      {index < safeSequence.length - 1 && (
+                                        <span className="text-green-600 dark:text-green-400 font-medium text-lg">
+                                          →
+                                        </span>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                                <span className="font-medium">.</span>
                               </div>
-                            ))}
-                          </div>
-                          <span className="font-medium">.</span>
-                        </>
-                      ) : (
-                        <>
-                          <span className="font-medium text-red-600 dark:text-red-400">
-                            System is UNSAFE • No safe sequence exists.
-                          </span>
-                          <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                            The system cannot find a sequence where all
-                            processes can complete their execution without
-                            potential deadlock.
-                          </div>
-                        </>
-                      )}
+                            </>
+                          );
+                        } else if (hasRequestDenied && requestResult?.processId !== undefined && requestResult?.requestVector) {
+                          return (
+                            <>
+                              <span className="font-medium text-red-600 dark:text-red-400">
+                                Request DENIED • Process P{requestResult.processId} request [{requestResult.requestVector.join(", ")}] cannot be granted.
+                              </span>
+                              <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                Granting this request would lead to an UNSAFE state with potential deadlock. The system cannot guarantee all processes can complete their execution.
+                              </div>
+                            </>
+                          );
+                        } else if (safeSequence.length > 0) {
+                          // Normal safety check result (not a request)
+                          return (
+                            <>
+                              <span className="font-medium">
+                                System is SAFE • Hence, the SAFE Sequence is as follows:{" "}
+                              </span>
+                              <div className="inline-flex items-center space-x-2 mt-1 flex-wrap">
+                                {safeSequence.map((process, index) => (
+                                  <div
+                                    key={process}
+                                    className="inline-flex items-center space-x-2"
+                                  >
+                                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                      {process}
+                                    </span>
+                                    {index < safeSequence.length - 1 && (
+                                      <span className="text-green-600 dark:text-green-400 font-medium text-lg">
+                                        →
+                                      </span>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                              <span className="font-medium">.</span>
+                            </>
+                          );
+                        } else {
+                          // Normal unsafe result (not a request)
+                          return (
+                            <>
+                              <span className="font-medium text-red-600 dark:text-red-400">
+                                System is UNSAFE • No safe sequence exists.
+                              </span>
+                              <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                                The system cannot find a sequence where all
+                                processes can complete their execution without
+                                potential deadlock.
+                              </div>
+                            </>
+                          );
+                        }
+                      })()}
                     </div>
                   </div>
                 </div>

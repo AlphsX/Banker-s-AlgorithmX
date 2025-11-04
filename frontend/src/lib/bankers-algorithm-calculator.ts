@@ -107,7 +107,7 @@ export class BankersAlgorithmCalculator {
             // Show resource release step using step (3)
             steps.push({
               stepNumber: 3,
-              description: `work = (${prevWork.join(", ")}) + (${allocation[
+              description: `work = work + allocation[${processName}]: (${prevWork.join(", ")}) + (${allocation[
                 i
               ].join(", ")})`, //  = (${work.join(", ")})
               workVector: cloneVector(work),
