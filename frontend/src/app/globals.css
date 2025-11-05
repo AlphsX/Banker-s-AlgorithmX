@@ -1668,3 +1668,8 @@ Swipe gesture animations */
     justify-content: center;
   }
 }
+
+/* Custom scrollbar for the table container */
+.overflow-x-auto::-webkit-scrollbar {
+  display: none;
+}

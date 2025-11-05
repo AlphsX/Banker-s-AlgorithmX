@@ -172,18 +172,30 @@ export function StepByStepResults({
                           = ({step.workVector.join(", ")})
                         </div>
                       )}
-                      {step.processChecked &&
-                        step.canFinish !== undefined &&
-                        (step.description.includes("<=") ||
-                          step.description.includes("≤") ||
-                          step.description.includes(">")) && (
-                          <div className="mt-2">
-                            <BooleanBadge
-                              value={step.canFinish}
-                              className="text-xs"
-                            />
-                          </div>
-                        )}
+                      {/* Show boolean badge - prioritize request validation steps first */}
+                      {step.canFinish !== undefined && (() => {
+                        // Check if this is a request validation step (steps 1 and 2 with "Check if Request")
+                        const isRequestValidationStep = (step.stepNumber === 1 || step.stepNumber === 2) &&
+                          step.description.includes("Check if Request");
+                        
+                        // Check if this is a safety algorithm process check (has processChecked and comparison symbols)
+                        const isSafetyProcessCheck = step.processChecked &&
+                          (step.description.includes("need[P") && step.description.includes("≤ work")) &&
+                          !step.description.includes("Check if Request");
+                        
+                        // Show badge if it's either type of step (but not both)
+                        if (isRequestValidationStep || isSafetyProcessCheck) {
+                          return (
+                            <div className="mt-2">
+                              <BooleanBadge
+                                value={step.canFinish}
+                                className="text-xs"
+                              />
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()}
                     </div>
                   </div>
                 </div>
