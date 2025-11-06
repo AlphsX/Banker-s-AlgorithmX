@@ -21,9 +21,9 @@
   --gray-50: 210 20% 96%;
   
   /* Table colors for light mode */
-  --table-bg: #ffffff;
+  --table-bg: #fdfdfd;
   --table-border: #e1e1e1;
-  --page-bg: #f9fafb;
+  --page-bg: #fdfdfd;
   
   /* Component colors for light mode */
   --sidebar-bg: #fdfdfd;

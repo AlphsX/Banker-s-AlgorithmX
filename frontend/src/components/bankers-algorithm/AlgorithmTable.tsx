@@ -73,7 +73,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
             {Array.from({ length: processCount }, (_, processIndex) => (
               <tr
                 key={processIndex}
-                className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors duration-150"
+                className="transition-colors duration-150"
                 style={{
                   borderBottom:
                     processIndex < processCount - 1
