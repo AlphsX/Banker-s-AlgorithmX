@@ -262,6 +262,9 @@ const config: Config = {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
+  		},
+  		transitionTimingFunction: {
+  			'bounce-in': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
   		}
   	}
   },

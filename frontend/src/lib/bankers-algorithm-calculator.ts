@@ -34,7 +34,7 @@ export class BankersAlgorithmCalculator {
   }
 
   /**
-   * Safety Algorithm Implementation (Based on C++ BANKER::isSAFESTATE)
+   * Safety Algorithm Implementation 
    *
    * Algorithm Steps:
    * 1. Initialize Work = Available and Finish[i] = false for all processes
@@ -116,7 +116,7 @@ export class BankersAlgorithmCalculator {
               isHighlighted: true,
             });
 
-            // Important: Start over from the beginning (like C++ implementation)
+            // Important: Start over from the beginning 
             break;
           }
         }
@@ -176,7 +176,7 @@ export class BankersAlgorithmCalculator {
   }
 
   /**
-   * Resource Request Algorithm Implementation (Based on C++ BANKER::requestRES)
+   * Resource Request Algorithm Implementation 
    *
    * Algorithm Steps:
    * 1. Check if Request[i] <= Need[i] (request doesn't exceed declared maximum)
@@ -507,7 +507,7 @@ export class BankersAlgorithmCalculator {
   }
 
   /**
-   * Process Completion Simulation (Based on C++ BANKER::checkPRO)
+   * Process Completion Simulation 
    * Simulates a process completing its execution and releasing all allocated resources
    */
   completeProcess(
@@ -563,7 +563,7 @@ export class BankersAlgorithmCalculator {
   }
 
   /**
-   * Find Safe Sequence (Based on C++ BANKER::findSAFESEQ)
+   * Find Safe Sequence 
    * Finds and returns the safe execution sequence if system is safe
    */
   findSafeSequence(state: BankersAlgorithmState): string[] {
@@ -576,7 +576,7 @@ export class BankersAlgorithmCalculator {
   }
 
   /**
-   * Comprehensive System Validation (Based on C++ BANKER::validateDATA)
+   * Comprehensive System Validation 
    * Validates all system constraints and data integrity
    */
   validateSystemData(state: BankersAlgorithmState): ValidationError[] {
@@ -636,7 +636,7 @@ export class BankersAlgorithmCalculator {
   }
 
   /**
-   * System Snapshot (Based on C++ BANKER::snapshot)
+   * System Snapshot 
    * Creates a comprehensive snapshot of current system state
    */
   getSystemSnapshot(state: BankersAlgorithmState): {

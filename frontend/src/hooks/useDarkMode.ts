@@ -85,10 +85,30 @@ export function useDarkMode() {
   const toggleDarkMode = () => {
     if (typeof window === 'undefined') return;
     
-    const newMode = !isDarkMode;
+    const currentTheme = localStorage.getItem('theme');
+    let newTheme: string;
+    let newMode: boolean;
+    
+    // Cycle through: system → light → dark → system
+    if (currentTheme === 'system' || !currentTheme) {
+      // System → Light
+      newTheme = 'light';
+      newMode = false;
+      setUserPreference(false);
+    } else if (currentTheme === 'light') {
+      // Light → Dark
+      newTheme = 'dark';
+      newMode = true;
+      setUserPreference(true);
+    } else {
+      // Dark → System
+      newTheme = 'system';
+      newMode = systemPreference;
+      setUserPreference(null);
+    }
     
     // Update localStorage first
-    localStorage.setItem('theme', newMode ? 'dark' : 'light');
+    localStorage.setItem('theme', newTheme);
     
     // Update document class immediately
     document.documentElement.classList.remove('dark');
@@ -96,13 +116,13 @@ export function useDarkMode() {
       document.documentElement.classList.add('dark');
     }
     
-    // Update states
+    // Update state
     setIsDarkMode(newMode);
-    setUserPreference(newMode);
     
     // Debug log for mobile
     if (window.innerWidth < 768) {
       console.log('Theme Toggle:', {
+        newTheme,
         newMode,
         localStorage: localStorage.getItem('theme'),
         documentHasDark: document.documentElement.classList.contains('dark')

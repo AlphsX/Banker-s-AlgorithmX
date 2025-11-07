@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { ChevronLeft, ChevronRight, User } from "lucide-react";
+import { ChevronsRight } from "lucide-react";
+// import { User } from "lucide-react"; // Commented out temporarily
 
 // Import existing hooks and utilities
 import {
@@ -507,14 +508,14 @@ export default function BankersAlgorithmPage() {
       >
         {/* Mobile Sidebar Overlay */}
         <div
-          className={`md:hidden fixed inset-0 z-50 flex transition-opacity duration-300 ${
+          className={`md:hidden fixed inset-0 z-50 flex transition-opacity duration-300 ease-out ${
             isSidebarOpen
               ? "opacity-100 pointer-events-auto"
               : "opacity-0 pointer-events-none"
           }`}
         >
           <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300"
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-out"
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setIsSidebarOpen(false);
@@ -566,7 +567,8 @@ export default function BankersAlgorithmPage() {
             {/* Mobile Sidebar Footer - Always at bottom */}
             <div className="p-4 flex-shrink-0">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
+                {/* User Icon and Text - Commented out temporarily */}
+                {/* <div className="flex items-center space-x-3">
                   <div className="relative">
                     <div
                       className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
@@ -593,14 +595,16 @@ export default function BankersAlgorithmPage() {
                       Online
                     </p>
                   </div>
-                </div>
+                </div> */}
                 <div className="flex items-center space-x-2">
                   <AnimatedThemeToggler
                     isDarkMode={isDarkMode}
                     toggleDarkMode={toggleDarkMode}
                     isUsingSystemPreference={isUsingSystemPreference}
-                    className="btn-hover p-2 rounded-lg transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
+                    className="btn-hover w-10 h-10 rounded-full transition-colors flex items-center justify-center touch-manipulation"
                   />
+                </div>
+                <div className="flex items-center space-x-2">
                   <button
                     className="btn-hover w-10 h-10 rounded-full transition-colors flex items-center justify-center"
                     onClick={(e) => {
@@ -609,17 +613,12 @@ export default function BankersAlgorithmPage() {
                     }}
                     title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
                   >
-                    {isSidebarOpen ? (
-                      <ChevronLeft
-                        className="h-5 w-5 mx-auto"
-                        style={{ color: "var(--text-secondary, #6b7280)" }}
-                      />
-                    ) : (
-                      <ChevronRight
-                        className="h-5 w-5 mx-auto"
-                        style={{ color: "var(--text-secondary, #6b7280)" }}
-                      />
-                    )}
+                    <ChevronsRight
+                      className={`h-[18px] w-[18px] mx-auto transition-transform duration-200 ${
+                        isSidebarOpen ? "rotate-180" : ""
+                      }`}
+                      style={{ color: "var(--text-secondary, #6b7280)" }}
+                    />
                   </button>
                 </div>
               </div>
@@ -630,7 +629,7 @@ export default function BankersAlgorithmPage() {
         {/* Desktop Sidebar */}
         <div
           ref={sidebarRef}
-          className={`hidden md:flex bg-[#fdfdfd] border-r border-[#f2f2f2] flex-col transition-all duration-300 shadow-sm
+          className={`hidden md:flex bg-[#fdfdfd] border-r border-[#f2f2f2] flex-col transition-all duration-300 ease-out shadow-sm
           ${
             isDesktopSidebarCollapsed
               ? "w-16 cursor-e-resize"
@@ -693,7 +692,8 @@ export default function BankersAlgorithmPage() {
           <div className="flex-shrink-0 p-4">
             {!isDesktopSidebarCollapsed ? (
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
+                {/* User Icon and Text - Commented out temporarily */}
+                {/* <div className="flex items-center space-x-3">
                   <div className="relative">
                     <div
                       className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
@@ -720,14 +720,16 @@ export default function BankersAlgorithmPage() {
                       Online
                     </p>
                   </div>
-                </div>
+                </div> */}
                 <div className="flex items-center space-x-2">
                   <AnimatedThemeToggler
                     isDarkMode={isDarkMode}
                     toggleDarkMode={toggleDarkMode}
                     isUsingSystemPreference={isUsingSystemPreference}
-                    className="btn-hover p-2 rounded-lg transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
+                    className="btn-hover w-10 h-10 rounded-full transition-colors flex items-center justify-center touch-manipulation"
                   />
+                </div>
+                <div className="flex items-center space-x-2">
                   <button
                     className="btn-hover w-10 h-10 rounded-full transition-colors flex items-center justify-center"
                     onClick={(e) => {
@@ -740,23 +742,19 @@ export default function BankersAlgorithmPage() {
                         : "Close sidebar"
                     }
                   >
-                    {isDesktopSidebarCollapsed ? (
-                      <ChevronRight
-                        className="h-5 w-5 mx-auto"
-                        style={{ color: "var(--text-secondary, #6b7280)" }}
-                      />
-                    ) : (
-                      <ChevronLeft
-                        className="h-5 w-5 mx-auto"
-                        style={{ color: "var(--text-secondary, #6b7280)" }}
-                      />
-                    )}
+                    <ChevronsRight
+                      className={`h-[18px] w-[18px] mx-auto transition-transform duration-200 ${
+                        isDesktopSidebarCollapsed ? "" : "rotate-180"
+                      }`}
+                      style={{ color: "var(--text-secondary, #6b7280)" }}
+                    />
                   </button>
                 </div>
               </div>
             ) : (
               <div className="flex flex-col items-center space-y-3">
-                <div className="relative" title="User">
+                {/* User Icon - Commented out temporarily */}
+                {/* <div className="relative" title="User">
                   <div
                     className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
                     style={{
@@ -773,12 +771,12 @@ export default function BankersAlgorithmPage() {
                     className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"
                     style={{ borderColor: "var(--sidebar-bg, #ffffff)" }}
                   ></div>
-                </div>
+                </div> */}
                 <AnimatedThemeToggler
                   isDarkMode={isDarkMode}
                   toggleDarkMode={toggleDarkMode}
                   isUsingSystemPreference={isUsingSystemPreference}
-                  className="btn-hover p-2 rounded-lg transition-colors flex items-center justify-center touch-manipulation min-h-[40px] min-w-[40px]"
+                  className="btn-hover w-10 h-10 rounded-full transition-colors flex items-center justify-center touch-manipulation"
                 />
                 <button
                   className="btn-hover w-10 h-10 rounded-full transition-colors flex items-center justify-center"
@@ -790,17 +788,12 @@ export default function BankersAlgorithmPage() {
                     isDesktopSidebarCollapsed ? "Open sidebar" : "Close sidebar"
                   }
                 >
-                  {isDesktopSidebarCollapsed ? (
-                    <ChevronRight
-                      className="h-5 w-5 mx-auto"
-                      style={{ color: "var(--text-secondary, #6b7280)" }}
-                    />
-                  ) : (
-                    <ChevronLeft
-                      className="h-5 w-5 mx-auto"
-                      style={{ color: "var(--text-secondary, #6b7280)" }}
-                    />
-                  )}
+                  <ChevronsRight
+                    className={`h-[18px] w-[18px] mx-auto transition-transform duration-200 ${
+                      isDesktopSidebarCollapsed ? "" : "rotate-180"
+                    }`}
+                    style={{ color: "var(--text-secondary, #6b7280)" }}
+                  />
                 </button>
               </div>
             )}

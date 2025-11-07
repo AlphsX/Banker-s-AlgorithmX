@@ -41,7 +41,7 @@ export const AnimatedThemeToggler = ({
       <div className="relative w-5 h-5">
         {/* System Icon */}
         <div
-          className={`absolute inset-0 transition-all duration-500 ease-[cubic-bezier(0.68,-0.55,0.265,1.55)] ${
+          className={`absolute inset-0 transition-all duration-500 ease-bounce-in ${
             showSystemIcon
               ? "opacity-100 rotate-0 scale-100"
               : "opacity-0 rotate-[360deg] scale-0"
@@ -52,7 +52,7 @@ export const AnimatedThemeToggler = ({
 
         {/* Sun Icon */}
         <div
-          className={`absolute inset-0 transition-all duration-500 ease-[cubic-bezier(0.68,-0.55,0.265,1.55)] ${
+          className={`absolute inset-0 transition-all duration-500 ease-bounce-in ${
             showSunIcon
               ? "opacity-100 rotate-0 scale-100"
               : "opacity-0 rotate-[360deg] scale-0"
@@ -63,7 +63,7 @@ export const AnimatedThemeToggler = ({
 
         {/* Moon Icon */}
         <div
-          className={`absolute inset-0 transition-all duration-500 ease-[cubic-bezier(0.68,-0.55,0.265,1.55)] ${
+          className={`absolute inset-0 transition-all duration-500 ease-bounce-in ${
             showMoonIcon
               ? "opacity-100 rotate-0 scale-100"
               : "opacity-0 rotate-[-360deg] scale-0"
