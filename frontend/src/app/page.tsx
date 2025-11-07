@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { ChevronsRight } from "lucide-react";
-// import { User } from "lucide-react"; // Commented out temporarily
 
 // Import existing hooks and utilities
 import {
@@ -567,35 +566,6 @@ export default function BankersAlgorithmPage() {
             {/* Mobile Sidebar Footer - Always at bottom */}
             <div className="p-4 flex-shrink-0">
               <div className="flex items-center justify-between">
-                {/* User Icon and Text - Commented out temporarily */}
-                {/* <div className="flex items-center space-x-3">
-                  <div className="relative">
-                    <div
-                      className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
-                      style={{
-                        backgroundColor: "var(--button-bg, #f3f4f6)",
-                        borderColor: "var(--button-border, #e5e7eb)",
-                      }}
-                    >
-                      <User
-                        className="h-5 w-5 text-gray-600 mx-auto"
-                        style={{ color: "var(--foreground, #4b5563)" }}
-                      />
-                    </div>
-                    <div
-                      className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"
-                      style={{ borderColor: "var(--sidebar-bg, #ffffff)" }}
-                    ></div>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                      Anonymous
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Online
-                    </p>
-                  </div>
-                </div> */}
                 <div className="flex items-center space-x-2">
                   <AnimatedThemeToggler
                     isDarkMode={isDarkMode}
@@ -692,35 +662,6 @@ export default function BankersAlgorithmPage() {
           <div className="flex-shrink-0 p-4">
             {!isDesktopSidebarCollapsed ? (
               <div className="flex items-center justify-between">
-                {/* User Icon and Text - Commented out temporarily */}
-                {/* <div className="flex items-center space-x-3">
-                  <div className="relative">
-                    <div
-                      className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
-                      style={{
-                        backgroundColor: "var(--button-bg, #f3f4f6)",
-                        borderColor: "var(--button-border, #e5e7eb)",
-                      }}
-                    >
-                      <User
-                        className="h-5 w-5 text-gray-600 mx-auto"
-                        style={{ color: "var(--foreground, #4b5563)" }}
-                      />
-                    </div>
-                    <div
-                      className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"
-                      style={{ borderColor: "var(--sidebar-bg, #ffffff)" }}
-                    ></div>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                      Anonymous
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Online
-                    </p>
-                  </div>
-                </div> */}
                 <div className="flex items-center space-x-2">
                   <AnimatedThemeToggler
                     isDarkMode={isDarkMode}
@@ -753,25 +694,6 @@ export default function BankersAlgorithmPage() {
               </div>
             ) : (
               <div className="flex flex-col items-center space-y-3">
-                {/* User Icon - Commented out temporarily */}
-                {/* <div className="relative" title="User">
-                  <div
-                    className="h-9 w-9 bg-gray-100 rounded-full flex items-center justify-center border border-gray-200"
-                    style={{
-                      backgroundColor: "var(--button-bg, #f3f4f6)",
-                      borderColor: "var(--button-border, #e5e7eb)",
-                    }}
-                  >
-                    <User
-                      className="h-5 w-5 text-gray-600 mx-auto"
-                      style={{ color: "var(--foreground, #4b5563)" }}
-                    />
-                  </div>
-                  <div
-                    className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 rounded-full border-2 border-white"
-                    style={{ borderColor: "var(--sidebar-bg, #ffffff)" }}
-                  ></div>
-                </div> */}
                 <AnimatedThemeToggler
                   isDarkMode={isDarkMode}
                   toggleDarkMode={toggleDarkMode}
