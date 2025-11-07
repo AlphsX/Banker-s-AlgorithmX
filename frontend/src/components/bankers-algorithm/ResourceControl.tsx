@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useRef, useCallback, useEffect } from 'react';
 
 interface ResourceControlProps {
   resourceCount: number;
@@ -11,18 +11,76 @@ export const ResourceControl: React.FC<ResourceControlProps> = ({
   resourceCount,
   onResourceCountChange,
 }) => {
-  const handleDecrement = (e: React.MouseEvent) => {
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const currentCountRef = useRef(resourceCount);
+  const isHoldingRef = useRef(false);
+
+  // Keep ref in sync with prop
+  useEffect(() => {
+    currentCountRef.current = resourceCount;
+  }, [resourceCount]);
+
+  const clearTimers = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
+
+  const handleClick = (action: 'increment' | 'decrement') => (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (resourceCount > 1) {
-      onResourceCountChange(resourceCount - 1);
+    // Only handle click if it wasn't a hold action
+    if (!isHoldingRef.current) {
+      if (action === 'decrement' && resourceCount > 1) {
+        onResourceCountChange(resourceCount - 1);
+      } else if (action === 'increment' && resourceCount < 10) {
+        onResourceCountChange(resourceCount + 1);
+      }
+    }
+    isHoldingRef.current = false;
+  };
+
+  const startAutoRepeat = useCallback((action: 'increment' | 'decrement') => {
+    timeoutRef.current = setTimeout(() => {
+      isHoldingRef.current = true;
+      intervalRef.current = setInterval(() => {
+        if (action === 'decrement') {
+          if (currentCountRef.current > 1) {
+            onResourceCountChange(currentCountRef.current - 1);
+          } else {
+            clearTimers();
+          }
+        } else {
+          if (currentCountRef.current < 10) {
+            onResourceCountChange(currentCountRef.current + 1);
+          } else {
+            clearTimers();
+          }
+        }
+      }, 100);
+    }, 500);
+  }, [onResourceCountChange, clearTimers]);
+
+  const handleMouseDown = (action: 'increment' | 'decrement') => (e: React.MouseEvent | React.TouchEvent) => {
+    e.preventDefault();
+    isHoldingRef.current = false;
+    if ((action === 'increment' && resourceCount < 10) || (action === 'decrement' && resourceCount > 1)) {
+      startAutoRepeat(action);
     }
   };
 
-  const handleIncrement = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (resourceCount < 10) {
-      onResourceCountChange(resourceCount + 1);
-    }
+  const handleMouseUp = () => {
+    clearTimers();
+  };
+
+  const handleMouseLeave = () => {
+    clearTimers();
+    isHoldingRef.current = false;
   };
 
   return (
@@ -32,10 +90,15 @@ export const ResourceControl: React.FC<ResourceControlProps> = ({
       </label>
       <div className="flex items-center space-x-3">
         <button
-          onClick={handleDecrement}
+          onClick={handleClick('decrement')}
+          onMouseDown={handleMouseDown('decrement')}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          onTouchStart={handleMouseDown('decrement')}
+          onTouchEnd={handleMouseUp}
           className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
           disabled={resourceCount <= 1}
-          title="Decrease resource count"
+          title="Decrease resource count (hold to repeat)"
           aria-label="Decrease resource count"
         >
           −
@@ -47,10 +110,15 @@ export const ResourceControl: React.FC<ResourceControlProps> = ({
           {resourceCount}
         </span>
         <button
-          onClick={handleIncrement}
+          onClick={handleClick('increment')}
+          onMouseDown={handleMouseDown('increment')}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          onTouchStart={handleMouseDown('increment')}
+          onTouchEnd={handleMouseUp}
           className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
           disabled={resourceCount >= 10}
-          title="Increase resource count"
+          title="Increase resource count (hold to repeat)"
           aria-label="Increase resource count"
         >
           +

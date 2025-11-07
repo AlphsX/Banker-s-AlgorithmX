@@ -418,7 +418,7 @@ The Banker's Algorithm was developed by Edsger Dijkstra in 1965 as part of his w
 - Performance Optimization and Testing
 
 **Contact**: 
-- GitHub: [@yourusername](https://github.com/AlphsX)
+- GitHub: [@AlphsX](https://github.com/AlphsX)
 <!-- - LinkedIn: [Your LinkedIn Profile](https://linkedin.com/in/yourprofile) -->
 <!-- - Email: your.email@example.com -->
 
