@@ -72,6 +72,8 @@ export default function BankersAlgorithmPage() {
 
   const sidebarRef = useRef<HTMLDivElement>(null);
   const mainContainerRef = useRef<HTMLDivElement>(null);
+  const mainContentRef = useRef<HTMLDivElement>(null);
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
   // Initialize calculator - use useMemo to avoid recreating on every render
   const calculator = useMemo(() => new BankersAlgorithmCalculator(), []);
@@ -483,6 +485,44 @@ export default function BankersAlgorithmPage() {
     }
   }, [attachToElement]);
 
+  // Detect if content is scrollable and show/hide scroll button
+  useEffect(() => {
+    const mainContent = mainContentRef.current;
+    if (!mainContent) return;
+
+    const checkScrollable = () => {
+      const { scrollTop, scrollHeight, clientHeight } = mainContent;
+      const isScrollable = scrollHeight > clientHeight;
+      const isNotAtBottom = scrollHeight - scrollTop - clientHeight > 100;
+      setShowScrollButton(isScrollable && isNotAtBottom);
+    };
+
+    // Check on mount and when content changes
+    checkScrollable();
+    
+    // Check on scroll
+    mainContent.addEventListener('scroll', checkScrollable);
+    
+    // Check on resize
+    const resizeObserver = new ResizeObserver(checkScrollable);
+    resizeObserver.observe(mainContent);
+
+    return () => {
+      mainContent.removeEventListener('scroll', checkScrollable);
+      resizeObserver.disconnect();
+    };
+  }, [algorithmState.algorithmSteps]);
+
+  // Scroll to bottom function
+  const scrollToBottom = useCallback(() => {
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTo({
+        top: mainContentRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, []);
+
   // Show loading screen if app is still loading
   if (appIsLoading) {
     return <LoadingScreen isLoading={appIsLoading} />;
@@ -837,8 +877,12 @@ export default function BankersAlgorithmPage() {
 
           {/* Main Algorithm Interface */}
           <div
-            className="flex-1 overflow-y-auto bg-white"
-            style={{ backgroundColor: "var(--page-bg)" }}
+            ref={mainContentRef}
+            className="flex-1 overflow-y-auto bg-white relative"
+            style={{ 
+              backgroundColor: "var(--page-bg)",
+              scrollBehavior: "smooth"
+            }}
           >
             <div className="max-w-7xl mx-auto p-6 space-y-6">
               {/* Algorithm Table */}
@@ -930,6 +974,45 @@ export default function BankersAlgorithmPage() {
                 }
                 requestResult={requestResult}
               />
+            </div>
+
+            {/* Scroll to Bottom Button */}
+            <div 
+              className={`fixed right-6 bottom-6 z-30 transition-all duration-300 ease-in-out ${
+                showScrollButton 
+                  ? 'opacity-100 translate-y-0 pointer-events-auto' 
+                  : 'opacity-0 translate-y-4 pointer-events-none'
+              }`}
+            >
+              <button
+                onClick={scrollToBottom}
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium leading-[normal] cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 ease-in-out select-none h-10 w-10 rounded-full shadow-lg hover:shadow-xl hover:scale-110"
+                style={{
+                  backgroundColor: isDarkMode ? '#292929' : '#ffffff',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                  borderColor: isDarkMode ? '#3a3a3a' : '#e6e6e6',
+                  color: isDarkMode ? '#9e9e9e' : '#0d0d0d',
+                }}
+                type="button"
+                aria-label="Scroll to bottom"
+                title="Scroll to bottom"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="stroke-[2] -mb-0.5"
+                >
+                  <path
+                    d="M6 9L12 15L18 9"
+                    stroke="currentColor"
+                    strokeLinecap="square"
+                  ></path>
+                </svg>
+              </button>
             </div>
           </div>
         </div>

@@ -52,6 +52,25 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
   });
   
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
 
   // Save to localStorage when values change
   React.useEffect(() => {
@@ -149,7 +168,10 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
     label: `P${i}`,
   }));
 
-
+  const handleProcessSelect = (processId: number) => {
+    setSelectedProcess(processId);
+    setIsDropdownOpen(false);
+  };
 
   return (
     <div className="space-y-3">
@@ -157,41 +179,107 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
         Request Panel
       </h3>
 
-      {/* Process Selection */}
-      <div className="space-y-1">
+      {/* Process Selection - Custom Dropdown */}
+      <div className="space-y-1" ref={dropdownRef}>
         <div className="relative">
-          <select
-            id="process-select"
-            value={selectedProcess}
-            onChange={(e) => setSelectedProcess(parseInt(e.target.value))}
+          {/* Dropdown Button */}
+          <button
+            type="button"
+            onClick={() => !isProcessing && setIsDropdownOpen(!isDropdownOpen)}
             disabled={isProcessing}
-            className="w-full h-10 px-3 pr-8 text-sm bg-white border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation font-medium appearance-none"
+            className="w-full h-12 px-5 text-left flex items-center justify-between rounded-full border transition-colors duration-200 touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               backgroundColor: 'var(--input-bg, #ffffff)',
               borderColor: 'var(--input-border, #e1e1e1)',
               color: 'var(--foreground)'
             }}
           >
-            {processOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          {/* Dropdown Arrow */}
-          <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+            <span className="text-base font-medium">
+              {processOptions[selectedProcess]?.label}
+            </span>
+            {/* Chevron Icon */}
             <svg
-              className="w-4 h-4 text-gray-400"
-              style={{ color: 'var(--text-secondary, #9ca3af)' }}
-              fill="none"
-              stroke="currentColor"
+              width="20"
+              height="20"
               viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className={`transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
+              style={{ color: 'var(--text-secondary, #6b7280)' }}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <path
+                d="M6 9l6 6 6-6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
             </svg>
-          </div>
-        </div>
+          </button>
 
+          {/* Dropdown Menu */}
+          {isDropdownOpen && (
+            <div 
+              className="absolute z-50 w-full mt-2 rounded-3xl border shadow-lg overflow-hidden"
+              style={{
+                backgroundColor: 'var(--input-bg, #ffffff)',
+                borderColor: 'var(--input-border, #e1e1e1)',
+                opacity: 1,
+                transform: 'translateY(0)',
+                transition: 'opacity 150ms ease-out, transform 150ms ease-out'
+              }}
+            >
+              <div className="max-h-64 overflow-y-auto py-1">
+                {processOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => handleProcessSelect(option.value)}
+                    className="w-full px-5 py-3 text-left flex items-center justify-between transition-colors duration-150"
+                    style={{
+                      backgroundColor: selectedProcess === option.value 
+                        ? 'var(--need-bg, #f9fafb)' 
+                        : 'transparent',
+                      color: 'var(--foreground)'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (selectedProcess !== option.value) {
+                        e.currentTarget.style.backgroundColor = 'var(--button-hover-bg, #f3f4f6)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = selectedProcess === option.value 
+                        ? 'var(--need-bg, #f9fafb)' 
+                        : 'transparent';
+                    }}
+                  >
+                    <span className="text-base font-medium">
+                      {option.label}
+                    </span>
+                    {selectedProcess === option.value && (
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style={{ color: 'var(--text-secondary, #6b7280)' }}
+                      >
+                        <path
+                          d="M5 13l4 4L19 7"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Request Vector Inputs */}
