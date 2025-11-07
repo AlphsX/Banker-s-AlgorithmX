@@ -220,27 +220,25 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
           {/* Dropdown Menu */}
           {isDropdownOpen && (
             <div 
-              className="absolute z-50 w-full mt-2 rounded-3xl border shadow-lg overflow-hidden"
+              className="absolute z-50 w-full mt-2 rounded-3xl border shadow-lg overflow-hidden animate-smooth-dropdown-in"
               style={{
                 backgroundColor: 'var(--input-bg, #ffffff)',
                 borderColor: 'var(--input-border, #e1e1e1)',
-                opacity: 1,
-                transform: 'translateY(0)',
-                transition: 'opacity 150ms ease-out, transform 150ms ease-out'
               }}
             >
               <div className="max-h-64 overflow-y-auto py-1">
-                {processOptions.map((option) => (
+                {processOptions.map((option, index) => (
                   <button
                     key={option.value}
                     type="button"
                     onClick={() => handleProcessSelect(option.value)}
-                    className="w-full px-5 py-3 text-left flex items-center justify-between transition-colors duration-150"
+                    className="w-full px-5 py-3 text-left flex items-center justify-between transition-colors duration-150 animate-item-slide-in"
                     style={{
                       backgroundColor: selectedProcess === option.value 
                         ? 'var(--need-bg, #f9fafb)' 
                         : 'transparent',
-                      color: 'var(--foreground)'
+                      color: 'var(--foreground)',
+                      animationDelay: `${index * 30}ms`
                     }}
                     onMouseEnter={(e) => {
                       if (selectedProcess !== option.value) {

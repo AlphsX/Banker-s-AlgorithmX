@@ -1107,6 +1107,22 @@ Swipe gesture animations */
   animation: itemSlideIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
+/* Smooth dropdown fade in animation */
+@keyframes smoothDropdownIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-smooth-dropdown-in {
+  animation: smoothDropdownIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* Plus button rotation with elastic bounce */
 @keyframes plusRotateIn {
   0% {

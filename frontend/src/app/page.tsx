@@ -165,14 +165,6 @@ export default function BankersAlgorithmPage() {
     [algorithmState, calculator, showSuccess, showError]
   );
 
-  useKeyboardShortcuts({
-    onToggleSidebar: toggleSidebar,
-    onToggleTheme: toggleDarkMode,
-    onFocusInput: focusInput,
-    onNewChat: resetAlgorithm, // Repurpose new chat for reset
-    onToggleTools: loadDefaultExample, // Load example with Ctrl+Shift+T
-  });
-
   // Update process count
   const updateProcessCount = useCallback(
     (newCount: number) => {
@@ -343,6 +335,16 @@ export default function BankersAlgorithmPage() {
       runInitialPreview();
     }
   }, [checkSafety]);
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    onToggleSidebar: toggleSidebar,
+    onToggleTheme: toggleDarkMode,
+    onFocusInput: focusInput,
+    onNewChat: resetAlgorithm, // Repurpose new chat for reset
+    onToggleTools: loadDefaultExample, // Load example with Ctrl+Shift+T
+    onCheckSafety: checkSafety, // Check safety with Shift+Enter
+  });
 
   // Process resource request with enhanced error handling
   const [isProcessingRequest, setIsProcessingRequest] = useState(false);

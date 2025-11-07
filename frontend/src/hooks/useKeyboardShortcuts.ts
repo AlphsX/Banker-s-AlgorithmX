@@ -8,6 +8,7 @@ interface KeyboardShortcutsConfig {
   onFocusInput?: () => void;
   onNewChat?: () => void;
   onToggleTools?: () => void;
+  onCheckSafety?: () => void;
 }
 
 export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
@@ -17,12 +18,20 @@ export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
     onFocusInput,
     onNewChat,
     onToggleTools,
+    onCheckSafety,
   } = config;
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       // Check for modifier keys (Cmd on Mac, Ctrl on Windows/Linux)
       const isModifierPressed = event.metaKey || event.ctrlKey;
+
+      // Handle Shift+Enter for Check Safety
+      if (event.key === "Enter" && event.shiftKey && !isModifierPressed && onCheckSafety) {
+        event.preventDefault();
+        onCheckSafety();
+        return;
+      }
 
       // Handle "/" key for tools toggle (without modifier)
       if (event.key === "/" && !isModifierPressed && onToggleTools) {
@@ -95,7 +104,7 @@ export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
           break;
       }
     },
-    [onToggleSidebar, onToggleTheme, onFocusInput, onNewChat, onToggleTools]
+    [onToggleSidebar, onToggleTheme, onFocusInput, onNewChat, onToggleTools, onCheckSafety]
   );
 
   useEffect(() => {
@@ -117,6 +126,7 @@ export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
       focusInput: navigator.userAgent.includes("Mac") ? "Cmd+K" : "Ctrl+K",
       newChat: navigator.userAgent.includes("Mac") ? "Cmd+N" : "Ctrl+N",
       toggleTools: "/",
+      checkSafety: "Shift+Enter",
     },
   };
 }
