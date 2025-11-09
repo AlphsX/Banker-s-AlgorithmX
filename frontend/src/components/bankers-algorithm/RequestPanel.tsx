@@ -10,6 +10,7 @@ interface RequestPanelProps {
   available: number[];
   onRequestSubmit: (request: ResourceRequest) => void;
   isProcessing: boolean;
+  disabled?: boolean;
 }
 
 export const RequestPanel: React.FC<RequestPanelProps> = ({
@@ -19,7 +20,9 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
   available: _available,
   onRequestSubmit,
   isProcessing,
+  disabled = false,
 }) => {
+  const isDisabled = disabled || isProcessing;
   // Load saved data from localStorage
   const [selectedProcess, setSelectedProcess] = useState<number>(() => {
     if (typeof window !== 'undefined') {
@@ -185,8 +188,8 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
           {/* Dropdown Button */}
           <button
             type="button"
-            onClick={() => !isProcessing && setIsDropdownOpen(!isDropdownOpen)}
-            disabled={isProcessing}
+            onClick={() => !isDisabled && setIsDropdownOpen(!isDisabled)}
+            disabled={isDisabled}
             className="w-full h-12 px-5 text-left flex items-center justify-between rounded-full border transition-colors duration-200 touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
               backgroundColor: 'var(--input-bg, #ffffff)',
@@ -315,7 +318,7 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
                   onChange={(e) =>
                     handleRequestVectorChange(index, e.target.value)
                   }
-                  disabled={isProcessing}
+                  disabled={isDisabled}
                   className="w-full h-10 px-3 text-center text-sm bg-white border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation font-medium"
                   style={{
                     backgroundColor: 'var(--input-bg, #ffffff)',
@@ -345,14 +348,14 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
       <div className="flex space-x-3">
         <button
           onClick={handleSubmit}
-          disabled={isProcessing}
+          disabled={isDisabled}
           className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-200 disabled:bg-gray-400 disabled:cursor-not-allowed rounded-full transition-colors duration-200 touch-manipulation"
         >
           {isProcessing ? "Processing..." : "Request"}
         </button>
         <button
           onClick={handleReset}
-          disabled={isProcessing}
+          disabled={isDisabled}
           className="px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-full transition-colors duration-200 touch-manipulation disabled:bg-gray-200 disabled:cursor-not-allowed"
           style={{
             backgroundColor: 'var(--button-bg, #ffffff)',

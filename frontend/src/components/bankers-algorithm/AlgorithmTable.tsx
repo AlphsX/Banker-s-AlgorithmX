@@ -13,6 +13,7 @@ interface AlgorithmTableProps {
   finish: boolean[];
   algorithmSteps: AlgorithmStep[];
   isCalculating: boolean;
+  isProcessingRequest?: boolean;
   onAllocationChange: (
     process: number,
     resource: number,
@@ -30,10 +31,12 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
   finish,
   algorithmSteps,
   isCalculating,
+  isProcessingRequest = false,
   onAllocationChange,
   onMaxChange,
 }) => {
   const resourceLabels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+  const isDisabled = isCalculating || isProcessingRequest;
 
   return (
     <div
@@ -116,7 +119,8 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                 Math.max(0, value)
                               );
                             }}
-                            className="w-12 h-10 text-center rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm"
+                            disabled={isDisabled}
+                            className="w-12 h-10 text-center rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                             style={{ 
                               border: "1px solid var(--table-border)",
                               backgroundColor: 'var(--input-bg, #ffffff)',
@@ -160,7 +164,8 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                 Math.max(0, value)
                               );
                             }}
-                            className="w-12 h-10 text-center rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm"
+                            disabled={isDisabled}
+                            className="w-12 h-10 text-center rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                             style={{ 
                               border: "1px solid var(--table-border)",
                               backgroundColor: 'var(--input-bg, #ffffff)',

@@ -5,11 +5,13 @@ import React, { useRef, useCallback, useEffect } from "react";
 interface ProcessControlProps {
   processCount: number;
   onProcessCountChange: (count: number) => void;
+  disabled?: boolean;
 }
 
 export const ProcessControl: React.FC<ProcessControlProps> = ({
   processCount,
   onProcessCountChange,
+  disabled = false,
 }) => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -34,6 +36,7 @@ export const ProcessControl: React.FC<ProcessControlProps> = ({
 
   const handleClick = (action: 'increment' | 'decrement') => (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (disabled) return;
     // Only handle click if it wasn't a hold action
     if (!isHoldingRef.current) {
       if (action === 'decrement' && processCount > 1) {
@@ -68,6 +71,7 @@ export const ProcessControl: React.FC<ProcessControlProps> = ({
 
   const handleMouseDown = (action: 'increment' | 'decrement') => (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
+    if (disabled) return;
     isHoldingRef.current = false;
     if ((action === 'increment' && processCount < 10) || (action === 'decrement' && processCount > 1)) {
       startAutoRepeat(action);
@@ -97,7 +101,7 @@ export const ProcessControl: React.FC<ProcessControlProps> = ({
           onTouchStart={handleMouseDown('decrement')}
           onTouchEnd={handleMouseUp}
           className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
-          disabled={processCount <= 1}
+          disabled={disabled || processCount <= 1}
           title="Decrease process count (hold to repeat)"
           aria-label="Decrease process count"
         >
@@ -117,7 +121,7 @@ export const ProcessControl: React.FC<ProcessControlProps> = ({
           onTouchStart={handleMouseDown('increment')}
           onTouchEnd={handleMouseUp}
           className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
-          disabled={processCount >= 10}
+          disabled={disabled || processCount >= 10}
           title="Increase process count (hold to repeat)"
           aria-label="Increase process count"
         >

@@ -601,6 +601,7 @@ export default function BankersAlgorithmPage() {
                 onAvailableChange={updateAvailable}
                 onRequestSubmit={processResourceRequest}
                 isProcessingRequest={isProcessingRequest}
+                isCalculating={algorithmState.isCalculating}
                 isCollapsed={false}
               />
             </div>
@@ -696,6 +697,7 @@ export default function BankersAlgorithmPage() {
               onAvailableChange={updateAvailable}
               onRequestSubmit={processResourceRequest}
               isProcessingRequest={isProcessingRequest}
+              isCalculating={algorithmState.isCalculating}
               isCollapsed={isDesktopSidebarCollapsed}
             />
           </div>
@@ -897,6 +899,7 @@ export default function BankersAlgorithmPage() {
                 finish={algorithmState.finish}
                 algorithmSteps={algorithmState.algorithmSteps}
                 isCalculating={algorithmState.isCalculating}
+                isProcessingRequest={isProcessingRequest}
                 onAllocationChange={updateAllocation}
                 onMaxChange={updateMax}
               />

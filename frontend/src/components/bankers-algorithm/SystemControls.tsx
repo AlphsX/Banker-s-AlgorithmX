@@ -17,6 +17,7 @@ interface SystemControlsProps {
   onAvailableChange: (index: number, value: number) => void;
   onRequestSubmit?: (request: ResourceRequest) => void;
   isProcessingRequest?: boolean;
+  isCalculating?: boolean;
   isCollapsed?: boolean;
 }
 
@@ -30,11 +31,14 @@ export const SystemControls: React.FC<SystemControlsProps> = ({
   onAvailableChange,
   onRequestSubmit,
   isProcessingRequest = false,
+  isCalculating = false,
   isCollapsed = false,
 }) => {
   if (isCollapsed) {
     return null;
   }
+
+  const isDisabled = isProcessingRequest || isCalculating;
 
   return (
     <div className="px-6 py-2">
@@ -47,16 +51,19 @@ export const SystemControls: React.FC<SystemControlsProps> = ({
           <ProcessControl
             processCount={processCount}
             onProcessCountChange={onProcessCountChange}
+            disabled={isDisabled}
           />
           
           <ResourceControl
             resourceCount={resourceCount}
             onResourceCountChange={onResourceCountChange}
+            disabled={isDisabled}
           />
           
           <AvailableResourcesInput
             available={available}
             onAvailableChange={onAvailableChange}
+            disabled={isDisabled}
           />
         </div>
 
@@ -70,6 +77,7 @@ export const SystemControls: React.FC<SystemControlsProps> = ({
               available={available}
               onRequestSubmit={onRequestSubmit}
               isProcessing={isProcessingRequest}
+              disabled={isDisabled}
             />
           </div>
         )}

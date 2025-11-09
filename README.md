@@ -396,8 +396,6 @@ Power user features for efficient navigation and control:
 |----------|--------|-------------|
 | `Cmd/Ctrl + [` | Toggle Sidebar | Show/hide the control sidebar |
 | `Cmd/Ctrl + D` | Toggle Theme | Switch between dark and light mode |
-| `Cmd/Ctrl + K` | Focus Input | Focus on the first input field |
-| `Cmd/Ctrl + N` | Reset System | Reset to empty state |
 | `Shift + Enter` | Check Safety | Run the safety algorithm |
 | `/` | Load Example | Load the default example |
 

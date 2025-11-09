@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Avrio",
+  title: "Accio",
   description: "Nothin' SpecialX~。",
 };
 

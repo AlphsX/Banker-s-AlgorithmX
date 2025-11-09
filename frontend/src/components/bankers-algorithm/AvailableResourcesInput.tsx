@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 interface AvailableResourcesInputProps {
   available: number[];
   onAvailableChange: (index: number, value: number) => void;
+  disabled?: boolean;
 }
 
 interface ValidationError {
@@ -15,6 +16,7 @@ interface ValidationError {
 export const AvailableResourcesInput: React.FC<AvailableResourcesInputProps> = ({
   available,
   onAvailableChange,
+  disabled = false,
 }) => {
   const [errors, setErrors] = useState<ValidationError[]>([]);
 
@@ -96,7 +98,8 @@ export const AvailableResourcesInput: React.FC<AvailableResourcesInputProps> = (
                 onBlur={(e) => {
                   handleInputBlur(index, e.target.value);
                 }}
-                className={`w-full h-10 px-3 text-center text-sm border rounded-full bg-white text-gray-900 font-medium transition-colors duration-200 touch-manipulation ${
+                disabled={disabled}
+                className={`w-full h-10 px-3 text-center text-sm border rounded-full bg-white text-gray-900 font-medium transition-colors duration-200 touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed ${
                   error
                     ? 'border-red-500 focus:ring-red-500'
                     : 'border-gray-300 focus:ring-blue-500'

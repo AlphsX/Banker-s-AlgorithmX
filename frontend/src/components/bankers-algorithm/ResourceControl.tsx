@@ -5,11 +5,13 @@ import React, { useRef, useCallback, useEffect } from 'react';
 interface ResourceControlProps {
   resourceCount: number;
   onResourceCountChange: (count: number) => void;
+  disabled?: boolean;
 }
 
 export const ResourceControl: React.FC<ResourceControlProps> = ({
   resourceCount,
   onResourceCountChange,
+  disabled = false,
 }) => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -34,6 +36,7 @@ export const ResourceControl: React.FC<ResourceControlProps> = ({
 
   const handleClick = (action: 'increment' | 'decrement') => (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (disabled) return;
     // Only handle click if it wasn't a hold action
     if (!isHoldingRef.current) {
       if (action === 'decrement' && resourceCount > 1) {
@@ -68,6 +71,7 @@ export const ResourceControl: React.FC<ResourceControlProps> = ({
 
   const handleMouseDown = (action: 'increment' | 'decrement') => (e: React.MouseEvent | React.TouchEvent) => {
     e.preventDefault();
+    if (disabled) return;
     isHoldingRef.current = false;
     if ((action === 'increment' && resourceCount < 10) || (action === 'decrement' && resourceCount > 1)) {
       startAutoRepeat(action);
@@ -97,7 +101,7 @@ export const ResourceControl: React.FC<ResourceControlProps> = ({
           onTouchStart={handleMouseDown('decrement')}
           onTouchEnd={handleMouseUp}
           className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
-          disabled={resourceCount <= 1}
+          disabled={disabled || resourceCount <= 1}
           title="Decrease resource count (hold to repeat)"
           aria-label="Decrease resource count"
         >
@@ -117,7 +121,7 @@ export const ResourceControl: React.FC<ResourceControlProps> = ({
           onTouchStart={handleMouseDown('increment')}
           onTouchEnd={handleMouseUp}
           className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
-          disabled={resourceCount >= 10}
+          disabled={disabled || resourceCount >= 10}
           title="Increase resource count (hold to repeat)"
           aria-label="Increase resource count"
         >
