@@ -16,6 +16,8 @@ interface StepByStepResultsProps {
     processId?: number;
     requestVector?: number[];
   };
+  onStepChange?: (stepIndex: number | undefined) => void;
+  currentStepIndex?: number;
 }
 
 export function StepByStepResults({
@@ -24,12 +26,48 @@ export function StepByStepResults({
   isCalculating,
   isProcessingRequest = false,
   requestResult,
+  onStepChange,
+  currentStepIndex,
 }: StepByStepResultsProps) {
   const [visibleSteps, setVisibleSteps] = useState<number>(0);
   const [animationComplete, setAnimationComplete] = useState(false);
   const [showCompletionDot, setShowCompletionDot] = useState(false);
   const [elapsedTime, setElapsedTime] = useState<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
+
+  // Keyboard navigation for steps
+  useEffect(() => {
+    if (!animationComplete) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Exit step navigation mode with Escape key
+      if (e.key === 'Escape' && currentStepIndex !== undefined) {
+        e.preventDefault();
+        onStepChange?.(undefined as any); // Reset to normal view
+        return;
+      }
+
+      // Only handle navigation keys if in step navigation mode
+      if (currentStepIndex === undefined) return;
+
+      if (e.key === 'ArrowLeft' && currentStepIndex > 0) {
+        e.preventDefault();
+        onStepChange?.(currentStepIndex - 1);
+      } else if (e.key === 'ArrowRight' && currentStepIndex < steps.length - 1) {
+        e.preventDefault();
+        onStepChange?.(currentStepIndex + 1);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        onStepChange?.(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        onStepChange?.(steps.length - 1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [animationComplete, currentStepIndex, steps.length, onStepChange]);
 
   // Reset all states when starting new calculation
   const resetStates = useCallback(() => {
@@ -102,6 +140,16 @@ export function StepByStepResults({
         backgroundColor: "var(--table-bg)",
         border: "1px solid var(--table-border)",
       }}
+      onClick={(e) => {
+        // Exit navigation mode when clicking anywhere in the Steps box
+        // but not on step buttons themselves
+        const target = e.target as HTMLElement;
+        const isStepButton = target.closest('button[title*="Jump to step"]') || target.closest('button[title*="Jump to final result"]');
+        
+        if (!isStepButton && currentStepIndex !== undefined) {
+          onStepChange?.(undefined);
+        }
+      }}
     >
       <div className="p-6">
         {/* Step Header */}
@@ -139,6 +187,8 @@ export function StepByStepResults({
             {/* Algorithm Steps */}
             {steps.map((step, index) => {
               const isVisible = index < visibleSteps;
+              const isCurrentStep = currentStepIndex !== undefined && index === currentStepIndex;
+              const isAfterCurrentStep = currentStepIndex !== undefined && index > currentStepIndex;
 
               return (
                 <div
@@ -150,25 +200,50 @@ export function StepByStepResults({
                   }`}
                 >
                   <div className="flex items-start space-x-3">
-                    <div
-                      className="flex-shrink-0 w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center"
+                    <button
+                      onClick={() => onStepChange?.(index)}
+                      disabled={!animationComplete}
+                      className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
+                        animationComplete ? 'cursor-pointer hover:scale-110 hover:shadow-md' : 'cursor-default'
+                      } ${
+                        isCurrentStep 
+                          ? 'ring-2 ring-gray-400 dark:ring-gray-500' 
+                          : ''
+                      }`}
                       style={{
-                        backgroundColor: "var(--button-bg, #f3f4f6)",
+                        backgroundColor: isCurrentStep 
+                          ? 'var(--button-bg, #f3f4f6)' 
+                          : "var(--button-bg, #f3f4f6)",
                       }}
+                      title={animationComplete ? `Jump to step ${step.stepNumber}` : ''}
                     >
-                      <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      <span className={`text-sm font-semibold transition-colors duration-200 ${
+                        isCurrentStep 
+                          ? 'text-gray-900 dark:text-gray-100' 
+                          : 'text-gray-700 dark:text-gray-300'
+                      }`}>
                         {step.stepNumber}
                       </span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm text-gray-900 dark:text-gray-100 leading-relaxed">
+                    </button>
+                    <div className={`flex-1 min-w-0 transition-opacity duration-300 ${
+                      isAfterCurrentStep ? 'opacity-40' : 'opacity-100'
+                    }`}>
+                      <div className={`text-sm leading-relaxed transition-colors duration-200 ${
+                        isAfterCurrentStep 
+                          ? 'text-gray-500 dark:text-gray-500' 
+                          : 'text-gray-900 dark:text-gray-100'
+                      }`}>
                         {/* Filter out request result information from step description */}
                         {step.description.split(/\n\n[✅❌]/).length > 1 
                           ? step.description.split(/\n\n[✅❌]/)[0]
                           : step.description}
                       </div>
                       {step.workVector && step.workVector.length > 0 && (
-                        <div className="mt-1 text-sm text-gray-600 dark:text-gray-400 font-mono">
+                        <div className={`mt-1 text-sm font-mono transition-colors duration-200 ${
+                          isAfterCurrentStep 
+                            ? 'text-gray-400 dark:text-gray-600' 
+                            : 'text-gray-600 dark:text-gray-400'
+                        }`}>
                           = ({step.workVector.join(", ")})
                         </div>
                       )}
@@ -209,7 +284,18 @@ export function StepByStepResults({
                 style={{ borderTop: "1px solid var(--table-border)" }}
               >
                 <div className="flex items-center space-x-3">
-                  <div className="flex-shrink-0 flex items-center justify-center">
+                  <button
+                    onClick={() => onStepChange?.(steps.length - 1)}
+                    disabled={!animationComplete}
+                    className={`flex-shrink-0 flex items-center justify-center transition-all duration-200 ${
+                      animationComplete ? 'cursor-pointer hover:scale-110' : 'cursor-default'
+                    } ${
+                      currentStepIndex === steps.length - 1
+                        ? 'ring-2 ring-gray-400 dark:ring-gray-500 rounded-full p-1'
+                        : ''
+                    }`}
+                    title={animationComplete ? 'Jump to final result' : ''}
+                  >
                     <svg
                       width="20"
                       height="20"
@@ -229,9 +315,15 @@ export function StepByStepResults({
                         fill="currentColor"
                       />
                     </svg>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm text-gray-900 dark:text-gray-100 leading-relaxed">
+                  </button>
+                  <div className={`flex-1 min-w-0 transition-opacity duration-300 ${
+                    currentStepIndex !== undefined && currentStepIndex < steps.length - 1 ? 'opacity-40' : 'opacity-100'
+                  }`}>
+                    <div className={`text-sm leading-relaxed transition-colors duration-200 ${
+                      currentStepIndex !== undefined && currentStepIndex < steps.length - 1
+                        ? 'text-gray-500 dark:text-gray-500'
+                        : 'text-gray-900 dark:text-gray-100'
+                    }`}>
                       {(() => {
                         // Check if this is a request result by looking for request information in the last step
                         const lastStep = steps.length > 0 ? steps[steps.length - 1] : null;

@@ -873,7 +873,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ```
 MIT License
 
-Copyright (c) 2024 [AlphsX]
+Copyright (c) 2025 [AlphsX]
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -901,5 +901,7 @@ SOFTWARE.
 **⭐ Star this repository if you find it helpful!**
 
 Made with ❣️ for the computer science education community
+
+© 2025 AlphsX, Inc.
 
 </div>

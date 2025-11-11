@@ -14,6 +14,7 @@ interface AlgorithmTableProps {
   algorithmSteps: AlgorithmStep[];
   isCalculating: boolean;
   isProcessingRequest?: boolean;
+  currentStepIndex?: number;
   onAllocationChange: (
     process: number,
     resource: number,
@@ -32,11 +33,20 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
   algorithmSteps,
   isCalculating,
   isProcessingRequest = false,
+  currentStepIndex,
   onAllocationChange,
   onMaxChange,
 }) => {
   const resourceLabels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
   const isDisabled = isCalculating || isProcessingRequest;
+
+  // Get the process being checked at the current step
+  const currentProcessChecked = currentStepIndex !== undefined && algorithmSteps[currentStepIndex]
+    ? algorithmSteps[currentStepIndex].processChecked
+    : undefined;
+  const currentProcessIndex = currentProcessChecked 
+    ? parseInt(currentProcessChecked.replace('P', ''))
+    : undefined;
 
   return (
     <div
@@ -73,10 +83,17 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
           </thead>
 
           <tbody>
-            {Array.from({ length: processCount }, (_, processIndex) => (
+            {Array.from({ length: processCount }, (_, processIndex) => {
+              const isHighlighted = currentProcessIndex === processIndex;
+              
+              return (
               <tr
                 key={processIndex}
-                className="transition-colors duration-150"
+                className={`transition-all duration-300 ${
+                  isHighlighted 
+                    ? 'bg-gray-100 dark:bg-gray-800/50 ring-2 ring-gray-300 dark:ring-gray-600 ring-inset' 
+                    : ''
+                }`}
                 style={{
                   borderBottom:
                     processIndex < processCount - 1
@@ -218,10 +235,12 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                     finalFinishState={finish[processIndex]}
                     algorithmSteps={algorithmSteps}
                     isCalculating={isCalculating}
+                    currentStepIndex={currentStepIndex}
                   />
                 </td>
               </tr>
-            ))}
+            );
+            })}
           </tbody>
         </table>
       </div>

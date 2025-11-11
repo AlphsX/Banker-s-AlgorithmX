@@ -91,6 +91,7 @@ body {
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -99,7 +100,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: hsl(var(--gray-300));
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .dark ::-webkit-scrollbar-thumb {
@@ -1472,8 +1473,8 @@ Swipe gesture animations */
 
   /* Improved mobile scrollbar styling */
   .mobile-scroll::-webkit-scrollbar {
-    height: 4px;
-    width: 4px;
+    height: 6px;
+    width: 6px;
   }
 
   .mobile-scroll::-webkit-scrollbar-track {
@@ -1481,12 +1482,12 @@ Swipe gesture animations */
   }
 
   .mobile-scroll::-webkit-scrollbar-thumb {
-    background: rgba(156, 163, 175, 0.6);
-    border-radius: 2px;
+    background: hsl(var(--gray-300));
+    border-radius: 4px;
   }
 
   .dark .mobile-scroll::-webkit-scrollbar-thumb {
-    background: rgba(75, 85, 99, 0.6);
+    background: hsl(var(--gray-700));
   }
 }
 
@@ -1519,34 +1520,33 @@ Swipe gesture animations */
 
   /* Enhanced desktop scrollbars */
   .desktop-scroll::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   .desktop-scroll::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.05);
-    border-radius: 4px;
+    background: transparent;
   }
 
   .desktop-scroll::-webkit-scrollbar-thumb {
-    background: rgba(156, 163, 175, 0.7);
+    background: hsl(var(--gray-300));
     border-radius: 4px;
   }
 
   .desktop-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgba(156, 163, 175, 0.9);
+    background: hsl(var(--gray-400));
   }
 
   .dark .desktop-scroll::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: transparent;
   }
 
   .dark .desktop-scroll::-webkit-scrollbar-thumb {
-    background: rgba(75, 85, 99, 0.7);
+    background: hsl(var(--gray-700));
   }
 
   .dark .desktop-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgba(75, 85, 99, 0.9);
+    background: hsl(var(--gray-600));
   }
 }
 
@@ -1687,5 +1687,27 @@ Swipe gesture animations */
 
 /* Custom scrollbar for the table container */
 .overflow-x-auto::-webkit-scrollbar {
-  display: none;
+  width: 6px;
+  height: 6px;
+}
+
+.overflow-x-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb {
+  background: hsl(var(--gray-300));
+  border-radius: 4px;
+}
+
+.dark .overflow-x-auto::-webkit-scrollbar-thumb {
+  background: hsl(var(--gray-700));
+}
+
+.overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--gray-400));
+}
+
+.dark .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--gray-600));
 }

@@ -284,6 +284,10 @@ export default function BankersAlgorithmPage() {
     
     // Clear request result since this is just a safety check
     setRequestResult({ isRequest: false });
+    
+    // Reset step navigation
+    setCurrentStepIndex(undefined);
+    setStepStates([]);
 
     // Add a small delay to show loading state
     setTimeout(() => {
@@ -302,6 +306,30 @@ export default function BankersAlgorithmPage() {
         isCalculating: false,
         lastUpdated: new Date(),
       }));
+      
+      // Build step states for navigation
+      const states: Array<{ work: number[]; finish: boolean[] }> = [];
+      let currentWork = [...algorithmState.available];
+      let currentFinish = Array(algorithmState.processCount).fill(false);
+      
+      safetyResult.steps.forEach((step) => {
+        if (step.workVector && step.workVector.length > 0) {
+          currentWork = [...step.workVector];
+        }
+        if (step.processChecked && step.canFinish) {
+          const processIndex = parseInt(step.processChecked.replace('P', ''));
+          if (!isNaN(processIndex)) {
+            currentFinish = [...currentFinish];
+            currentFinish[processIndex] = true;
+          }
+        }
+        states.push({
+          work: [...currentWork],
+          finish: [...currentFinish],
+        });
+      });
+      
+      setStepStates(states);
 
       // Show result notification
       if (safetyResult.isSafe) {
@@ -355,6 +383,43 @@ export default function BankersAlgorithmPage() {
     requestVector?: number[];
   }>({ isRequest: false });
 
+  // Step navigation state
+  const [currentStepIndex, setCurrentStepIndex] = useState<number | undefined>(undefined);
+  const [stepStates, setStepStates] = useState<Array<{
+    work: number[];
+    finish: boolean[];
+  }>>([]);
+
+  // Handle step navigation
+  const handleStepChange = useCallback((stepIndex: number | undefined) => {
+    setCurrentStepIndex(stepIndex);
+    
+    // If stepIndex is undefined, reset to final state (exit navigation mode)
+    if (stepIndex === undefined) {
+      // Reset to the final state of the algorithm
+      const finalStateIndex = stepStates.length - 1;
+      if (finalStateIndex >= 0 && stepStates[finalStateIndex]) {
+        const finalState = stepStates[finalStateIndex];
+        setAlgorithmState((prev) => ({
+          ...prev,
+          finish: finalState.finish,
+        }));
+      }
+      return;
+    }
+    
+    // Update the UI to reflect the state at this step
+    if (stepStates[stepIndex]) {
+      const stepState = stepStates[stepIndex];
+      setAlgorithmState((prev) => ({
+        ...prev,
+        finish: stepState.finish,
+        // Note: We don't update available here as it's shown in the sidebar
+        // The work vector is displayed in the step description
+      }));
+    }
+  }, [stepStates, setAlgorithmState]);
+
   const processResourceRequest = useCallback(
     (request: ResourceRequest) => {
       setIsProcessingRequest(true);
@@ -368,6 +433,10 @@ export default function BankersAlgorithmPage() {
         finish: Array(prev.processCount).fill(false),
         isSafe: undefined,
       }));
+      
+      // Reset step navigation
+      setCurrentStepIndex(undefined);
+      setStepStates([]);
 
       // Add a small delay to show loading state
       setTimeout(() => {
@@ -900,6 +969,7 @@ export default function BankersAlgorithmPage() {
                 algorithmSteps={algorithmState.algorithmSteps}
                 isCalculating={algorithmState.isCalculating}
                 isProcessingRequest={isProcessingRequest}
+                currentStepIndex={currentStepIndex}
                 onAllocationChange={updateAllocation}
                 onMaxChange={updateMax}
               />
@@ -978,6 +1048,8 @@ export default function BankersAlgorithmPage() {
                   algorithmState.safeSequence.length > 0
                 }
                 requestResult={requestResult}
+                onStepChange={handleStepChange}
+                currentStepIndex={currentStepIndex}
               />
             </div>
 

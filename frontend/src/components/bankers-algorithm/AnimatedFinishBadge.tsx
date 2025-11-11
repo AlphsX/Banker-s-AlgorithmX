@@ -9,6 +9,7 @@ interface AnimatedFinishBadgeProps {
   finalFinishState: boolean;
   algorithmSteps: AlgorithmStep[];
   isCalculating: boolean;
+  currentStepIndex?: number;
 }
 
 export const AnimatedFinishBadge: React.FC<AnimatedFinishBadgeProps> = ({
@@ -16,11 +17,21 @@ export const AnimatedFinishBadge: React.FC<AnimatedFinishBadgeProps> = ({
   finalFinishState,
   algorithmSteps,
   isCalculating,
+  currentStepIndex,
 }) => {
   const [currentFinishState, setCurrentFinishState] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const animationRef = useRef<NodeJS.Timeout | null>(null);
+
+  // When user navigates to a specific step, update finish state immediately
+  useEffect(() => {
+    if (currentStepIndex !== undefined) {
+      // User is navigating through steps manually
+      setCurrentFinishState(finalFinishState);
+      setIsAnimating(false);
+    }
+  }, [currentStepIndex, finalFinishState]);
 
   // Reset state when calculation starts or when no steps
   useEffect(() => {
@@ -33,9 +44,9 @@ export const AnimatedFinishBadge: React.FC<AnimatedFinishBadgeProps> = ({
     }
   }, [isCalculating, algorithmSteps]);
 
-  // Animate through steps when algorithm steps are available
+  // Animate through steps when algorithm steps are available (only if not manually navigating)
   useEffect(() => {
-    if (algorithmSteps && algorithmSteps.length > 0 && !isCalculating) {
+    if (algorithmSteps && algorithmSteps.length > 0 && !isCalculating && currentStepIndex === undefined) {
       setCurrentFinishState(false);
 
       // Create animation timeline that matches StepByStepResults exactly
@@ -95,7 +106,7 @@ export const AnimatedFinishBadge: React.FC<AnimatedFinishBadgeProps> = ({
         clearTimeout(animationRef.current);
       }
     };
-  }, [algorithmSteps, isCalculating, processIndex]);
+  }, [algorithmSteps, isCalculating, processIndex, currentStepIndex]);
 
   // Fallback to final state if no animation occurred
   useEffect(() => {

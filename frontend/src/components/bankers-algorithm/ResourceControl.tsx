@@ -17,11 +17,78 @@ export const ResourceControl: React.FC<ResourceControlProps> = ({
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const currentCountRef = useRef(resourceCount);
   const isHoldingRef = useRef(false);
+  const [showMinWarning, setShowMinWarning] = React.useState(false);
+  const [showMaxWarning, setShowMaxWarning] = React.useState(false);
+  const [mountMinWarning, setMountMinWarning] = React.useState(false);
+  const [mountMaxWarning, setMountMaxWarning] = React.useState(false);
+  const hasShownMinWarningRef = useRef(false);
+  const hasShownMaxWarningRef = useRef(false);
+  const warningTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const unmountTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Keep ref in sync with prop
   useEffect(() => {
     currentCountRef.current = resourceCount;
   }, [resourceCount]);
+
+  // Show/hide warnings with auto-dismiss
+  useEffect(() => {
+    if (warningTimeoutRef.current) {
+      clearTimeout(warningTimeoutRef.current);
+    }
+    if (unmountTimeoutRef.current) {
+      clearTimeout(unmountTimeoutRef.current);
+    }
+
+    if (resourceCount <= 1 && !hasShownMinWarningRef.current) {
+      hasShownMinWarningRef.current = true;
+      setMountMinWarning(true);
+      setTimeout(() => setShowMinWarning(true), 10);
+      warningTimeoutRef.current = setTimeout(() => {
+        setShowMinWarning(false);
+        unmountTimeoutRef.current = setTimeout(() => {
+          setMountMinWarning(false);
+        }, 500);
+      }, 3000);
+    } else if (resourceCount > 1) {
+      hasShownMinWarningRef.current = false;
+      if (mountMinWarning) {
+        setShowMinWarning(false);
+        unmountTimeoutRef.current = setTimeout(() => {
+          setMountMinWarning(false);
+        }, 500);
+      }
+    }
+
+    if (resourceCount >= 10 && !hasShownMaxWarningRef.current) {
+      hasShownMaxWarningRef.current = true;
+      setMountMaxWarning(true);
+      setTimeout(() => setShowMaxWarning(true), 10);
+      warningTimeoutRef.current = setTimeout(() => {
+        setShowMaxWarning(false);
+        unmountTimeoutRef.current = setTimeout(() => {
+          setMountMaxWarning(false);
+        }, 500);
+      }, 3000);
+    } else if (resourceCount < 10) {
+      hasShownMaxWarningRef.current = false;
+      if (mountMaxWarning) {
+        setShowMaxWarning(false);
+        unmountTimeoutRef.current = setTimeout(() => {
+          setMountMaxWarning(false);
+        }, 500);
+      }
+    }
+
+    return () => {
+      if (warningTimeoutRef.current) {
+        clearTimeout(warningTimeoutRef.current);
+      }
+      if (unmountTimeoutRef.current) {
+        clearTimeout(unmountTimeoutRef.current);
+      }
+    };
+  }, [resourceCount, mountMinWarning, mountMaxWarning]);
 
   const clearTimers = useCallback(() => {
     if (intervalRef.current) {
@@ -128,16 +195,24 @@ export const ResourceControl: React.FC<ResourceControlProps> = ({
           +
         </button>
       </div>
-      {resourceCount <= 1 && (
-        <p className="text-xs text-red-500 dark:text-red-400">
+      <div className={`overflow-hidden transition-all duration-500 ${
+        resourceCount <= 1 && mountMinWarning ? 'max-h-6 mt-1' : 'max-h-0 mt-0'
+      }`}>
+        <p className={`text-xs text-red-500 dark:text-red-400 transition-opacity duration-500 ${
+          showMinWarning ? 'opacity-100' : 'opacity-0'
+        }`}>
           Minimum 1 resource required
         </p>
-      )}
-      {resourceCount >= 10 && (
-        <p className="text-xs text-yellow-500 dark:text-yellow-400">
+      </div>
+      <div className={`overflow-hidden transition-all duration-500 ${
+        resourceCount >= 10 && mountMaxWarning ? 'max-h-6 mt-1' : 'max-h-0 mt-0'
+      }`}>
+        <p className={`text-xs text-yellow-500 dark:text-yellow-400 transition-opacity duration-500 ${
+          showMaxWarning ? 'opacity-100' : 'opacity-0'
+        }`}>
           Maximum 10 resources allowed
         </p>
-      )}
+      </div>
     </div>
   );
 };

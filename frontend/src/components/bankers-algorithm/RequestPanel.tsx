@@ -55,8 +55,11 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
   });
   
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [showValidationErrors, setShowValidationErrors] = useState(false);
+  const [mountValidationErrors, setMountValidationErrors] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const unmountTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
@@ -117,12 +120,19 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
         return newVector;
       });
 
-      // Clear validation errors when user starts typing
-      if (validationErrors.length > 0) {
-        setValidationErrors([]);
+      // Clear validation errors when user starts typing with smooth animation
+      if (mountValidationErrors) {
+        setShowValidationErrors(false);
+        if (unmountTimeoutRef.current) {
+          clearTimeout(unmountTimeoutRef.current);
+        }
+        unmountTimeoutRef.current = setTimeout(() => {
+          setMountValidationErrors(false);
+          setValidationErrors([]);
+        }, 500);
       }
     },
-    [validationErrors.length]
+    [mountValidationErrors]
   );
 
   const validateRequest = useCallback((): string[] => {
@@ -149,6 +159,9 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
 
     if (errors.length > 0) {
       setValidationErrors(errors);
+      setMountValidationErrors(true);
+      setTimeout(() => setShowValidationErrors(true), 10);
+      
       return;
     }
 
@@ -162,8 +175,19 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
 
   const handleReset = useCallback(() => {
     setRequestVector(new Array(resourceCount).fill(0));
-    setValidationErrors([]);
-  }, [resourceCount]);
+    
+    // Clear validation errors with smooth animation
+    if (mountValidationErrors) {
+      setShowValidationErrors(false);
+      if (unmountTimeoutRef.current) {
+        clearTimeout(unmountTimeoutRef.current);
+      }
+      unmountTimeoutRef.current = setTimeout(() => {
+        setMountValidationErrors(false);
+        setValidationErrors([]);
+      }, 500);
+    }
+  }, [resourceCount, mountValidationErrors]);
 
   // Generate process options (P0, P1, P2, etc.)
   const processOptions = Array.from({ length: processCount }, (_, i) => ({
@@ -188,7 +212,7 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
           {/* Dropdown Button */}
           <button
             type="button"
-            onClick={() => !isDisabled && setIsDropdownOpen(!isDisabled)}
+            onClick={() => !isDisabled && setIsDropdownOpen(!isDropdownOpen)}
             disabled={isDisabled}
             className="w-full h-12 px-5 text-left flex items-center justify-between rounded-full border transition-colors duration-200 touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
@@ -334,18 +358,18 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
       </div>
 
       {/* Validation Errors */}
-      {validationErrors.length > 0 && (
-        <div className="space-y-1">
-          {validationErrors.map((error, index) => (
-            <div key={index} className="text-xs text-red-600 dark:text-red-400">
-              {error}
-            </div>
-          ))}
-        </div>
-      )}
+      <div className={`overflow-hidden transition-all duration-500 ${
+        validationErrors.length > 0 && mountValidationErrors ? 'max-h-12 mt-1' : 'max-h-0 mt-0'
+      }`}>
+        <p className={`text-xs text-red-500 dark:text-red-400 transition-opacity duration-500 ${
+          showValidationErrors ? 'opacity-100' : 'opacity-0'
+        }`}>
+          {validationErrors[0]}
+        </p>
+      </div>
 
       {/* Action Buttons */}
-      <div className="flex space-x-3">
+      <div className="flex space-x-3 transition-all duration-500">
         <button
           onClick={handleSubmit}
           disabled={isDisabled}
