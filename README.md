@@ -90,19 +90,19 @@ This simulator handles all the complex algorithmic details while providing an in
 🧪 **Tested**: 31+ test cases covering edge cases and classical examples  
 💻 **Modern**: Built with Next.js 16, TypeScript 5, and React 19  
 📱 **Responsive**: Works seamlessly on desktop, tablet, and mobile devices  
-🎨 **Beautiful UI**: Dark/light mode with smooth animations using Framer Motion  
+🎨 **Beautiful UI**: Dark/light mode with smooth animations using Framer Motion   
 ⌨️ **Keyboard Shortcuts**: Efficient navigation and control for power users
 
 
 ## Features
 
 ### Core Algorithm Implementation
-- ✅ **Safety Algorithm**: Complete implementation of Dijkstra's safety checking algorithm
-- ✅ **Resource Request Processing**: Handles resource allocation requests with full validation
-- ✅ **Step-by-Step Visualization**: Shows each algorithm step with detailed explanations
-- ✅ **Multiple System States**: Support for 1-10 processes and 1-10 resource types
-- ✅ **Process Completion**: Simulate processes finishing and releasing resources
-- ✅ **System Validation**: Comprehensive validation of all system constraints
+- **Safety Algorithm**: Complete implementation of Dijkstra's safety checking algorithm
+- **Resource Request Processing**: Handles resource allocation requests with full validation
+- **Step-by-Step Visualization**: Shows each algorithm step with detailed explanations
+- **Multiple System States**: Support for 1-10 processes and 1-10 resource types
+- **Process Completion**: Simulate processes finishing and releasing resources
+- **System Validation**: Comprehensive validation of all system constraints
 
 ### Interactive Interface
 - 🎯 **Real-time Matrix Editing**: Modify allocation, maximum, and available resources
@@ -121,7 +121,7 @@ This simulator handles all the complex algorithmic details while providing an in
 - 🎓 **Detailed Documentation**: Complete algorithm explanation in [REPORT.md](REPORT.md)
 
 ### Advanced Features
-- ⌨️ **Keyboard Shortcuts**: Efficient navigation (Cmd/Ctrl+K, Shift+Enter, etc.)
+- ⌨️ **Keyboard Shortcuts**: Efficient navigation (Cmd/Ctrl+[, Cmd/Ctrl+D, Shift+Enter)
 - 🔔 **Toast Notifications**: Beautiful animated notifications for all actions
 - 💾 **State Persistence**: Maintains system state during navigation
 - 🎭 **Animated UI**: Smooth transitions using Framer Motion
@@ -192,11 +192,11 @@ Click "Check Safety" or press `Shift+Enter` to run the safety algorithm:
 
 ```
 Step 1: Initialize Work = [2, 2, 3], Finish = [false, false]
-Step 2: Check P0: Need[P0] = [1,1,1] ≤ Work = [2,2,3] ✓
+Step 2: Check P0: Need[P0] = [1,1,1] ≤ Work = [2,2,3] [PASS]
 Step 3: P0 finishes: Work = [2,2,3] + [1,0,0] = [3,2,3]
-Step 2: Check P1: Need[P1] = [1,1,1] ≤ Work = [3,2,3] ✓
+Step 2: Check P1: Need[P1] = [1,1,1] ≤ Work = [3,2,3] [PASS]
 Step 3: P1 finishes: Work = [3,2,3] + [0,1,0] = [3,3,3]
-Step 4: All processes finished ✓ Safe Sequence: P0 → P1
+Step 4: All processes finished [PASS] Safe Sequence: P0 → P1
 ```
 
 ### Submitting Resource Requests
@@ -212,10 +212,10 @@ Process: P0
 Request: [1, 0, 0]  // P0 requests 1 unit of resource A
 
 Validation:
-✓ Step 1: Request ≤ Need ([1,0,0] ≤ [1,1,1])
-✓ Step 2: Request ≤ Available ([1,0,0] ≤ [2,2,3])
-✓ Step 3: Simulate allocation
-✓ Step 4: System remains safe → REQUEST GRANTED
+[PASS] Step 1: Request ≤ Need ([1,0,0] ≤ [1,1,1])
+[PASS] Step 2: Request ≤ Available ([1,0,0] ≤ [2,2,3])
+[PASS] Step 3: Simulate allocation
+[PASS] Step 4: System remains safe → REQUEST GRANTED
 ```
 
 ### Adjusting System Size
@@ -397,7 +397,6 @@ Power user features for efficient navigation and control:
 | `Cmd/Ctrl + [` | Toggle Sidebar | Show/hide the control sidebar |
 | `Cmd/Ctrl + D` | Toggle Theme | Switch between dark and light mode |
 | `Shift + Enter` | Check Safety | Run the safety algorithm |
-| `/` | Load Example | Load the default example |
 
 **Platform-specific:**
 - Mac: Use `Cmd` key

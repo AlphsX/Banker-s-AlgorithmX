@@ -234,8 +234,8 @@ export function StepByStepResults({
                           : 'text-gray-900 dark:text-gray-100'
                       }`}>
                         {/* Filter out request result information from step description */}
-                        {step.description.split(/\n\n[✅❌]/).length > 1 
-                          ? step.description.split(/\n\n[✅❌]/)[0]
+                        {step.description.split(/\n\n\[REQUEST (GRANTED|DENIED)\]/).length > 1 
+                          ? step.description.split(/\n\n\[REQUEST (GRANTED|DENIED)\]/)[0]
                           : step.description}
                       </div>
                       {step.workVector && step.workVector.length > 0 && (
@@ -330,9 +330,9 @@ export function StepByStepResults({
                         
                         // Check for request results using both prop and step description
                         const hasRequestGranted = requestResult?.isRequest && requestResult?.wasGranted === true || 
-                                                 lastStep?.description.includes("✅ REQUEST GRANTED:");
+                                                 lastStep?.description.includes("[REQUEST GRANTED]:");
                         const hasRequestDenied = requestResult?.isRequest && requestResult?.wasGranted === false || 
-                                                lastStep?.description.includes("❌ REQUEST DENIED:");
+                                                lastStep?.description.includes("[REQUEST DENIED]:");
                         
 
                         

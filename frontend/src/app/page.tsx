@@ -297,6 +297,15 @@ export default function BankersAlgorithmPage() {
         algorithmState.need
       );
 
+      // Save original state before updating
+      // Note: We don't need to save 'available' because it never changes during navigation
+      setOriginalStateBeforeSteps({
+        available: [...algorithmState.available], // Keep original available
+        allocation: algorithmState.allocation.map(row => [...row]),
+        need: algorithmState.need.map(row => [...row]),
+        finish: [...algorithmState.finish],
+      });
+
       setAlgorithmState((prev) => ({
         ...prev,
         finish: safetyResult.finalFinishState,
@@ -307,10 +316,18 @@ export default function BankersAlgorithmPage() {
         lastUpdated: new Date(),
       }));
       
-      // Build step states for navigation
-      const states: Array<{ work: number[]; finish: boolean[] }> = [];
+      // Build step states for navigation - track complete state at each step
+      const states: Array<{ 
+        work: number[]; 
+        finish: boolean[];
+        allocation: number[][];
+        need: number[][];
+        available?: number[]; // Not used for safety check, available stays constant
+      }> = [];
       let currentWork = [...algorithmState.available];
       let currentFinish = Array(algorithmState.processCount).fill(false);
+      let currentAllocation = algorithmState.allocation.map(row => [...row]);
+      let currentNeed = algorithmState.need.map(row => [...row]);
       
       safetyResult.steps.forEach((step) => {
         if (step.workVector && step.workVector.length > 0) {
@@ -326,6 +343,9 @@ export default function BankersAlgorithmPage() {
         states.push({
           work: [...currentWork],
           finish: [...currentFinish],
+          allocation: currentAllocation.map(row => [...row]),
+          need: currentNeed.map(row => [...row]),
+          // Don't include available - it should remain constant for safety checks
         });
       });
       
@@ -368,9 +388,6 @@ export default function BankersAlgorithmPage() {
   useKeyboardShortcuts({
     onToggleSidebar: toggleSidebar,
     onToggleTheme: toggleDarkMode,
-    onFocusInput: focusInput,
-    onNewChat: resetAlgorithm, // Repurpose new chat for reset
-    onToggleTools: loadDefaultExample, // Load example with Ctrl+Shift+T
     onCheckSafety: checkSafety, // Check safety with Shift+Enter
   });
 
@@ -381,6 +398,7 @@ export default function BankersAlgorithmPage() {
     wasGranted?: boolean;
     processId?: number;
     requestVector?: number[];
+    shouldResetRequest?: boolean;
   }>({ isRequest: false });
 
   // Step navigation state
@@ -388,7 +406,16 @@ export default function BankersAlgorithmPage() {
   const [stepStates, setStepStates] = useState<Array<{
     work: number[];
     finish: boolean[];
+    allocation: number[][];
+    need: number[][];
+    available?: number[]; // Optional: only used for request steps
   }>>([]);
+  const [originalStateBeforeSteps, setOriginalStateBeforeSteps] = useState<{
+    available: number[];
+    allocation: number[][];
+    need: number[][];
+    finish: boolean[];
+  } | null>(null);
 
   // Handle step navigation
   const handleStepChange = useCallback((stepIndex: number | undefined) => {
@@ -396,13 +423,14 @@ export default function BankersAlgorithmPage() {
     
     // If stepIndex is undefined, reset to final state (exit navigation mode)
     if (stepIndex === undefined) {
-      // Reset to the final state of the algorithm
-      const finalStateIndex = stepStates.length - 1;
-      if (finalStateIndex >= 0 && stepStates[finalStateIndex]) {
-        const finalState = stepStates[finalStateIndex];
+      // Restore the original state from before step navigation
+      if (originalStateBeforeSteps) {
         setAlgorithmState((prev) => ({
           ...prev,
-          finish: finalState.finish,
+          available: [...originalStateBeforeSteps.available],
+          allocation: originalStateBeforeSteps.allocation.map(row => [...row]),
+          need: originalStateBeforeSteps.need.map(row => [...row]),
+          finish: [...originalStateBeforeSteps.finish],
         }));
       }
       return;
@@ -413,12 +441,14 @@ export default function BankersAlgorithmPage() {
       const stepState = stepStates[stepIndex];
       setAlgorithmState((prev) => ({
         ...prev,
-        finish: stepState.finish,
-        // Note: We don't update available here as it's shown in the sidebar
-        // The work vector is displayed in the step description
+        // For request steps, update available if it's tracked; otherwise keep original
+        available: stepState.available ? [...stepState.available] : prev.available,
+        allocation: stepState.allocation.map(row => [...row]),
+        need: stepState.need.map(row => [...row]),
+        finish: [...stepState.finish],
       }));
     }
-  }, [stepStates, setAlgorithmState]);
+  }, [stepStates, originalStateBeforeSteps]);
 
   const processResourceRequest = useCallback(
     (request: ResourceRequest) => {
@@ -453,9 +483,18 @@ export default function BankersAlgorithmPage() {
           if (enhancedSteps.length > 0) {
             const lastStep = enhancedSteps[enhancedSteps.length - 1];
             if (lastStep.description.includes("System is SAFE")) {
-              lastStep.description += `\n\n✅ REQUEST GRANTED: Process P${request.processId} successfully allocated [${request.requestVector.join(", ")}] resources. The system remains in a safe state.`;
+              lastStep.description += `\n\n[REQUEST GRANTED]: Process P${request.processId} successfully allocated [${request.requestVector.join(", ")}] resources. The system remains in a safe state.`;
             }
           }
+
+          // Save original state before updating for step navigation
+          // For granted requests, save the NEW state (after allocation)
+          setOriginalStateBeforeSteps({
+            available: [...requestResult.newState.available], // New available after allocation
+            allocation: requestResult.newState.allocation.map(row => [...row]),
+            need: requestResult.newState.need.map(row => [...row]),
+            finish: [...requestResult.newState.finish],
+          });
 
           setAlgorithmState({
             ...requestResult.newState,
@@ -463,12 +502,58 @@ export default function BankersAlgorithmPage() {
             lastUpdated: new Date(),
           });
           
+          // Build step states for navigation
+          const states: Array<{ 
+            work: number[]; 
+            finish: boolean[];
+            allocation: number[][];
+            need: number[][];
+            available: number[]; // Track available separately for request steps
+          }> = [];
+          let currentWork = [...requestResult.newState.available];
+          let currentFinish = Array(requestResult.newState.processCount).fill(false);
+          let currentAllocation = requestResult.newState.allocation.map(row => [...row]);
+          let currentNeed = requestResult.newState.need.map(row => [...row]);
+          let currentAvailable = [...algorithmState.available]; // Start with original available
+          let allocationHappened = false;
+          
+          enhancedSteps.forEach((step, index) => {
+            // Check if this step is where allocation happens (step 3 in request process)
+            if (step.description.includes("Temporarily allocate resources") && requestResult.newState) {
+              allocationHappened = true;
+              currentAvailable = [...requestResult.newState.available]; // Update to new available after allocation
+              currentAllocation = requestResult.newState.allocation.map(row => [...row]);
+              currentNeed = requestResult.newState.need.map(row => [...row]);
+            }
+            
+            if (step.workVector && step.workVector.length > 0) {
+              currentWork = [...step.workVector];
+            }
+            if (step.processChecked && step.canFinish) {
+              const processIndex = parseInt(step.processChecked.replace('P', ''));
+              if (!isNaN(processIndex)) {
+                currentFinish = [...currentFinish];
+                currentFinish[processIndex] = true;
+              }
+            }
+            states.push({
+              work: [...currentWork],
+              finish: [...currentFinish],
+              allocation: currentAllocation.map(row => [...row]),
+              need: currentNeed.map(row => [...row]),
+              available: [...currentAvailable], // Store the correct available for this step
+            });
+          });
+          
+          setStepStates(states);
+          
           // Set request result state
           setRequestResult({ 
             isRequest: true, 
             wasGranted: true,
             processId: request.processId,
-            requestVector: request.requestVector
+            requestVector: request.requestVector,
+            shouldResetRequest: true, // Signal to reset request panel
           });
 
           // Show success message with detailed information
@@ -490,7 +575,7 @@ export default function BankersAlgorithmPage() {
           if (enhancedSteps.length > 0) {
             const lastStep = enhancedSteps[enhancedSteps.length - 1];
             if (lastStep.description.includes("System is UNSAFE")) {
-              lastStep.description += `\n\n❌ REQUEST DENIED: Process P${request.processId} request [${request.requestVector.join(", ")}] cannot be granted as it would lead to an unsafe state (potential deadlock).`;
+              lastStep.description += `\n\n[REQUEST DENIED]: Process P${request.processId} request [${request.requestVector.join(", ")}] cannot be granted as it would lead to an unsafe state (potential deadlock).`;
             }
           }
 
@@ -499,7 +584,7 @@ export default function BankersAlgorithmPage() {
             isRequest: true, 
             wasGranted: false,
             processId: request.processId,
-            requestVector: request.requestVector
+            requestVector: request.requestVector,
           });
 
           showError(
@@ -515,6 +600,15 @@ export default function BankersAlgorithmPage() {
 
           // Show the simulation steps even for denied requests to help user understand why
           if (requestResult.simulationSteps) {
+            // Save original state before updating for step navigation
+            // Note: We don't need to save 'available' because it never changes during navigation
+            setOriginalStateBeforeSteps({
+              available: [...algorithmState.available], // Keep original available
+              allocation: algorithmState.allocation.map(row => [...row]),
+              need: algorithmState.need.map(row => [...row]),
+              finish: [...algorithmState.finish],
+            });
+
             setAlgorithmState((prev) => ({
               ...prev,
               algorithmSteps: enhancedSteps,
@@ -523,6 +617,53 @@ export default function BankersAlgorithmPage() {
               isSafe: false,
               lastUpdated: new Date(),
             }));
+            
+            // Build step states for navigation
+            const states: Array<{ 
+              work: number[]; 
+              finish: boolean[];
+              allocation: number[][];
+              need: number[][];
+              available?: number[];
+            }> = [];
+            let currentWork = [...algorithmState.available];
+            let currentFinish = Array(algorithmState.processCount).fill(false);
+            let currentAllocation = algorithmState.allocation.map(row => [...row]);
+            let currentNeed = algorithmState.need.map(row => [...row]);
+            let currentAvailable = [...algorithmState.available]; // Start with original available
+            
+            // For denied requests, we still need to track when allocation would have happened
+            enhancedSteps.forEach((step) => {
+              // Check if this step is where allocation would happen (step 3 in request process)
+              if (step.description.includes("Temporarily allocate resources")) {
+                // Extract the new available from the description or calculate it
+                // For denied requests, we simulate what would have happened
+                const requestVector = request.requestVector;
+                currentAvailable = algorithmState.available.map((val, idx) => val - requestVector[idx]);
+                // Note: For denied requests, allocation/need don't actually change in the real state
+                // but we show what the simulation tried
+              }
+              
+              if (step.workVector && step.workVector.length > 0) {
+                currentWork = [...step.workVector];
+              }
+              if (step.processChecked && step.canFinish) {
+                const processIndex = parseInt(step.processChecked.replace('P', ''));
+                if (!isNaN(processIndex)) {
+                  currentFinish = [...currentFinish];
+                  currentFinish[processIndex] = true;
+                }
+              }
+              states.push({
+                work: [...currentWork],
+                finish: [...currentFinish],
+                allocation: currentAllocation.map(row => [...row]),
+                need: currentNeed.map(row => [...row]),
+                available: [...currentAvailable],
+              });
+            });
+            
+            setStepStates(states);
           }
         }
 
@@ -672,6 +813,8 @@ export default function BankersAlgorithmPage() {
                 isProcessingRequest={isProcessingRequest}
                 isCalculating={algorithmState.isCalculating}
                 isCollapsed={false}
+                shouldResetRequest={requestResult.shouldResetRequest}
+                onRequestResetComplete={() => setRequestResult(prev => ({ ...prev, shouldResetRequest: false }))}
               />
             </div>
 
@@ -768,6 +911,8 @@ export default function BankersAlgorithmPage() {
               isProcessingRequest={isProcessingRequest}
               isCalculating={algorithmState.isCalculating}
               isCollapsed={isDesktopSidebarCollapsed}
+              shouldResetRequest={requestResult.shouldResetRequest}
+              onRequestResetComplete={() => setRequestResult(prev => ({ ...prev, shouldResetRequest: false }))}
             />
           </div>
 

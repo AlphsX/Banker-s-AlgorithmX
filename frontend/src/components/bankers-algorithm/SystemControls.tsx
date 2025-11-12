@@ -19,6 +19,8 @@ interface SystemControlsProps {
   isProcessingRequest?: boolean;
   isCalculating?: boolean;
   isCollapsed?: boolean;
+  shouldResetRequest?: boolean;
+  onRequestResetComplete?: () => void;
 }
 
 export const SystemControls: React.FC<SystemControlsProps> = ({
@@ -33,6 +35,8 @@ export const SystemControls: React.FC<SystemControlsProps> = ({
   isProcessingRequest = false,
   isCalculating = false,
   isCollapsed = false,
+  shouldResetRequest = false,
+  onRequestResetComplete,
 }) => {
   if (isCollapsed) {
     return null;
@@ -78,6 +82,8 @@ export const SystemControls: React.FC<SystemControlsProps> = ({
               onRequestSubmit={onRequestSubmit}
               isProcessing={isProcessingRequest}
               disabled={isDisabled}
+              shouldResetAfterRequest={shouldResetRequest}
+              onResetComplete={onRequestResetComplete}
             />
           </div>
         )}

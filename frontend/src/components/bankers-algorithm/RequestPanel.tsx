@@ -11,6 +11,8 @@ interface RequestPanelProps {
   onRequestSubmit: (request: ResourceRequest) => void;
   isProcessing: boolean;
   disabled?: boolean;
+  shouldResetAfterRequest?: boolean;
+  onResetComplete?: () => void;
 }
 
 export const RequestPanel: React.FC<RequestPanelProps> = ({
@@ -21,8 +23,26 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
   onRequestSubmit,
   isProcessing,
   disabled = false,
+  shouldResetAfterRequest = false,
+  onResetComplete,
 }) => {
   const isDisabled = disabled || isProcessing;
+  
+  // Store request vectors for each process
+  const [processRequestVectors, setProcessRequestVectors] = useState<Record<number, number[]>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('bankers-process-request-vectors');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          // If parsing fails, fall back to default
+        }
+      }
+    }
+    return {};
+  });
+  
   // Load saved data from localStorage
   const [selectedProcess, setSelectedProcess] = useState<number>(() => {
     if (typeof window !== 'undefined') {
@@ -33,23 +53,16 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
   });
   
   const [requestVector, setRequestVector] = useState<number[]>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('bankers-request-vector');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (Array.isArray(parsed)) {
-            const newVector = new Array(resourceCount).fill(0);
-            const copyLength = Math.min(parsed.length, resourceCount);
-            for (let i = 0; i < copyLength; i++) {
-              newVector[i] = parsed[i] || 0;
-            }
-            return newVector;
-          }
-        } catch {
-          // If parsing fails, fall back to default
-        }
+    // Get the saved vector for the selected process, or create a new one
+    const savedVectors = processRequestVectors;
+    if (savedVectors[selectedProcess]) {
+      const saved = savedVectors[selectedProcess];
+      const newVector = new Array(resourceCount).fill(0);
+      const copyLength = Math.min(saved.length, resourceCount);
+      for (let i = 0; i < copyLength; i++) {
+        newVector[i] = saved[i] || 0;
       }
+      return newVector;
     }
     return new Array(resourceCount).fill(0);
   });
@@ -85,11 +98,17 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
     }
   }, [selectedProcess]);
 
+  // Save request vector for current process
   React.useEffect(() => {
     if (typeof window !== 'undefined') {
-      localStorage.setItem('bankers-request-vector', JSON.stringify(requestVector));
+      const updatedVectors = {
+        ...processRequestVectors,
+        [selectedProcess]: requestVector,
+      };
+      setProcessRequestVectors(updatedVectors);
+      localStorage.setItem('bankers-process-request-vectors', JSON.stringify(updatedVectors));
     }
-  }, [requestVector]);
+  }, [requestVector, selectedProcess]);
 
   // Update request vector when resource count changes
   React.useEffect(() => {
@@ -110,6 +129,28 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
       setSelectedProcess(0);
     }
   }, [processCount, selectedProcess]);
+
+  // Reset request vector after successful request
+  React.useEffect(() => {
+    if (shouldResetAfterRequest) {
+      // Reset only the current process's request vector
+      setRequestVector(new Array(resourceCount).fill(0));
+      
+      // Update the stored vectors
+      const updatedVectors = {
+        ...processRequestVectors,
+        [selectedProcess]: new Array(resourceCount).fill(0),
+      };
+      setProcessRequestVectors(updatedVectors);
+      
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('bankers-process-request-vectors', JSON.stringify(updatedVectors));
+      }
+      
+      // Notify parent that reset is complete
+      onResetComplete?.();
+    }
+  }, [shouldResetAfterRequest, resourceCount, selectedProcess, processRequestVectors, onResetComplete]);
 
   const handleRequestVectorChange = useCallback(
     (index: number, value: string) => {
@@ -174,7 +215,14 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
   }, [selectedProcess, requestVector, validateRequest, onRequestSubmit]);
 
   const handleReset = useCallback(() => {
+    // Reset all process request vectors
+    setProcessRequestVectors({});
     setRequestVector(new Array(resourceCount).fill(0));
+    
+    // Clear from localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('bankers-process-request-vectors');
+    }
     
     // Clear validation errors with smooth animation
     if (mountValidationErrors) {
@@ -196,6 +244,20 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
   }));
 
   const handleProcessSelect = (processId: number) => {
+    // Load the saved request vector for the selected process
+    const savedVector = processRequestVectors[processId];
+    if (savedVector) {
+      const newVector = new Array(resourceCount).fill(0);
+      const copyLength = Math.min(savedVector.length, resourceCount);
+      for (let i = 0; i < copyLength; i++) {
+        newVector[i] = savedVector[i] || 0;
+      }
+      setRequestVector(newVector);
+    } else {
+      // If no saved vector, reset to zeros
+      setRequestVector(new Array(resourceCount).fill(0));
+    }
+    
     setSelectedProcess(processId);
     setIsDropdownOpen(false);
   };
