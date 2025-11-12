@@ -11,7 +11,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Accio",
-  description: "Nothin' SpecialX~。",
+  description: "Unlock the power of Dijkstra’s Banker's Algorithm. Interactive simulator for visualizing, testing, and mastering deadlock-free resource allocation.", // Nothin' SpecialX~。
 };
 
 export default function RootLayout({
