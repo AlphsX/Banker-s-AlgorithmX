@@ -900,7 +900,7 @@ SOFTWARE.
 
 **⭐ Star this repository if you find it helpful!**
 
-Made with ❣️ for the computer science education community
+Made with ♡ for the computer science education community
 
 © 2025 AlphsX, Inc.
 
