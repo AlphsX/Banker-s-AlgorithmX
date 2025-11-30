@@ -25,7 +25,12 @@ export interface AlgorithmStep {
   processChecked?: string;
   canFinish?: boolean;
   isHighlighted?: boolean;
-  stepType?: 'initialization' | 'process_check' | 'resource_allocation' | 'completion' | 'failure';
+  stepType?:
+    | "initialization"
+    | "process_check"
+    | "resource_allocation"
+    | "completion"
+    | "failure";
   timestamp?: Date;
 }
 
@@ -52,7 +57,7 @@ export interface ValidationError {
   field: string;
   message: string;
   code?: string;
-  severity?: 'error' | 'warning' | 'info';
+  severity?: "error" | "warning" | "info";
 }
 
 export interface SystemStatistics {

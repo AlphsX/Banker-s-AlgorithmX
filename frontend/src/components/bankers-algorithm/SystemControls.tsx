@@ -1,11 +1,11 @@
 "use client";
 
-import React from 'react';
-import { ProcessControl } from './ProcessControl';
-import { ResourceControl } from './ResourceControl';
-import { AvailableResourcesInput } from './AvailableResourcesInput';
-import { RequestPanel } from './RequestPanel';
-import { ResourceRequest } from '@/types/bankers-algorithm';
+import React from "react";
+import { ProcessControl } from "./ProcessControl";
+import { ResourceControl } from "./ResourceControl";
+import { AvailableResourcesInput } from "./AvailableResourcesInput";
+import { RequestPanel } from "./RequestPanel";
+import { ResourceRequest } from "@/types/bankers-algorithm";
 
 interface SystemControlsProps {
   processCount: number;
@@ -51,19 +51,19 @@ export const SystemControls: React.FC<SystemControlsProps> = ({
           <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-2">
             System Controls
           </h3>
-          
+
           <ProcessControl
             processCount={processCount}
             onProcessCountChange={onProcessCountChange}
             disabled={isDisabled}
           />
-          
+
           <ResourceControl
             resourceCount={resourceCount}
             onResourceCountChange={onResourceCountChange}
             disabled={isDisabled}
           />
-          
+
           <AvailableResourcesInput
             available={available}
             onAvailableChange={onAvailableChange}
