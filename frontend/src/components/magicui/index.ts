@@ -1,1 +1,1 @@
-export { AnimatedThemeToggler } from './animated-theme-toggler';
+export { AnimatedThemeToggler } from "./animated-theme-toggler";

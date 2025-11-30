@@ -9,11 +9,7 @@ interface KeyboardShortcutsConfig {
 }
 
 export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
-  const {
-    onToggleSidebar,
-    onToggleTheme,
-    onCheckSafety,
-  } = config;
+  const { onToggleSidebar, onToggleTheme, onCheckSafety } = config;
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -21,7 +17,12 @@ export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
       const isModifierPressed = event.metaKey || event.ctrlKey;
 
       // Handle Shift+Enter for Check Safety
-      if (event.key === "Enter" && event.shiftKey && !isModifierPressed && onCheckSafety) {
+      if (
+        event.key === "Enter" &&
+        event.shiftKey &&
+        !isModifierPressed &&
+        onCheckSafety
+      ) {
         event.preventDefault();
         onCheckSafety();
         return;
@@ -48,7 +49,7 @@ export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
           break;
       }
     },
-    [onToggleSidebar, onToggleTheme, onCheckSafety]
+    [onToggleSidebar, onToggleTheme, onCheckSafety],
   );
 
   useEffect(() => {

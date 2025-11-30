@@ -101,49 +101,58 @@ export const ProcessControl: React.FC<ProcessControlProps> = ({
     }
   }, []);
 
-  const handleClick = (action: 'increment' | 'decrement') => (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (disabled) return;
-    // Only handle click if it wasn't a hold action
-    if (!isHoldingRef.current) {
-      if (action === 'decrement' && processCount > 1) {
-        onProcessCountChange(processCount - 1);
-      } else if (action === 'increment' && processCount < 10) {
-        onProcessCountChange(processCount + 1);
-      }
-    }
-    isHoldingRef.current = false;
-  };
-
-  const startAutoRepeat = useCallback((action: 'increment' | 'decrement') => {
-    timeoutRef.current = setTimeout(() => {
-      isHoldingRef.current = true;
-      intervalRef.current = setInterval(() => {
-        if (action === 'decrement') {
-          if (currentCountRef.current > 1) {
-            onProcessCountChange(currentCountRef.current - 1);
-          } else {
-            clearTimers();
-          }
-        } else {
-          if (currentCountRef.current < 10) {
-            onProcessCountChange(currentCountRef.current + 1);
-          } else {
-            clearTimers();
-          }
+  const handleClick =
+    (action: "increment" | "decrement") => (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (disabled) return;
+      // Only handle click if it wasn't a hold action
+      if (!isHoldingRef.current) {
+        if (action === "decrement" && processCount > 1) {
+          onProcessCountChange(processCount - 1);
+        } else if (action === "increment" && processCount < 10) {
+          onProcessCountChange(processCount + 1);
         }
-      }, 100);
-    }, 500);
-  }, [onProcessCountChange, clearTimers]);
+      }
+      isHoldingRef.current = false;
+    };
 
-  const handleMouseDown = (action: 'increment' | 'decrement') => (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    if (disabled) return;
-    isHoldingRef.current = false;
-    if ((action === 'increment' && processCount < 10) || (action === 'decrement' && processCount > 1)) {
-      startAutoRepeat(action);
-    }
-  };
+  const startAutoRepeat = useCallback(
+    (action: "increment" | "decrement") => {
+      timeoutRef.current = setTimeout(() => {
+        isHoldingRef.current = true;
+        intervalRef.current = setInterval(() => {
+          if (action === "decrement") {
+            if (currentCountRef.current > 1) {
+              onProcessCountChange(currentCountRef.current - 1);
+            } else {
+              clearTimers();
+            }
+          } else {
+            if (currentCountRef.current < 10) {
+              onProcessCountChange(currentCountRef.current + 1);
+            } else {
+              clearTimers();
+            }
+          }
+        }, 100);
+      }, 500);
+    },
+    [onProcessCountChange, clearTimers],
+  );
+
+  const handleMouseDown =
+    (action: "increment" | "decrement") =>
+    (e: React.MouseEvent | React.TouchEvent) => {
+      e.preventDefault();
+      if (disabled) return;
+      isHoldingRef.current = false;
+      if (
+        (action === "increment" && processCount < 10) ||
+        (action === "decrement" && processCount > 1)
+      ) {
+        startAutoRepeat(action);
+      }
+    };
 
   const handleMouseUp = () => {
     clearTimers();
@@ -161,11 +170,11 @@ export const ProcessControl: React.FC<ProcessControlProps> = ({
       </label>
       <div className="flex items-center space-x-3">
         <button
-          onClick={handleClick('decrement')}
-          onMouseDown={handleMouseDown('decrement')}
+          onClick={handleClick("decrement")}
+          onMouseDown={handleMouseDown("decrement")}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
-          onTouchStart={handleMouseDown('decrement')}
+          onTouchStart={handleMouseDown("decrement")}
           onTouchEnd={handleMouseUp}
           className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
           disabled={disabled || processCount <= 1}
@@ -181,11 +190,11 @@ export const ProcessControl: React.FC<ProcessControlProps> = ({
           {processCount}
         </span>
         <button
-          onClick={handleClick('increment')}
-          onMouseDown={handleMouseDown('increment')}
+          onClick={handleClick("increment")}
+          onMouseDown={handleMouseDown("increment")}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
-          onTouchStart={handleMouseDown('increment')}
+          onTouchStart={handleMouseDown("increment")}
           onTouchEnd={handleMouseUp}
           className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
           disabled={disabled || processCount >= 10}
@@ -195,21 +204,31 @@ export const ProcessControl: React.FC<ProcessControlProps> = ({
           +
         </button>
       </div>
-      <div className={`overflow-hidden transition-all duration-500 ${
-        processCount <= 1 && mountMinWarning ? 'max-h-6 mt-1' : 'max-h-0 mt-0'
-      }`}>
-        <p className={`text-xs text-red-500 dark:text-red-400 transition-opacity duration-500 ${
-          showMinWarning ? 'opacity-100' : 'opacity-0'
-        }`}>
+      <div
+        className={`overflow-hidden transition-all duration-500 ${
+          processCount <= 1 && mountMinWarning ? "max-h-6 mt-1" : "max-h-0 mt-0"
+        }`}
+      >
+        <p
+          className={`text-xs text-red-500 dark:text-red-400 transition-opacity duration-500 ${
+            showMinWarning ? "opacity-100" : "opacity-0"
+          }`}
+        >
           Minimum 1 process required
         </p>
       </div>
-      <div className={`overflow-hidden transition-all duration-500 ${
-        processCount >= 10 && mountMaxWarning ? 'max-h-6 mt-1' : 'max-h-0 mt-0'
-      }`}>
-        <p className={`text-xs text-yellow-500 dark:text-yellow-400 transition-opacity duration-500 ${
-          showMaxWarning ? 'opacity-100' : 'opacity-0'
-        }`}>
+      <div
+        className={`overflow-hidden transition-all duration-500 ${
+          processCount >= 10 && mountMaxWarning
+            ? "max-h-6 mt-1"
+            : "max-h-0 mt-0"
+        }`}
+      >
+        <p
+          className={`text-xs text-yellow-500 dark:text-yellow-400 transition-opacity duration-500 ${
+            showMaxWarning ? "opacity-100" : "opacity-0"
+          }`}
+        >
           Maximum 10 processes allowed
         </p>
       </div>

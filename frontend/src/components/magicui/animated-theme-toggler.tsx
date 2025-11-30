@@ -34,12 +34,12 @@ export const AnimatedThemeToggler = ({
         showSystemIcon
           ? "Using system theme preference"
           : isDarkMode
-          ? "Switch to light mode"
-          : "Switch to dark mode"
+            ? "Switch to light mode"
+            : "Switch to dark mode"
       }
-      style={{ 
-        WebkitTapHighlightColor: 'transparent',
-        touchAction: 'manipulation'
+      style={{
+        WebkitTapHighlightColor: "transparent",
+        touchAction: "manipulation",
       }}
     >
       <div className="relative w-5 h-5">
@@ -50,10 +50,10 @@ export const AnimatedThemeToggler = ({
               ? "opacity-100 rotate-0 scale-100"
               : "opacity-0 rotate-[360deg] scale-0"
           }`}
-          style={{ 
-            willChange: showSystemIcon ? 'auto' : 'transform, opacity',
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden'
+          style={{
+            willChange: showSystemIcon ? "auto" : "transform, opacity",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
           }}
         >
           <Monitor size={20} />
@@ -66,10 +66,10 @@ export const AnimatedThemeToggler = ({
               ? "opacity-100 rotate-0 scale-100"
               : "opacity-0 rotate-[360deg] scale-0"
           } theme-toggle-glow-sun`}
-          style={{ 
-            willChange: showSunIcon ? 'auto' : 'transform, opacity',
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden'
+          style={{
+            willChange: showSunIcon ? "auto" : "transform, opacity",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
           }}
         >
           <Sun size={20} />
@@ -82,10 +82,10 @@ export const AnimatedThemeToggler = ({
               ? "opacity-100 rotate-0 scale-100"
               : "opacity-0 rotate-[-360deg] scale-0"
           } theme-toggle-glow-moon text-[#c5cbd3]`}
-          style={{ 
-            willChange: showMoonIcon ? 'auto' : 'transform, opacity',
-            backfaceVisibility: 'hidden',
-            WebkitBackfaceVisibility: 'hidden'
+          style={{
+            willChange: showMoonIcon ? "auto" : "transform, opacity",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
           }}
         >
           <Moon size={20} />

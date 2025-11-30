@@ -34,7 +34,7 @@ export class BankersAlgorithmCalculator {
   }
 
   /**
-   * Safety Algorithm Implementation 
+   * Safety Algorithm Implementation
    *
    * Algorithm Steps:
    * 1. Initialize Work = Available and Finish[i] = false for all processes
@@ -45,7 +45,7 @@ export class BankersAlgorithmCalculator {
   checkSafety(
     available: number[],
     allocation: number[][],
-    need: number[][]
+    need: number[][],
   ): SafetyResult {
     const processCount = allocation.length;
 
@@ -86,7 +86,7 @@ export class BankersAlgorithmCalculator {
           steps.push({
             stepNumber: 2,
             description: `need[${processName}] ≤ work:\n(${need[i].join(
-              ", "
+              ", ",
             )}) ${canFinish ? "≤" : "≰"} (${work.join(", ")})`,
             workVector: cloneVector(work),
             processChecked: processName,
@@ -116,7 +116,7 @@ export class BankersAlgorithmCalculator {
               isHighlighted: true,
             });
 
-            // Important: Start over from the beginning 
+            // Important: Start over from the beginning
             break;
           }
         }
@@ -131,7 +131,7 @@ export class BankersAlgorithmCalculator {
         steps.push({
           stepNumber: 2,
           description: `No more processes can finish. Remaining processes ${unfinishedProcesses.join(
-            ", "
+            ", ",
           )} cannot satisfy their needs with current available resources.`,
           workVector: cloneVector(work),
           isHighlighted: false,
@@ -146,7 +146,7 @@ export class BankersAlgorithmCalculator {
       steps.push({
         stepNumber: 4,
         description: `All processes can finish safely. Safe sequence: ${safeSequence.join(
-          " → "
+          " → ",
         )}`,
         workVector: cloneVector(work),
         isHighlighted: true,
@@ -160,7 +160,7 @@ export class BankersAlgorithmCalculator {
       steps.push({
         stepNumber: 4,
         description: `System is UNSAFE • Processes ${unfinishedProcesses.join(
-          ", "
+          ", ",
         )} cannot finish (potential deadlock)`,
         workVector: cloneVector(work),
         isHighlighted: true,
@@ -176,7 +176,7 @@ export class BankersAlgorithmCalculator {
   }
 
   /**
-   * Resource Request Algorithm Implementation 
+   * Resource Request Algorithm Implementation
    *
    * Algorithm Steps:
    * 1. Check if Request[i] <= Need[i] (request doesn't exceed declared maximum)
@@ -186,7 +186,7 @@ export class BankersAlgorithmCalculator {
    */
   processRequest(
     request: ResourceRequest,
-    currentState: BankersAlgorithmState
+    currentState: BankersAlgorithmState,
   ): RequestResult {
     const { processId, requestVector } = request;
     const { allocation, max, available, need } = currentState;
@@ -226,7 +226,7 @@ export class BankersAlgorithmCalculator {
     requestSteps.push({
       stepNumber: 1,
       description: `Check if Request[P${processId}] ≤ Need[P${processId}]: (${requestVector.join(
-        ", "
+        ", ",
       )}) ${step1Valid ? "≤" : "≰"} (${need[processId].join(", ")})`,
       workVector: cloneVector(available),
       canFinish: step1Valid,
@@ -237,9 +237,9 @@ export class BankersAlgorithmCalculator {
       return {
         canGrant: false,
         errorMessage: `Request DENIED: Process P${processId} request [${requestVector.join(
-          ", "
+          ", ",
         )}] exceeds declared maximum need [${need[processId].join(
-          ", "
+          ", ",
         )}]. A process cannot request more resources than it declared as its maximum requirement.`,
         simulationSteps: requestSteps,
       };
@@ -257,7 +257,7 @@ export class BankersAlgorithmCalculator {
     requestSteps.push({
       stepNumber: 2,
       description: `Check if Request[P${processId}] ≤ Available: (${requestVector.join(
-        ", "
+        ", ",
       )}) ${step2Valid ? "≤" : "≰"} (${available.join(", ")})`,
       workVector: cloneVector(available),
       canFinish: step2Valid,
@@ -268,9 +268,9 @@ export class BankersAlgorithmCalculator {
       return {
         canGrant: false,
         errorMessage: `Request DENIED: Insufficient resources available. Process P${processId} requested [${requestVector.join(
-          ", "
+          ", ",
         )}] but only [${available.join(
-          ", "
+          ", ",
         )}] resources are currently available. Process must wait until more resources become available.`,
         simulationSteps: requestSteps,
       };
@@ -289,13 +289,13 @@ export class BankersAlgorithmCalculator {
     requestSteps.push({
       stepNumber: 3,
       description: `Temporarily allocate resources:\nAvailable = (${available.join(
-        ", "
+        ", ",
       )}) - (${requestVector.join(", ")}) = (${newAvailable.join(
-        ", "
+        ", ",
       )})\nAllocation[P${processId}] = (${allocation[processId].join(
-        ", "
+        ", ",
       )}) + (${requestVector.join(", ")}) = (${newAllocation[processId].join(
-        ", "
+        ", ",
       )})`,
       workVector: cloneVector(newAvailable),
       isHighlighted: true,
@@ -338,9 +338,9 @@ export class BankersAlgorithmCalculator {
         newState,
         simulationSteps: allSteps,
         errorMessage: `Request GRANTED: Process P${processId} successfully allocated [${requestVector.join(
-          ", "
+          ", ",
         )}] resources. System remains in SAFE state with execution sequence: ${safetyResult.safeSequence.join(
-          " → "
+          " → ",
         )}.`,
       };
     } else {
@@ -348,7 +348,7 @@ export class BankersAlgorithmCalculator {
       return {
         canGrant: false,
         errorMessage: `Request DENIED: Granting request [${requestVector.join(
-          ", "
+          ", ",
         )}] to Process P${processId} would lead to an UNSAFE state (potential deadlock). The system cannot guarantee that all processes can complete their execution. Process must wait for a safer system state.`,
         simulationSteps: allSteps,
       };
@@ -468,7 +468,7 @@ export class BankersAlgorithmCalculator {
   resizeMatrices(
     currentState: BankersAlgorithmState,
     newProcessCount: number,
-    newResourceCount: number
+    newResourceCount: number,
   ): BankersAlgorithmState {
     // Create new matrices with appropriate dimensions
     const newAllocation = createZeroMatrix(newProcessCount, newResourceCount);
@@ -507,12 +507,12 @@ export class BankersAlgorithmCalculator {
   }
 
   /**
-   * Process Completion Simulation 
+   * Process Completion Simulation
    * Simulates a process completing its execution and releasing all allocated resources
    */
   completeProcess(
     state: BankersAlgorithmState,
-    processId: number
+    processId: number,
   ): BankersAlgorithmState {
     if (processId < 0 || processId >= state.processCount) {
       throw new Error(`Invalid process ID: ${processId}`);
@@ -563,20 +563,20 @@ export class BankersAlgorithmCalculator {
   }
 
   /**
-   * Find Safe Sequence 
+   * Find Safe Sequence
    * Finds and returns the safe execution sequence if system is safe
    */
   findSafeSequence(state: BankersAlgorithmState): string[] {
     const safetyResult = this.checkSafety(
       state.available,
       state.allocation,
-      state.need
+      state.need,
     );
     return safetyResult.safeSequence;
   }
 
   /**
-   * Comprehensive System Validation 
+   * Comprehensive System Validation
    * Validates all system constraints and data integrity
    */
   validateSystemData(state: BankersAlgorithmState): ValidationError[] {
@@ -636,7 +636,7 @@ export class BankersAlgorithmCalculator {
   }
 
   /**
-   * System Snapshot 
+   * System Snapshot
    * Creates a comprehensive snapshot of current system state
    */
   getSystemSnapshot(state: BankersAlgorithmState): {
@@ -664,7 +664,7 @@ export class BankersAlgorithmCalculator {
     const safetyResult = this.checkSafety(
       state.available,
       state.allocation,
-      state.need
+      state.need,
     );
 
     // Calculate statistics

@@ -27,11 +27,13 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
   onResetComplete,
 }) => {
   const isDisabled = disabled || isProcessing;
-  
+
   // Store request vectors for each process
-  const [processRequestVectors, setProcessRequestVectors] = useState<Record<number, number[]>>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('bankers-process-request-vectors');
+  const [processRequestVectors, setProcessRequestVectors] = useState<
+    Record<number, number[]>
+  >(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("bankers-process-request-vectors");
       if (saved) {
         try {
           return JSON.parse(saved);
@@ -42,16 +44,16 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
     }
     return {};
   });
-  
+
   // Load saved data from localStorage
   const [selectedProcess, setSelectedProcess] = useState<number>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('bankers-request-process');
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("bankers-request-process");
       return saved ? Math.min(parseInt(saved), processCount - 1) : 0;
     }
     return 0;
   });
-  
+
   const [requestVector, setRequestVector] = useState<number[]>(() => {
     // Get the saved vector for the selected process, or create a new one
     const savedVectors = processRequestVectors;
@@ -66,7 +68,7 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
     }
     return new Array(resourceCount).fill(0);
   });
-  
+
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [showValidationErrors, setShowValidationErrors] = useState(false);
   const [mountValidationErrors, setMountValidationErrors] = useState(false);
@@ -77,36 +79,45 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
   // Close dropdown when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsDropdownOpen(false);
       }
     };
 
     if (isDropdownOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isDropdownOpen]);
 
   // Save to localStorage when values change
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('bankers-request-process', selectedProcess.toString());
+    if (typeof window !== "undefined") {
+      localStorage.setItem(
+        "bankers-request-process",
+        selectedProcess.toString(),
+      );
     }
   }, [selectedProcess]);
 
   // Save request vector for current process
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const updatedVectors = {
         ...processRequestVectors,
         [selectedProcess]: requestVector,
       };
       setProcessRequestVectors(updatedVectors);
-      localStorage.setItem('bankers-process-request-vectors', JSON.stringify(updatedVectors));
+      localStorage.setItem(
+        "bankers-process-request-vectors",
+        JSON.stringify(updatedVectors),
+      );
     }
   }, [requestVector, selectedProcess]);
 
@@ -135,22 +146,31 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
     if (shouldResetAfterRequest) {
       // Reset only the current process's request vector
       setRequestVector(new Array(resourceCount).fill(0));
-      
+
       // Update the stored vectors
       const updatedVectors = {
         ...processRequestVectors,
         [selectedProcess]: new Array(resourceCount).fill(0),
       };
       setProcessRequestVectors(updatedVectors);
-      
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('bankers-process-request-vectors', JSON.stringify(updatedVectors));
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem(
+          "bankers-process-request-vectors",
+          JSON.stringify(updatedVectors),
+        );
       }
-      
+
       // Notify parent that reset is complete
       onResetComplete?.();
     }
-  }, [shouldResetAfterRequest, resourceCount, selectedProcess, processRequestVectors, onResetComplete]);
+  }, [
+    shouldResetAfterRequest,
+    resourceCount,
+    selectedProcess,
+    processRequestVectors,
+    onResetComplete,
+  ]);
 
   const handleRequestVectorChange = useCallback(
     (index: number, value: string) => {
@@ -173,7 +193,7 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
         }, 500);
       }
     },
-    [mountValidationErrors]
+    [mountValidationErrors],
   );
 
   const validateRequest = useCallback((): string[] => {
@@ -202,7 +222,7 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
       setValidationErrors(errors);
       setMountValidationErrors(true);
       setTimeout(() => setShowValidationErrors(true), 10);
-      
+
       return;
     }
 
@@ -218,12 +238,12 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
     // Reset all process request vectors
     setProcessRequestVectors({});
     setRequestVector(new Array(resourceCount).fill(0));
-    
+
     // Clear from localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('bankers-process-request-vectors');
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("bankers-process-request-vectors");
     }
-    
+
     // Clear validation errors with smooth animation
     if (mountValidationErrors) {
       setShowValidationErrors(false);
@@ -257,7 +277,7 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
       // If no saved vector, reset to zeros
       setRequestVector(new Array(resourceCount).fill(0));
     }
-    
+
     setSelectedProcess(processId);
     setIsDropdownOpen(false);
   };
@@ -278,9 +298,9 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
             disabled={isDisabled}
             className="w-full h-12 px-5 text-left flex items-center justify-between rounded-full border transition-colors duration-200 touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed"
             style={{
-              backgroundColor: 'var(--input-bg, #ffffff)',
-              borderColor: 'var(--input-border, #e1e1e1)',
-              color: 'var(--foreground)'
+              backgroundColor: "var(--input-bg, #ffffff)",
+              borderColor: "var(--input-border, #e1e1e1)",
+              color: "var(--foreground)",
             }}
           >
             <span className="text-base font-medium">
@@ -293,8 +313,8 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className={`transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
-              style={{ color: 'var(--text-secondary, #6b7280)' }}
+              className={`transition-transform duration-200 ${isDropdownOpen ? "rotate-180" : ""}`}
+              style={{ color: "var(--text-secondary, #6b7280)" }}
             >
               <path
                 d="M6 9l6 6 6-6"
@@ -308,11 +328,11 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
 
           {/* Dropdown Menu */}
           {isDropdownOpen && (
-            <div 
+            <div
               className="absolute z-50 w-full mt-2 rounded-3xl border shadow-lg overflow-hidden animate-smooth-dropdown-in"
               style={{
-                backgroundColor: 'var(--input-bg, #ffffff)',
-                borderColor: 'var(--input-border, #e1e1e1)',
+                backgroundColor: "var(--input-bg, #ffffff)",
+                borderColor: "var(--input-border, #e1e1e1)",
               }}
             >
               <div className="max-h-64 overflow-y-auto py-1">
@@ -323,21 +343,24 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
                     onClick={() => handleProcessSelect(option.value)}
                     className="w-full px-5 py-3 text-left flex items-center justify-between transition-colors duration-150 animate-item-slide-in"
                     style={{
-                      backgroundColor: selectedProcess === option.value 
-                        ? 'var(--need-bg, #f9fafb)' 
-                        : 'transparent',
-                      color: 'var(--foreground)',
-                      animationDelay: `${index * 30}ms`
+                      backgroundColor:
+                        selectedProcess === option.value
+                          ? "var(--need-bg, #f9fafb)"
+                          : "transparent",
+                      color: "var(--foreground)",
+                      animationDelay: `${index * 30}ms`,
                     }}
                     onMouseEnter={(e) => {
                       if (selectedProcess !== option.value) {
-                        e.currentTarget.style.backgroundColor = 'var(--button-hover-bg, #f3f4f6)';
+                        e.currentTarget.style.backgroundColor =
+                          "var(--button-hover-bg, #f3f4f6)";
                       }
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = selectedProcess === option.value 
-                        ? 'var(--need-bg, #f9fafb)' 
-                        : 'transparent';
+                      e.currentTarget.style.backgroundColor =
+                        selectedProcess === option.value
+                          ? "var(--need-bg, #f9fafb)"
+                          : "transparent";
                     }}
                   >
                     <span className="text-base font-medium">
@@ -350,7 +373,7 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
                         viewBox="0 0 24 24"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
-                        style={{ color: 'var(--text-secondary, #6b7280)' }}
+                        style={{ color: "var(--text-secondary, #6b7280)" }}
                       >
                         <path
                           d="M5 13l4 4L19 7"
@@ -390,7 +413,7 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
                 <label
                   htmlFor={`resource-${index}`}
                   className="text-sm font-medium text-center block"
-                  style={{ color: 'var(--text-secondary, #6b7280)' }}
+                  style={{ color: "var(--text-secondary, #6b7280)" }}
                 >
                   {resourceLabels[index] || `R${index}`}
                 </label>
@@ -407,9 +430,9 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
                   disabled={isDisabled}
                   className="w-full h-10 px-3 text-center text-sm bg-white border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation font-medium"
                   style={{
-                    backgroundColor: 'var(--input-bg, #ffffff)',
-                    borderColor: 'var(--input-border, #e1e1e1)',
-                    color: 'var(--foreground)'
+                    backgroundColor: "var(--input-bg, #ffffff)",
+                    borderColor: "var(--input-border, #e1e1e1)",
+                    color: "var(--foreground)",
                   }}
                   placeholder="0"
                 />
@@ -420,12 +443,18 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
       </div>
 
       {/* Validation Errors */}
-      <div className={`overflow-hidden transition-all duration-500 ${
-        validationErrors.length > 0 && mountValidationErrors ? 'max-h-12 mt-1' : 'max-h-0 mt-0'
-      }`}>
-        <p className={`text-xs text-red-500 dark:text-red-400 transition-opacity duration-500 ${
-          showValidationErrors ? 'opacity-100' : 'opacity-0'
-        }`}>
+      <div
+        className={`overflow-hidden transition-all duration-500 ${
+          validationErrors.length > 0 && mountValidationErrors
+            ? "max-h-12 mt-1"
+            : "max-h-0 mt-0"
+        }`}
+      >
+        <p
+          className={`text-xs text-red-500 dark:text-red-400 transition-opacity duration-500 ${
+            showValidationErrors ? "opacity-100" : "opacity-0"
+          }`}
+        >
           {validationErrors[0]}
         </p>
       </div>
@@ -444,9 +473,9 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
           disabled={isDisabled}
           className="px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-full transition-colors duration-200 touch-manipulation disabled:bg-gray-200 disabled:cursor-not-allowed"
           style={{
-            backgroundColor: 'var(--button-bg, #ffffff)',
-            borderColor: 'var(--button-border, #e1e1e1)',
-            color: 'var(--foreground)'
+            backgroundColor: "var(--button-bg, #ffffff)",
+            borderColor: "var(--button-border, #e1e1e1)",
+            color: "var(--foreground)",
           }}
         >
           Reset
