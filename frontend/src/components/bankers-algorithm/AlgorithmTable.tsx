@@ -125,15 +125,18 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
         border: "1px solid var(--table-border)",
       }}
     >
-      <div className="overflow-x-auto">
+      <div className="overflow-x-hidden">
         <table
-          className="w-full min-w-max bg-white"
-          style={{ backgroundColor: "var(--table-bg)" }}
+          className="w-full bg-white"
+          style={{ 
+            backgroundColor: "var(--table-bg)",
+            minWidth: "100%"
+          }}
         >
           <thead>
             {/* Main header row */}
             <tr style={{ borderBottom: "1px solid var(--table-border)" }}>
-              <th className="text-left px-6 py-4 font-semibold text-gray-900 dark:text-gray-100 min-w-[100px]">
+              <th className="text-left px-6 py-4 font-semibold text-gray-900 dark:text-gray-100 sticky left-0 z-10 min-w-[100px]" style={{ backgroundColor: "var(--table-bg)" }}>
                 Processes
               </th>
               <th className="text-center px-4 py-4 font-semibold text-gray-900 dark:text-gray-100">
@@ -171,13 +174,13 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                   }}
                 >
                   {/* Process name */}
-                  <td className="px-6 py-6 font-semibold text-gray-900 dark:text-gray-100">
+                  <td className="px-6 py-6 font-semibold text-gray-900 dark:text-gray-100 sticky left-0 z-10" style={{ backgroundColor: "var(--table-bg)" }}>
                     P{processIndex}
                   </td>
 
                   {/* Allocation section */}
                   <td className="px-4 py-6 text-center">
-                    <div className="flex space-x-3 justify-center">
+                    <div className="flex flex-wrap gap-3 justify-center max-w-[240px] mx-auto">
                       {Array.from(
                         { length: resourceCount },
                         (_, resourceIndex) => (
@@ -275,7 +278,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
 
                   {/* Max section */}
                   <td className="px-4 py-6 text-center">
-                    <div className="flex space-x-3 justify-center">
+                    <div className="flex flex-wrap gap-3 justify-center max-w-[240px] mx-auto">
                       {Array.from(
                         { length: resourceCount },
                         (_, resourceIndex) => (
@@ -373,7 +376,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
 
                   {/* Need section */}
                   <td className="px-4 py-6 text-center">
-                    <div className="flex space-x-3 justify-center">
+                    <div className="flex flex-wrap gap-3 justify-center max-w-[240px] mx-auto">
                       {Array.from(
                         { length: resourceCount },
                         (_, resourceIndex) => (
@@ -391,17 +394,19 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                               {resourceLabels[resourceIndex] ||
                                 `R${resourceIndex}`}
                             </div>
-                            {/* Read-only field */}
-                            <div
-                              className="w-16 h-10 px-3 flex items-center justify-center rounded-full bg-gray-50 text-gray-700 text-sm font-medium"
-                              style={{
-                                backgroundColor: "var(--need-bg, #f9fafb)",
-                                color: "var(--text-secondary, #6b7280)",
-                                border: "1px solid var(--table-border)",
-                                borderRadius: "9999px",
-                              }}
-                            >
-                              {need[processIndex][resourceIndex]}
+                            {/* Read-only field - same container as input fields */}
+                            <div className="relative group w-16">
+                              <div
+                                className="w-full h-10 px-3 flex items-center justify-center rounded-full text-gray-900 text-sm font-medium"
+                                style={{
+                                  backgroundColor: "var(--need-bg, #f9fafb)",
+                                  color: "var(--foreground)",
+                                  border: "1px solid var(--table-border)",
+                                  borderRadius: "9999px",
+                                }}
+                              >
+                                {need[processIndex][resourceIndex]}
+                              </div>
                             </div>
                           </div>
                         ),
@@ -411,13 +416,15 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
 
                   {/* Finish column */}
                   <td className="px-6 py-6 text-center">
-                    <AnimatedFinishBadge
-                      processIndex={processIndex}
-                      finalFinishState={finish[processIndex]}
-                      algorithmSteps={algorithmSteps}
-                      isCalculating={isCalculating}
-                      currentStepIndex={currentStepIndex}
-                    />
+                    <div className="flex justify-center">
+                      <AnimatedFinishBadge
+                        processIndex={processIndex}
+                        finalFinishState={finish[processIndex]}
+                        algorithmSteps={algorithmSteps}
+                        isCalculating={isCalculating}
+                        currentStepIndex={currentStepIndex}
+                      />
+                    </div>
                   </td>
                 </tr>
               );
