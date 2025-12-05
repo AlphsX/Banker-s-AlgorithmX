@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useCallback } from "react";
 import { AlgorithmStep } from "@/types/bankers-algorithm";
 import { AnimatedFinishBadge } from "./AnimatedFinishBadge";
 
@@ -39,6 +39,74 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
 }) => {
   const resourceLabels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
   const isDisabled = isCalculating || isProcessingRequest;
+  
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const allocationRef = useRef(allocation);
+  const maxRef = useRef(max);
+
+  // Update refs when values change
+  React.useEffect(() => {
+    allocationRef.current = allocation;
+    maxRef.current = max;
+  }, [allocation, max]);
+
+  const clearTimers = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
+
+  // Cleanup on unmount
+  React.useEffect(() => {
+    return () => {
+      clearTimers();
+    };
+  }, [clearTimers]);
+
+  const handleMouseDown = useCallback(
+    (
+      type: "allocation" | "max",
+      processIdx: number,
+      resourceIdx: number,
+      increment: boolean
+    ) => {
+      if (isDisabled) return;
+
+      clearTimers();
+
+      const onChange = type === "allocation" ? onAllocationChange : onMaxChange;
+      const currentMatrix = type === "allocation" ? allocationRef : maxRef;
+
+      // Immediate action
+      const initialValue = currentMatrix.current[processIdx][resourceIdx];
+      const newValue = increment
+        ? Math.min(999, initialValue + 1)
+        : Math.max(0, initialValue - 1);
+      onChange(processIdx, resourceIdx, newValue);
+
+      // Start continuous increment/decrement after delay
+      timeoutRef.current = setTimeout(() => {
+        intervalRef.current = setInterval(() => {
+          const currentValue = currentMatrix.current[processIdx][resourceIdx];
+          const nextValue = increment
+            ? Math.min(999, currentValue + 1)
+            : Math.max(0, currentValue - 1);
+          onChange(processIdx, resourceIdx, nextValue);
+        }, 80);
+      }, 400);
+    },
+    [isDisabled, onAllocationChange, onMaxChange, clearTimers]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    clearTimers();
+  }, [clearTimers]);
 
   // Get the process being checked at the current step
   const currentProcessChecked =
@@ -57,15 +125,18 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
         border: "1px solid var(--table-border)",
       }}
     >
-      <div className="overflow-x-auto">
+      <div className="overflow-x-hidden">
         <table
-          className="w-full min-w-max bg-white"
-          style={{ backgroundColor: "var(--table-bg)" }}
+          className="w-full bg-white"
+          style={{ 
+            backgroundColor: "var(--table-bg)",
+            minWidth: "100%"
+          }}
         >
           <thead>
             {/* Main header row */}
             <tr style={{ borderBottom: "1px solid var(--table-border)" }}>
-              <th className="text-left px-6 py-4 font-semibold text-gray-900 dark:text-gray-100 min-w-[100px]">
+              <th className="text-left px-6 py-4 font-semibold text-gray-900 dark:text-gray-100 sticky left-0 z-10 min-w-[100px]" style={{ backgroundColor: "var(--table-bg)" }}>
                 Processes
               </th>
               <th className="text-center px-4 py-4 font-semibold text-gray-900 dark:text-gray-100">
@@ -103,13 +174,13 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                   }}
                 >
                   {/* Process name */}
-                  <td className="px-6 py-6 font-semibold text-gray-900 dark:text-gray-100">
+                  <td className="px-6 py-6 font-semibold text-gray-900 dark:text-gray-100 sticky left-0 z-10" style={{ backgroundColor: "var(--table-bg)" }}>
                     P{processIndex}
                   </td>
 
                   {/* Allocation section */}
                   <td className="px-4 py-6 text-center">
-                    <div className="flex space-x-3 justify-center">
+                    <div className="flex flex-wrap gap-3 justify-center max-w-[240px] mx-auto">
                       {Array.from(
                         { length: resourceCount },
                         (_, resourceIndex) => (
@@ -127,30 +198,78 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                               {resourceLabels[resourceIndex] ||
                                 `R${resourceIndex}`}
                             </div>
-                            {/* Input field */}
-                            <input
-                              type="number"
-                              inputMode="numeric"
-                              min="0"
-                              max="999"
-                              value={allocation[processIndex][resourceIndex]}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value) || 0;
-                                onAllocationChange(
-                                  processIndex,
-                                  resourceIndex,
-                                  Math.max(0, value),
-                                );
-                              }}
-                              disabled={isDisabled}
-                              className="w-12 h-10 text-center rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                              style={{
-                                border: "1px solid var(--table-border)",
-                                backgroundColor: "var(--input-bg, #ffffff)",
-                                color: "var(--foreground)",
-                              }}
-                              placeholder="0"
-                            />
+                            {/* Input field with spinner */}
+                            <div className="relative group w-16">
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                value={allocation[processIndex][resourceIndex].toString()}
+                                onChange={(e) => {
+                                  const inputValue = e.target.value.replace(/[^0-9]/g, '');
+                                  const value = parseInt(inputValue) || 0;
+                                  onAllocationChange(
+                                    processIndex,
+                                    resourceIndex,
+                                    Math.max(0, Math.min(999, value)),
+                                  );
+                                }}
+                                disabled={isDisabled}
+                                className="w-full h-10 px-3 text-center rounded-full bg-white text-gray-900 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                style={{
+                                  border: "1px solid var(--table-border)",
+                                  backgroundColor: "var(--input-bg, #ffffff)",
+                                  color: "var(--foreground)",
+                                  borderRadius: "9999px",
+                                }}
+                                placeholder="0"
+                              />
+                              <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200 hidden md:flex">
+                                <button
+                                  type="button"
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("allocation", processIndex, resourceIndex, true);
+                                  }}
+                                  onMouseUp={handleMouseUp}
+                                  onMouseLeave={handleMouseUp}
+                                  onTouchStart={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("allocation", processIndex, resourceIndex, true);
+                                  }}
+                                  onTouchEnd={handleMouseUp}
+                                  onTouchCancel={handleMouseUp}
+                                  disabled={isDisabled}
+                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
+                                  aria-label="Increment"
+                                >
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 15l-6-6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                </button>
+                                <button
+                                  type="button"
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("allocation", processIndex, resourceIndex, false);
+                                  }}
+                                  onMouseUp={handleMouseUp}
+                                  onMouseLeave={handleMouseUp}
+                                  onTouchStart={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("allocation", processIndex, resourceIndex, false);
+                                  }}
+                                  onTouchEnd={handleMouseUp}
+                                  onTouchCancel={handleMouseUp}
+                                  disabled={isDisabled}
+                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
+                                  aria-label="Decrement"
+                                >
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         ),
                       )}
@@ -159,7 +278,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
 
                   {/* Max section */}
                   <td className="px-4 py-6 text-center">
-                    <div className="flex space-x-3 justify-center">
+                    <div className="flex flex-wrap gap-3 justify-center max-w-[240px] mx-auto">
                       {Array.from(
                         { length: resourceCount },
                         (_, resourceIndex) => (
@@ -177,30 +296,78 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                               {resourceLabels[resourceIndex] ||
                                 `R${resourceIndex}`}
                             </div>
-                            {/* Input field */}
-                            <input
-                              type="number"
-                              inputMode="numeric"
-                              min="0"
-                              max="999"
-                              value={max[processIndex][resourceIndex]}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value) || 0;
-                                onMaxChange(
-                                  processIndex,
-                                  resourceIndex,
-                                  Math.max(0, value),
-                                );
-                              }}
-                              disabled={isDisabled}
-                              className="w-12 h-10 text-center rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                              style={{
-                                border: "1px solid var(--table-border)",
-                                backgroundColor: "var(--input-bg, #ffffff)",
-                                color: "var(--foreground)",
-                              }}
-                              placeholder="0"
-                            />
+                            {/* Input field with spinner */}
+                            <div className="relative group w-16">
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                value={max[processIndex][resourceIndex].toString()}
+                                onChange={(e) => {
+                                  const inputValue = e.target.value.replace(/[^0-9]/g, '');
+                                  const value = parseInt(inputValue) || 0;
+                                  onMaxChange(
+                                    processIndex,
+                                    resourceIndex,
+                                    Math.max(0, Math.min(999, value)),
+                                  );
+                                }}
+                                disabled={isDisabled}
+                                className="w-full h-10 px-3 text-center rounded-full bg-white text-gray-900 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                style={{
+                                  border: "1px solid var(--table-border)",
+                                  backgroundColor: "var(--input-bg, #ffffff)",
+                                  color: "var(--foreground)",
+                                  borderRadius: "9999px",
+                                }}
+                                placeholder="0"
+                              />
+                              <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200 hidden md:flex">
+                                <button
+                                  type="button"
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("max", processIndex, resourceIndex, true);
+                                  }}
+                                  onMouseUp={handleMouseUp}
+                                  onMouseLeave={handleMouseUp}
+                                  onTouchStart={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("max", processIndex, resourceIndex, true);
+                                  }}
+                                  onTouchEnd={handleMouseUp}
+                                  onTouchCancel={handleMouseUp}
+                                  disabled={isDisabled}
+                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
+                                  aria-label="Increment"
+                                >
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 15l-6-6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                </button>
+                                <button
+                                  type="button"
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("max", processIndex, resourceIndex, false);
+                                  }}
+                                  onMouseUp={handleMouseUp}
+                                  onMouseLeave={handleMouseUp}
+                                  onTouchStart={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("max", processIndex, resourceIndex, false);
+                                  }}
+                                  onTouchEnd={handleMouseUp}
+                                  onTouchCancel={handleMouseUp}
+                                  disabled={isDisabled}
+                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
+                                  aria-label="Decrement"
+                                >
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         ),
                       )}
@@ -209,7 +376,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
 
                   {/* Need section */}
                   <td className="px-4 py-6 text-center">
-                    <div className="flex space-x-3 justify-center">
+                    <div className="flex flex-wrap gap-3 justify-center max-w-[240px] mx-auto">
                       {Array.from(
                         { length: resourceCount },
                         (_, resourceIndex) => (
@@ -227,16 +394,19 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                               {resourceLabels[resourceIndex] ||
                                 `R${resourceIndex}`}
                             </div>
-                            {/* Read-only field */}
-                            <div
-                              className="w-12 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-700 text-sm"
-                              style={{
-                                backgroundColor: "var(--need-bg, #f9fafb)",
-                                color: "var(--text-secondary, #6b7280)",
-                                border: "1px solid var(--table-border)",
-                              }}
-                            >
-                              {need[processIndex][resourceIndex]}
+                            {/* Read-only field - same container as input fields */}
+                            <div className="relative group w-16">
+                              <div
+                                className="w-full h-10 px-3 flex items-center justify-center rounded-full text-gray-900 text-sm font-medium"
+                                style={{
+                                  backgroundColor: "var(--need-bg, #f9fafb)",
+                                  color: "var(--foreground)",
+                                  border: "1px solid var(--table-border)",
+                                  borderRadius: "9999px",
+                                }}
+                              >
+                                {need[processIndex][resourceIndex]}
+                              </div>
                             </div>
                           </div>
                         ),
@@ -246,13 +416,15 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
 
                   {/* Finish column */}
                   <td className="px-6 py-6 text-center">
-                    <AnimatedFinishBadge
-                      processIndex={processIndex}
-                      finalFinishState={finish[processIndex]}
-                      algorithmSteps={algorithmSteps}
-                      isCalculating={isCalculating}
-                      currentStepIndex={currentStepIndex}
-                    />
+                    <div className="flex justify-center">
+                      <AnimatedFinishBadge
+                        processIndex={processIndex}
+                        finalFinishState={finish[processIndex]}
+                        algorithmSteps={algorithmSteps}
+                        isCalculating={isCalculating}
+                        currentStepIndex={currentStepIndex}
+                      />
+                    </div>
                   </td>
                 </tr>
               );
