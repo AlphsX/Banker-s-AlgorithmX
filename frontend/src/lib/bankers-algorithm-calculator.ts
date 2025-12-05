@@ -286,6 +286,9 @@ export class BankersAlgorithmCalculator {
       newAvailable[i] -= requestVector[i];
     }
 
+    // Recalculate need matrix after temporary allocation
+    const newNeed = this.calculateNeedMatrix(max, newAllocation);
+
     requestSteps.push({
       stepNumber: 3,
       description: `Temporarily allocate resources:\nAvailable = (${available.join(
@@ -296,13 +299,14 @@ export class BankersAlgorithmCalculator {
         ", ",
       )}) + (${requestVector.join(", ")}) = (${newAllocation[processId].join(
         ", ",
+      )})\nNeed[P${processId}] = (${need[processId].join(
+        ", ",
+      )}) - (${requestVector.join(", ")}) = (${newNeed[processId].join(
+        ", ",
       )})`,
       workVector: cloneVector(newAvailable),
       isHighlighted: true,
     });
-
-    // Recalculate need matrix after temporary allocation
-    const newNeed = this.calculateNeedMatrix(max, newAllocation);
 
     // Step (4): Run Safety Algorithm to check if new state is safe
     const safetyResult = this.checkSafety(newAvailable, newAllocation, newNeed);
