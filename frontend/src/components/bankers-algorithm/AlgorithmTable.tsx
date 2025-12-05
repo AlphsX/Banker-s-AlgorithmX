@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useCallback } from "react";
 import { AlgorithmStep } from "@/types/bankers-algorithm";
 import { AnimatedFinishBadge } from "./AnimatedFinishBadge";
 
@@ -39,6 +39,74 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
 }) => {
   const resourceLabels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
   const isDisabled = isCalculating || isProcessingRequest;
+  
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const allocationRef = useRef(allocation);
+  const maxRef = useRef(max);
+
+  // Update refs when values change
+  React.useEffect(() => {
+    allocationRef.current = allocation;
+    maxRef.current = max;
+  }, [allocation, max]);
+
+  const clearTimers = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
+
+  // Cleanup on unmount
+  React.useEffect(() => {
+    return () => {
+      clearTimers();
+    };
+  }, [clearTimers]);
+
+  const handleMouseDown = useCallback(
+    (
+      type: "allocation" | "max",
+      processIdx: number,
+      resourceIdx: number,
+      increment: boolean
+    ) => {
+      if (isDisabled) return;
+
+      clearTimers();
+
+      const onChange = type === "allocation" ? onAllocationChange : onMaxChange;
+      const currentMatrix = type === "allocation" ? allocationRef : maxRef;
+
+      // Immediate action
+      const initialValue = currentMatrix.current[processIdx][resourceIdx];
+      const newValue = increment
+        ? Math.min(999, initialValue + 1)
+        : Math.max(0, initialValue - 1);
+      onChange(processIdx, resourceIdx, newValue);
+
+      // Start continuous increment/decrement after delay
+      timeoutRef.current = setTimeout(() => {
+        intervalRef.current = setInterval(() => {
+          const currentValue = currentMatrix.current[processIdx][resourceIdx];
+          const nextValue = increment
+            ? Math.min(999, currentValue + 1)
+            : Math.max(0, currentValue - 1);
+          onChange(processIdx, resourceIdx, nextValue);
+        }, 80);
+      }, 400);
+    },
+    [isDisabled, onAllocationChange, onMaxChange, clearTimers]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    clearTimers();
+  }, [clearTimers]);
 
   // Get the process being checked at the current step
   const currentProcessChecked =
@@ -154,9 +222,20 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                               <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200">
                                 <button
                                   type="button"
-                                  onClick={() => onAllocationChange(processIndex, resourceIndex, Math.min(999, allocation[processIndex][resourceIndex] + 1))}
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("allocation", processIndex, resourceIndex, true);
+                                  }}
+                                  onMouseUp={handleMouseUp}
+                                  onMouseLeave={handleMouseUp}
+                                  onTouchStart={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("allocation", processIndex, resourceIndex, true);
+                                  }}
+                                  onTouchEnd={handleMouseUp}
+                                  onTouchCancel={handleMouseUp}
                                   disabled={isDisabled}
-                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent"
+                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
                                   aria-label="Increment"
                                 >
                                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -165,9 +244,20 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                 </button>
                                 <button
                                   type="button"
-                                  onClick={() => onAllocationChange(processIndex, resourceIndex, Math.max(0, allocation[processIndex][resourceIndex] - 1))}
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("allocation", processIndex, resourceIndex, false);
+                                  }}
+                                  onMouseUp={handleMouseUp}
+                                  onMouseLeave={handleMouseUp}
+                                  onTouchStart={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("allocation", processIndex, resourceIndex, false);
+                                  }}
+                                  onTouchEnd={handleMouseUp}
+                                  onTouchCancel={handleMouseUp}
                                   disabled={isDisabled}
-                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent"
+                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
                                   aria-label="Decrement"
                                 >
                                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -229,9 +319,20 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                               <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200">
                                 <button
                                   type="button"
-                                  onClick={() => onMaxChange(processIndex, resourceIndex, Math.min(999, max[processIndex][resourceIndex] + 1))}
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("max", processIndex, resourceIndex, true);
+                                  }}
+                                  onMouseUp={handleMouseUp}
+                                  onMouseLeave={handleMouseUp}
+                                  onTouchStart={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("max", processIndex, resourceIndex, true);
+                                  }}
+                                  onTouchEnd={handleMouseUp}
+                                  onTouchCancel={handleMouseUp}
                                   disabled={isDisabled}
-                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent"
+                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
                                   aria-label="Increment"
                                 >
                                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -240,9 +341,20 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                 </button>
                                 <button
                                   type="button"
-                                  onClick={() => onMaxChange(processIndex, resourceIndex, Math.max(0, max[processIndex][resourceIndex] - 1))}
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("max", processIndex, resourceIndex, false);
+                                  }}
+                                  onMouseUp={handleMouseUp}
+                                  onMouseLeave={handleMouseUp}
+                                  onTouchStart={(e) => {
+                                    e.preventDefault();
+                                    handleMouseDown("max", processIndex, resourceIndex, false);
+                                  }}
+                                  onTouchEnd={handleMouseUp}
+                                  onTouchCancel={handleMouseUp}
                                   disabled={isDisabled}
-                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent"
+                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
                                   aria-label="Decrement"
                                 >
                                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

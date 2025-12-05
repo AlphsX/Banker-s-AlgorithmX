@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import { ResourceRequest } from "@/types/bankers-algorithm";
 
 interface RequestPanelProps {
@@ -75,6 +75,9 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const unmountTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const requestVectorRef = useRef(requestVector);
 
   // Close dropdown when clicking outside
   React.useEffect(() => {
@@ -141,6 +144,29 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
     }
   }, [processCount, selectedProcess]);
 
+  // Update ref when requestVector changes
+  React.useEffect(() => {
+    requestVectorRef.current = requestVector;
+  }, [requestVector]);
+
+  const clearTimers = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
+
+  // Cleanup on unmount
+  React.useEffect(() => {
+    return () => {
+      clearTimers();
+    };
+  }, [clearTimers]);
+
   // Reset request vector after successful request
   React.useEffect(() => {
     if (shouldResetAfterRequest) {
@@ -195,6 +221,39 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
     },
     [mountValidationErrors],
   );
+
+  const handleMouseDown = useCallback(
+    (idx: number, increment: boolean) => {
+      if (isDisabled) return;
+
+      // Clear any existing timers first
+      clearTimers();
+
+      // Immediate action on mouse down
+      const initialValue = requestVectorRef.current[idx];
+      const newValue = increment
+        ? initialValue + 1
+        : Math.max(0, initialValue - 1);
+      handleRequestVectorChange(idx, newValue.toString());
+
+      // Start continuous increment/decrement after delay
+      timeoutRef.current = setTimeout(() => {
+        intervalRef.current = setInterval(() => {
+          // Get the latest value from ref
+          const currentValue = requestVectorRef.current[idx];
+          const nextValue = increment
+            ? currentValue + 1
+            : Math.max(0, currentValue - 1);
+          handleRequestVectorChange(idx, nextValue.toString());
+        }, 80); // Repeat every 80ms for smoother experience
+      }, 400); // Start repeating after 400ms hold
+    },
+    [isDisabled, clearTimers, handleRequestVectorChange]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    clearTimers();
+  }, [clearTimers]);
 
   const validateRequest = useCallback((): string[] => {
     const errors: string[] = [];
@@ -439,12 +498,20 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
                   <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200">
                     <button
                       type="button"
-                      onClick={() => {
-                        const newValue = Math.min(999, value + 1);
-                        handleRequestVectorChange(index, newValue.toString());
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleMouseDown(index, true);
                       }}
+                      onMouseUp={handleMouseUp}
+                      onMouseLeave={handleMouseUp}
+                      onTouchStart={(e) => {
+                        e.preventDefault();
+                        handleMouseDown(index, true);
+                      }}
+                      onTouchEnd={handleMouseUp}
+                      onTouchCancel={handleMouseUp}
                       disabled={isDisabled}
-                      className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent"
+                      className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
                       aria-label="Increment"
                     >
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -453,12 +520,20 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
                     </button>
                     <button
                       type="button"
-                      onClick={() => {
-                        const newValue = Math.max(0, value - 1);
-                        handleRequestVectorChange(index, newValue.toString());
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        handleMouseDown(index, false);
                       }}
+                      onMouseUp={handleMouseUp}
+                      onMouseLeave={handleMouseUp}
+                      onTouchStart={(e) => {
+                        e.preventDefault();
+                        handleMouseDown(index, false);
+                      }}
+                      onTouchEnd={handleMouseUp}
+                      onTouchCancel={handleMouseUp}
                       disabled={isDisabled}
-                      className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent"
+                      className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
                       aria-label="Decrement"
                     >
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

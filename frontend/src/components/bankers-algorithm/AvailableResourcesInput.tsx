@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback } from "react";
 
 interface AvailableResourcesInputProps {
   available: number[];
@@ -17,6 +17,9 @@ export const AvailableResourcesInput: React.FC<
   AvailableResourcesInputProps
 > = ({ available, onAvailableChange, disabled = false }) => {
   const [errors, setErrors] = useState<ValidationError[]>([]);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const availableRef = useRef(available);
 
   const validateInput = (index: number, value: number): string | null => {
     if (isNaN(value)) {
@@ -65,6 +68,62 @@ export const AvailableResourcesInput: React.FC<
     const error = errors.find((error) => error.index === index);
     return error ? error.message : null;
   };
+
+  const clearTimers = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
+
+  const handleMouseDown = useCallback(
+    (idx: number, increment: boolean) => {
+      if (disabled) return;
+
+      // Clear any existing timers first
+      clearTimers();
+
+      // Immediate action on mouse down
+      const initialValue = availableRef.current[idx];
+      const newValue = increment
+        ? initialValue + 1
+        : Math.max(0, initialValue - 1);
+      onAvailableChange(idx, newValue);
+
+      // Start continuous increment/decrement after delay
+      timeoutRef.current = setTimeout(() => {
+        intervalRef.current = setInterval(() => {
+          // Get the latest value from ref
+          const currentValue = availableRef.current[idx];
+          const nextValue = increment
+            ? currentValue + 1
+            : Math.max(0, currentValue - 1);
+          onAvailableChange(idx, nextValue);
+        }, 80); // Repeat every 80ms for smoother experience
+      }, 400); // Start repeating after 400ms hold
+    },
+    [onAvailableChange, disabled, clearTimers]
+  );
+
+  const handleMouseUp = useCallback(() => {
+    clearTimers();
+  }, [clearTimers]);
+
+  // Update ref when available changes
+  React.useEffect(() => {
+    availableRef.current = available;
+  }, [available]);
+
+  // Cleanup on unmount
+  React.useEffect(() => {
+    return () => {
+      clearTimers();
+    };
+  }, [clearTimers]);
 
   return (
     <div className="space-y-2">
@@ -128,9 +187,20 @@ export const AvailableResourcesInput: React.FC<
                 <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200">
                   <button
                     type="button"
-                    onClick={() => onAvailableChange(index, value + 1)}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      handleMouseDown(index, true);
+                    }}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                    onTouchStart={(e) => {
+                      e.preventDefault();
+                      handleMouseDown(index, true);
+                    }}
+                    onTouchEnd={handleMouseUp}
+                    onTouchCancel={handleMouseUp}
                     disabled={disabled}
-                    className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent"
+                    className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
                     aria-label="Increment"
                   >
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -139,9 +209,20 @@ export const AvailableResourcesInput: React.FC<
                   </button>
                   <button
                     type="button"
-                    onClick={() => onAvailableChange(index, Math.max(0, value - 1))}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      handleMouseDown(index, false);
+                    }}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                    onTouchStart={(e) => {
+                      e.preventDefault();
+                      handleMouseDown(index, false);
+                    }}
+                    onTouchEnd={handleMouseUp}
+                    onTouchCancel={handleMouseUp}
                     disabled={disabled}
-                    className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent"
+                    className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
                     aria-label="Decrement"
                   >
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
