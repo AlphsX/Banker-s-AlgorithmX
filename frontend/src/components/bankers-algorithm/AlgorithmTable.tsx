@@ -127,30 +127,55 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                               {resourceLabels[resourceIndex] ||
                                 `R${resourceIndex}`}
                             </div>
-                            {/* Input field */}
-                            <input
-                              type="number"
-                              inputMode="numeric"
-                              min="0"
-                              max="999"
-                              value={allocation[processIndex][resourceIndex]}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value) || 0;
-                                onAllocationChange(
-                                  processIndex,
-                                  resourceIndex,
-                                  Math.max(0, value),
-                                );
-                              }}
-                              disabled={isDisabled}
-                              className="w-12 h-10 text-center rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                              style={{
-                                border: "1px solid var(--table-border)",
-                                backgroundColor: "var(--input-bg, #ffffff)",
-                                color: "var(--foreground)",
-                              }}
-                              placeholder="0"
-                            />
+                            {/* Input field with spinner */}
+                            <div className="relative group w-16">
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                value={allocation[processIndex][resourceIndex].toString()}
+                                onChange={(e) => {
+                                  const inputValue = e.target.value.replace(/[^0-9]/g, '');
+                                  const value = parseInt(inputValue) || 0;
+                                  onAllocationChange(
+                                    processIndex,
+                                    resourceIndex,
+                                    Math.max(0, Math.min(999, value)),
+                                  );
+                                }}
+                                disabled={isDisabled}
+                                className="w-full h-10 px-3 text-center rounded-full bg-white text-gray-900 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                style={{
+                                  border: "1px solid var(--table-border)",
+                                  backgroundColor: "var(--input-bg, #ffffff)",
+                                  color: "var(--foreground)",
+                                }}
+                                placeholder="0"
+                              />
+                              <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200">
+                                <button
+                                  type="button"
+                                  onClick={() => onAllocationChange(processIndex, resourceIndex, Math.min(999, allocation[processIndex][resourceIndex] + 1))}
+                                  disabled={isDisabled}
+                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent"
+                                  aria-label="Increment"
+                                >
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 15l-6-6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => onAllocationChange(processIndex, resourceIndex, Math.max(0, allocation[processIndex][resourceIndex] - 1))}
+                                  disabled={isDisabled}
+                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent"
+                                  aria-label="Decrement"
+                                >
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         ),
                       )}
@@ -177,30 +202,55 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                               {resourceLabels[resourceIndex] ||
                                 `R${resourceIndex}`}
                             </div>
-                            {/* Input field */}
-                            <input
-                              type="number"
-                              inputMode="numeric"
-                              min="0"
-                              max="999"
-                              value={max[processIndex][resourceIndex]}
-                              onChange={(e) => {
-                                const value = parseInt(e.target.value) || 0;
-                                onMaxChange(
-                                  processIndex,
-                                  resourceIndex,
-                                  Math.max(0, value),
-                                );
-                              }}
-                              disabled={isDisabled}
-                              className="w-12 h-10 text-center rounded-xl bg-white text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-                              style={{
-                                border: "1px solid var(--table-border)",
-                                backgroundColor: "var(--input-bg, #ffffff)",
-                                color: "var(--foreground)",
-                              }}
-                              placeholder="0"
-                            />
+                            {/* Input field with spinner */}
+                            <div className="relative group w-16">
+                              <input
+                                type="text"
+                                inputMode="numeric"
+                                value={max[processIndex][resourceIndex].toString()}
+                                onChange={(e) => {
+                                  const inputValue = e.target.value.replace(/[^0-9]/g, '');
+                                  const value = parseInt(inputValue) || 0;
+                                  onMaxChange(
+                                    processIndex,
+                                    resourceIndex,
+                                    Math.max(0, Math.min(999, value)),
+                                  );
+                                }}
+                                disabled={isDisabled}
+                                className="w-full h-10 px-3 text-center rounded-full bg-white text-gray-900 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                                style={{
+                                  border: "1px solid var(--table-border)",
+                                  backgroundColor: "var(--input-bg, #ffffff)",
+                                  color: "var(--foreground)",
+                                }}
+                                placeholder="0"
+                              />
+                              <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200">
+                                <button
+                                  type="button"
+                                  onClick={() => onMaxChange(processIndex, resourceIndex, Math.min(999, max[processIndex][resourceIndex] + 1))}
+                                  disabled={isDisabled}
+                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent"
+                                  aria-label="Increment"
+                                >
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 15l-6-6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => onMaxChange(processIndex, resourceIndex, Math.max(0, max[processIndex][resourceIndex] - 1))}
+                                  disabled={isDisabled}
+                                  className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent"
+                                  aria-label="Decrement"
+                                >
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         ),
                       )}
@@ -229,7 +279,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                             </div>
                             {/* Read-only field */}
                             <div
-                              className="w-12 h-10 flex items-center justify-center rounded-xl bg-gray-50 text-gray-700 text-sm"
+                              className="w-16 h-10 px-3 flex items-center justify-center rounded-full bg-gray-50 text-gray-700 text-sm font-medium"
                               style={{
                                 backgroundColor: "var(--need-bg, #f9fafb)",
                                 color: "var(--text-secondary, #6b7280)",

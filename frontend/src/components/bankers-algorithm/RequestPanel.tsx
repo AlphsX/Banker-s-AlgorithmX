@@ -417,25 +417,56 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
                 >
                   {resourceLabels[index] || `R${index}`}
                 </label>
-                <input
-                  id={`resource-${index}`}
-                  type="number"
-                  inputMode="numeric"
-                  min="0"
-                  max="999"
-                  value={value}
-                  onChange={(e) =>
-                    handleRequestVectorChange(index, e.target.value)
-                  }
-                  disabled={isDisabled}
-                  className="w-full h-10 px-3 text-center text-sm bg-white border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation font-medium"
-                  style={{
-                    backgroundColor: "var(--input-bg, #ffffff)",
-                    borderColor: "var(--input-border, #e1e1e1)",
-                    color: "var(--foreground)",
-                  }}
-                  placeholder="0"
-                />
+                <div className="relative group">
+                  <input
+                    id={`resource-${index}`}
+                    type="text"
+                    inputMode="numeric"
+                    value={value.toString()}
+                    onChange={(e) => {
+                      const inputValue = e.target.value.replace(/[^0-9]/g, '');
+                      handleRequestVectorChange(index, inputValue);
+                    }}
+                    disabled={isDisabled}
+                    className="w-full h-10 px-3 text-center text-sm bg-white border border-gray-300 rounded-full focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation font-medium"
+                    style={{
+                      backgroundColor: "var(--input-bg, #ffffff)",
+                      borderColor: "var(--input-border, #e1e1e1)",
+                      color: "var(--foreground)",
+                    }}
+                    placeholder="0"
+                  />
+                  <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newValue = Math.min(999, value + 1);
+                        handleRequestVectorChange(index, newValue.toString());
+                      }}
+                      disabled={isDisabled}
+                      className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent"
+                      aria-label="Increment"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 15l-6-6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newValue = Math.max(0, value - 1);
+                        handleRequestVectorChange(index, newValue.toString());
+                      }}
+                      disabled={isDisabled}
+                      className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent"
+                      aria-label="Decrement"
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
               </div>
             );
           })}
