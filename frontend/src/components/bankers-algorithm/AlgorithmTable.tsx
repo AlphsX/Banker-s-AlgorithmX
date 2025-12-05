@@ -216,10 +216,11 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                   border: "1px solid var(--table-border)",
                                   backgroundColor: "var(--input-bg, #ffffff)",
                                   color: "var(--foreground)",
+                                  borderRadius: "9999px",
                                 }}
                                 placeholder="0"
                               />
-                              <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200">
+                              <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200 hidden md:flex">
                                 <button
                                   type="button"
                                   onMouseDown={(e) => {
@@ -313,10 +314,11 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                   border: "1px solid var(--table-border)",
                                   backgroundColor: "var(--input-bg, #ffffff)",
                                   color: "var(--foreground)",
+                                  borderRadius: "9999px",
                                 }}
                                 placeholder="0"
                               />
-                              <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200">
+                              <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200 hidden md:flex">
                                 <button
                                   type="button"
                                   onMouseDown={(e) => {
@@ -396,6 +398,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                 backgroundColor: "var(--need-bg, #f9fafb)",
                                 color: "var(--text-secondary, #6b7280)",
                                 border: "1px solid var(--table-border)",
+                                borderRadius: "9999px",
                               }}
                             >
                               {need[processIndex][resourceIndex]}

@@ -180,11 +180,12 @@ export const AvailableResourcesInput: React.FC<
                       ? "#ef4444"
                       : "var(--input-border, #e1e1e1)",
                     color: "var(--foreground)",
+                    borderRadius: "9999px",
                   }}
                   aria-label={`Available resources for resource type ${index}`}
                   aria-describedby={error ? `error-${index}` : undefined}
                 />
-                <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200">
+                <div className="absolute right-0.5 top-1/2 -translate-y-1/2 flex-col opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200 hidden md:flex">
                   <button
                     type="button"
                     onMouseDown={(e) => {
