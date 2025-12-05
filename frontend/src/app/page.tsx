@@ -332,8 +332,11 @@ export default function BankersAlgorithmPage() {
       }> = [];
       let currentWork = [...algorithmState.available];
       let currentFinish = Array(algorithmState.processCount).fill(false);
-      let currentAllocation = algorithmState.allocation.map((row) => [...row]);
-      let currentNeed = algorithmState.need.map((row) => [...row]);
+      // For safety checks, allocation and need never change - they're just the current state
+      const constantAllocation = algorithmState.allocation.map((row) => [
+        ...row,
+      ]);
+      const constantNeed = algorithmState.need.map((row) => [...row]);
 
       safetyResult.steps.forEach((step) => {
         if (step.workVector && step.workVector.length > 0) {
@@ -349,8 +352,8 @@ export default function BankersAlgorithmPage() {
         states.push({
           work: [...currentWork],
           finish: [...currentFinish],
-          allocation: currentAllocation.map((row) => [...row]),
-          need: currentNeed.map((row) => [...row]),
+          allocation: constantAllocation.map((row) => [...row]),
+          need: constantNeed.map((row) => [...row]),
           // Don't include available - it should remain constant for safety checks
         });
       });
@@ -454,10 +457,10 @@ export default function BankersAlgorithmPage() {
         const stepState = stepStates[stepIndex];
         setAlgorithmState((prev) => ({
           ...prev,
-          // For request steps, update available if it's tracked; otherwise keep original
+          // For request steps, update available if it's tracked; otherwise use work vector
           available: stepState.available
             ? [...stepState.available]
-            : prev.available,
+            : [...stepState.work],
           allocation: stepState.allocation.map((row) => [...row]),
           need: stepState.need.map((row) => [...row]),
           finish: [...stepState.finish],
@@ -533,12 +536,12 @@ export default function BankersAlgorithmPage() {
           let currentFinish = Array(requestResult.newState.processCount).fill(
             false,
           );
-          let currentAllocation = requestResult.newState.allocation.map(
-            (row) => [...row],
-          );
-          let currentNeed = requestResult.newState.need.map((row) => [...row]);
+          // Start with original state before allocation
+          let currentAllocation = algorithmState.allocation.map((row) => [
+            ...row,
+          ]);
+          let currentNeed = algorithmState.need.map((row) => [...row]);
           let currentAvailable = [...algorithmState.available]; // Start with original available
-          let allocationHappened = false;
 
           enhancedSteps.forEach((step, index) => {
             // Check if this step is where allocation happens (step 3 in request process)
@@ -546,8 +549,8 @@ export default function BankersAlgorithmPage() {
               step.description.includes("Temporarily allocate resources") &&
               requestResult.newState
             ) {
-              allocationHappened = true;
-              currentAvailable = [...requestResult.newState.available]; // Update to new available after allocation
+              // Update to new state after allocation
+              currentAvailable = [...requestResult.newState.available];
               currentAllocation = requestResult.newState.allocation.map(
                 (row) => [...row],
               );
@@ -671,11 +674,26 @@ export default function BankersAlgorithmPage() {
                 // Extract the new available from the description or calculate it
                 // For denied requests, we simulate what would have happened
                 const requestVector = request.requestVector;
+                const processId = request.processId;
+
+                // Update available (subtract request)
                 currentAvailable = algorithmState.available.map(
                   (val, idx) => val - requestVector[idx],
                 );
-                // Note: For denied requests, allocation/need don't actually change in the real state
-                // but we show what the simulation tried
+
+                // Update allocation (add request to process)
+                currentAllocation = algorithmState.allocation.map((row, pIdx) =>
+                  pIdx === processId
+                    ? row.map((val, rIdx) => val + requestVector[rIdx])
+                    : [...row],
+                );
+
+                // Update need (subtract request from process)
+                currentNeed = algorithmState.need.map((row, pIdx) =>
+                  pIdx === processId
+                    ? row.map((val, rIdx) => val - requestVector[rIdx])
+                    : [...row],
+                );
               }
 
               if (step.workVector && step.workVector.length > 0) {
