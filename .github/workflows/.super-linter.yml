@@ -26,17 +26,13 @@ jobs:
           # DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FILTER_REGEX_EXCLUDE: "(node_modules|.next|out|build)/.*"
-          VALIDATE_BIOME_FORMAT: true
-          VALIDATE_BIOME_LINT: true
-          VALIDATE_CSS: true
-          VALIDATE_CSS_PRETTIER: true
-          VALIDATE_GITHUB_ACTIONS_ZIZMOR: true
-          VALIDATE_JSCPD: true
-          VALIDATE_MARKDOWN: true
-          VALIDATE_MARKDOWN_PRETTIER: true
-          VALIDATE_NATURAL_LANGUAGE: true
-          # Disabled: Next.js handles TypeScript/TSX linting during build
+          # Run all available linters except the ones explicitly disabled below
+          VALIDATE_ALL_CODEBASE: true
+          # Disable TypeScript/TSX linting - Next.js handles these during build
           VALIDATE_TSX: false
           VALIDATE_TYPESCRIPT_ES: false
-          VALIDATE_TYPESCRIPT_PRETTIER: true
-          VALIDATE_YAML_PRETTIER: true
+          VALIDATE_TYPESCRIPT_STANDARD: false
+          # Disable JavaScript linting - handled by Next.js ESLint
+          VALIDATE_JAVASCRIPT_ES: false
+          VALIDATE_JAVASCRIPT_STANDARD: false
+          VALIDATE_JSX: false
