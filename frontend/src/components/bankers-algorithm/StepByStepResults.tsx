@@ -34,6 +34,8 @@ export function StepByStepResults({
   const [showCompletionDot, setShowCompletionDot] = useState(false);
   const [elapsedTime, setElapsedTime] = useState<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
+  const lastStepsLengthRef = useRef<number>(0);
+  const animationRunningRef = useRef<boolean>(false);
 
   // Keyboard navigation for steps
   useEffect(() => {
@@ -79,6 +81,8 @@ export function StepByStepResults({
     setShowCompletionDot(false);
     setElapsedTime(null);
     startTimeRef.current = null;
+    lastStepsLengthRef.current = 0;
+    animationRunningRef.current = false;
   }, []);
 
   // Reset and start timing when calculation begins
@@ -94,7 +98,16 @@ export function StepByStepResults({
 
   // Start animation when calculation completes and steps are available
   useEffect(() => {
-    if (steps.length > 0 && !isCalculating && !isProcessingRequest) {
+    // Only run animation if steps changed and not already running
+    if (
+      steps.length > 0 &&
+      !isCalculating &&
+      !isProcessingRequest &&
+      steps.length !== lastStepsLengthRef.current &&
+      !animationRunningRef.current
+    ) {
+      lastStepsLengthRef.current = steps.length;
+      animationRunningRef.current = true;
       setVisibleSteps(0);
       setAnimationComplete(false);
 
@@ -122,6 +135,7 @@ export function StepByStepResults({
           setElapsedTime(finalTime);
         }
         setShowCompletionDot(true);
+        animationRunningRef.current = false;
       };
 
       animateSteps();
@@ -129,7 +143,8 @@ export function StepByStepResults({
       // Reset everything when no steps and not calculating
       resetStates();
     }
-  }, [steps, isCalculating, isProcessingRequest, resetStates]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [steps.length, isCalculating, isProcessingRequest]);
 
   // Don't render if no steps or still calculating
   if (steps.length === 0 && !isCalculating && !isProcessingRequest) {

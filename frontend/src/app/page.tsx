@@ -682,10 +682,11 @@ export default function BankersAlgorithmPage() {
                 );
 
                 // Update allocation (add request to process)
-                currentAllocation = algorithmState.allocation.map((row, pIdx) =>
-                  pIdx === processId
-                    ? row.map((val, rIdx) => val + requestVector[rIdx])
-                    : [...row],
+                currentAllocation = algorithmState.allocation.map(
+                  (row, pIdx) =>
+                    pIdx === processId
+                      ? row.map((val, rIdx) => val + requestVector[rIdx])
+                      : [...row],
                 );
 
                 // Update need (subtract request from process)
@@ -1049,8 +1050,8 @@ export default function BankersAlgorithmPage() {
           {/* Top Bar - Clean and minimal */}
           <header
             className="bg-white"
-            style={{ 
-              backgroundColor: "var(--page-bg)"
+            style={{
+              backgroundColor: "var(--page-bg)",
             }}
           >
             <div className="px-6 py-4">
