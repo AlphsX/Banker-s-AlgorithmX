@@ -26,6 +26,13 @@ const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
     return () => clearTimeout(timer);
   }, []);
 
+  const handleDismiss = useCallback(() => {
+    setIsExiting(true);
+    setTimeout(() => {
+      onDismiss(toast.id);
+    }, 300);
+  }, [toast.id, onDismiss]);
+
   useEffect(() => {
     // Auto dismiss after duration
     if (toast.duration && toast.duration > 0) {
@@ -34,14 +41,7 @@ const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
       }, toast.duration);
       return () => clearTimeout(timer);
     }
-  }, [toast.duration]);
-
-  const handleDismiss = useCallback(() => {
-    setIsExiting(true);
-    setTimeout(() => {
-      onDismiss(toast.id);
-    }, 300);
-  }, [toast.id, onDismiss]);
+  }, [toast.duration, handleDismiss]);
 
   const Icon = toast.type === "success" ? CheckCircle : XCircle;
   const bgColor =
