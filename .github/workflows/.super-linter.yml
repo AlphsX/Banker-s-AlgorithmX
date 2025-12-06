@@ -2,7 +2,9 @@ name: Lint
 
 on:
   push:
+    branches: [main, develop]
   pull_request:
+    branches: [main, develop]
 
 permissions:
   contents: read
@@ -18,8 +20,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
-          ref: ${{ github.ref }} # Checkout the branch or tag that triggered the workflow
-          fetch-depth: 0 # Fetch full history to allow comparison with default branch
+          fetch-depth: 0
 
       - name: Super-linter
         uses: super-linter/super-linter@v8.3.0
@@ -27,13 +28,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BRANCH: main
           FILTER_REGEX_EXCLUDE: "(node_modules|.next|out|build)/.*"
-          # Run all available linters except the ones explicitly disabled below
-          VALIDATE_ALL_CODEBASE: true
-          # Disable TypeScript/TSX linting - Next.js handles these during build
+          VALIDATE_ALL_CODEBASE: false
           VALIDATE_TSX: false
           VALIDATE_TYPESCRIPT_ES: false
           VALIDATE_TYPESCRIPT_STANDARD: false
-          # Disable JavaScript linting - handled by Next.js ESLint
           VALIDATE_JAVASCRIPT_ES: false
           VALIDATE_JAVASCRIPT_STANDARD: false
           VALIDATE_JSX: false

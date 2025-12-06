@@ -1,4 +1,5 @@
 export { SystemControls } from "./SystemControls";
+export { CountControl } from "./CountControl";
 export { ProcessControl } from "./ProcessControl";
 export { ResourceControl } from "./ResourceControl";
 export { AvailableResourcesInput } from "./AvailableResourcesInput";

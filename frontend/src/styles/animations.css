@@ -740,8 +740,9 @@
 
 .ease-out-quint {
   transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
-} /* Inpu
-t Focus and Typing Animations */
+}
+
+/* Input Focus and Typing Animations */
 @keyframes inputFocusGlow {
   0% {
     box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
@@ -808,8 +809,9 @@ t Focus and Typing Animations */
 
 .input-typing-active {
   animation: inputTypingPulse 1.5s ease-in-out infinite;
-} /* B
-anker's Algorithm Finish Badge Animations */
+}
+
+/* Banker's Algorithm Finish Badge Animations */
 @keyframes finishBadgeBounce {
   0% {
     transform: scale(1);
