@@ -4,7 +4,7 @@
 
 **The interactive, production-ready implementation of Dijkstra's deadlock avoidance algorithm.**
 
-*Built with modern web technologies for educational and research purposes*
+_Built with modern web technologies for educational and research purposes_
 
 [![Next.js](https://img.shields.io/badge/Next.js-16+-black?logo=next.js&logoColor=white)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -19,11 +19,11 @@
 ---
 
 > **Note**
-> 
+>
 > #### Production-Ready Banker's Algorithm Implementation
-> 
+>
 > This is a comprehensive, interactive implementation of Dijkstra's Banker's Algorithm for deadlock avoidance in operating systems. Built with modern web technologies, it provides real-time visualization, step-by-step algorithm execution, and comprehensive testing capabilities.
-> 
+>
 > **Perfect for:** Computer Science education, operating systems courses, research demonstrations, and understanding resource allocation in concurrent systems.
 
 ---
@@ -38,12 +38,11 @@ const calculator = new BankersAlgorithmCalculator();
 const safetyResult = calculator.checkSafety(available, allocation, need);
 
 if (safetyResult.isSafe) {
-  console.log(`Safe sequence: ${safetyResult.safeSequence.join(' → ')}`);
+  console.log(`Safe sequence: ${safetyResult.safeSequence.join(" → ")}`);
 } else {
-  console.log('System is in unsafe state - potential deadlock!');
+  console.log("System is in unsafe state - potential deadlock!");
 }
 ```
-
 
 ## 📋 Table of Contents
 
@@ -90,13 +89,13 @@ This simulator handles all the complex algorithmic details while providing an in
 🧪 **Tested**: 31+ test cases covering edge cases and classical examples  
 💻 **Modern**: Built with Next.js 16, TypeScript 5, and React 19  
 📱 **Responsive**: Works seamlessly on desktop, tablet, and mobile devices  
-🎨 **Beautiful UI**: Dark/light mode with smooth animations using Framer Motion   
+🎨 **Beautiful UI**: Dark/light mode with smooth animations using Framer Motion  
 ⌨️ **Keyboard Shortcuts**: Efficient navigation and control for power users
-
 
 ## Features
 
 ### Core Algorithm Implementation
+
 - **Safety Algorithm**: Complete implementation of Dijkstra's safety checking algorithm
 - **Resource Request Processing**: Handles resource allocation requests with full validation
 - **Step-by-Step Visualization**: Shows each algorithm step with detailed explanations
@@ -105,6 +104,7 @@ This simulator handles all the complex algorithmic details while providing an in
 - **System Validation**: Comprehensive validation of all system constraints
 
 ### Interactive Interface
+
 - 🎯 **Real-time Matrix Editing**: Modify allocation, maximum, and available resources
 - 🔄 **Dynamic System Sizing**: Adjust number of processes and resources on the fly
 - 📊 **Request Simulation**: Submit resource requests and see immediate results
@@ -113,6 +113,7 @@ This simulator handles all the complex algorithmic details while providing an in
 - 🌓 **Dark/Light Mode**: Automatic theme switching with system preference detection
 
 ### Educational Tools
+
 - 📖 **Algorithm Steps**: Detailed breakdown of each algorithm iteration
 - 🔢 **Step Numbering**: Clear step numbers (1-4) matching textbook algorithms
 - ✅ **Safety Sequence Display**: Clear visualization of safe execution order
@@ -121,6 +122,7 @@ This simulator handles all the complex algorithmic details while providing an in
 - 🎓 **Detailed Documentation**: Complete algorithm explanation in [REPORT.md](REPORT.md)
 
 ### Advanced Features
+
 - ⌨️ **Keyboard Shortcuts**: Efficient navigation (Cmd/Ctrl+[, Cmd/Ctrl+D, Shift+Enter)
 - 🔔 **Toast Notifications**: Beautiful animated notifications for all actions
 - 💾 **State Persistence**: Maintains system state during navigation
@@ -158,7 +160,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 3. **Modify Values**: Click any cell in the matrices to edit
 4. **Submit Request**: Use the request panel to test resource allocation
 5. **View Steps**: Scroll down to see detailed algorithm execution
-
 
 ## Usage
 
@@ -207,6 +208,7 @@ Step 4: All processes finished [PASS] Safe Sequence: P0 → P1
 4. View the detailed validation and safety check
 
 Example request:
+
 ```typescript
 Process: P0
 Request: [1, 0, 0]  // P0 requests 1 unit of resource A
@@ -221,6 +223,7 @@ Validation:
 ### Adjusting System Size
 
 Use the controls in the sidebar to:
+
 - **Process Count**: 1-10 processes
 - **Resource Count**: 1-10 resource types
 - **Available Resources**: Set available units for each resource type
@@ -231,7 +234,6 @@ Use the controls in the sidebar to:
 - **Logo Click**: Reloads the default safe example
 - **Keyboard**: Press `Cmd/Ctrl+N` to reset
 
-
 ## Core Components
 
 ### The `BankersAlgorithmCalculator`
@@ -239,7 +241,7 @@ Use the controls in the sidebar to:
 The central class implementing Dijkstra's algorithm with comprehensive validation and step tracking.
 
 ```typescript
-import { BankersAlgorithmCalculator } from '@/lib/bankers-algorithm-calculator';
+import { BankersAlgorithmCalculator } from "@/lib/bankers-algorithm-calculator";
 
 const calculator = new BankersAlgorithmCalculator();
 
@@ -307,7 +309,7 @@ import {
   cloneMatrix,
   validateMatrixValues,
   validateAllocationConstraints,
-} from '@/utils/matrix-utils';
+} from "@/utils/matrix-utils";
 
 // Calculate Need = Max - Allocation
 const need = calculateNeedMatrix(max, allocation);
@@ -321,7 +323,6 @@ const newWork = addVectors(work, allocation[i]);
 // Validate matrix constraints
 const errors = validateAllocationConstraints(allocation, max);
 ```
-
 
 ## Algorithm Implementation
 
@@ -341,6 +342,7 @@ checkSafety(available: number[], allocation: number[][], need: number[][]): Safe
 ```
 
 **Implementation Details:**
+
 - Uses work vector to simulate available resources
 - Iterates through processes to find those that can complete
 - Simulates resource release when process completes
@@ -363,6 +365,7 @@ processRequest(request: ResourceRequest, currentState: BankersAlgorithmState): R
 ```
 
 **Implementation Details:**
+
 - Validates request against declared maximum needs
 - Checks resource availability
 - Simulates allocation without committing changes
@@ -387,18 +390,18 @@ validateMatrixValues(matrix: number[][]): ValidationError[]
 validateAllocationConstraints(allocation: number[][], max: number[][]): ValidationError[]
 ```
 
-
 ## Keyboard Shortcuts
 
 Power user features for efficient navigation and control:
 
-| Shortcut | Action | Description |
-|----------|--------|-------------|
-| `Cmd/Ctrl + [` | Toggle Sidebar | Show/hide the control sidebar |
-| `Cmd/Ctrl + D` | Toggle Theme | Switch between dark and light mode |
-| `Shift + Enter` | Check Safety | Run the safety algorithm |
+| Shortcut        | Action         | Description                        |
+| --------------- | -------------- | ---------------------------------- |
+| `Cmd/Ctrl + [`  | Toggle Sidebar | Show/hide the control sidebar      |
+| `Cmd/Ctrl + D`  | Toggle Theme   | Switch between dark and light mode |
+| `Shift + Enter` | Check Safety   | Run the safety algorithm           |
 
 **Platform-specific:**
+
 - Mac: Use `Cmd` key
 - Windows/Linux: Use `Ctrl` key
 
@@ -423,29 +426,34 @@ npm test -- --testPathPattern=bankers-algorithm
 ### Test Categories
 
 **Safety Algorithm Tests (6 tests)**
+
 - Classical textbook examples
 - Safe state identification
 - Unsafe state detection
 - Detailed step tracking
 
 **Resource Request Tests (9 tests)**
+
 - Request validation
 - Availability checking
 - Safety verification
 - Grant/deny logic
 
 **Process Completion Tests (3 tests)**
+
 - Resource release simulation
 - State updates
 - Completion validation
 
 **System Validation Tests (4 tests)**
+
 - Matrix dimension validation
 - Value range checking
 - Constraint validation
 - Error reporting
 
 **Additional Tests (9 tests)**
+
 - System snapshots and statistics
 - Algorithm step numbering
 - Safe sequence finding
@@ -458,11 +466,11 @@ npm run test:coverage
 ```
 
 Expected coverage:
+
 - Statements: >95%
 - Branches: >90%
 - Functions: >95%
 - Lines: >95%
-
 
 ## Architecture
 
@@ -521,17 +529,17 @@ bankers-algorithm-simulator/
 
 ### Key Technologies
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **Next.js** | 16.0+ | React framework with app router |
-| **React** | 19.1 | UI library |
-| **TypeScript** | 5+ | Type-safe development |
-| **Tailwind CSS** | 3.4+ | Utility-first styling |
-| **Framer Motion** | 12+ | Smooth animations |
-| **Jest** | 30+ | Testing framework |
-| **React Testing Library** | 16+ | Component testing |
-| **Zustand** | 5+ | State management |
-| **Lucide React** | Latest | Icon library |
+| Technology                | Version | Purpose                         |
+| ------------------------- | ------- | ------------------------------- |
+| **Next.js**               | 16.0+   | React framework with app router |
+| **React**                 | 19.1    | UI library                      |
+| **TypeScript**            | 5+      | Type-safe development           |
+| **Tailwind CSS**          | 3.4+    | Utility-first styling           |
+| **Framer Motion**         | 12+     | Smooth animations               |
+| **Jest**                  | 30+     | Testing framework               |
+| **React Testing Library** | 16+     | Component testing               |
+| **Zustand**               | 5+      | State management                |
+| **Lucide React**          | Latest  | Icon library                    |
 
 ### Design Patterns
 
@@ -540,7 +548,6 @@ bankers-algorithm-simulator/
 - **Type Safety**: Comprehensive TypeScript types
 - **Separation of Concerns**: Clear separation between UI and logic
 - **Test-Driven Development**: Tests written alongside features
-
 
 ## Deployment
 
@@ -553,6 +560,7 @@ npm run dev
 ```
 
 Starts the development server at `http://localhost:3000` with:
+
 - Hot module replacement
 - Fast refresh
 - TypeScript checking
@@ -569,6 +577,7 @@ npm start
 ```
 
 The build process:
+
 - Optimizes and minifies code
 - Generates static assets
 - Creates production-ready bundle
@@ -617,6 +626,7 @@ CMD ["node", "server.js"]
 ```
 
 Build and run:
+
 ```bash
 docker build -t bankers-algorithm .
 docker run -p 3000:3000 bankers-algorithm
@@ -634,7 +644,6 @@ NEXT_PUBLIC_GA_ID=your-ga-id
 NEXT_PUBLIC_SENTRY_DSN=your-sentry-dsn
 ```
 
-
 ## Contributing
 
 Contributions are welcome! This project follows standard open-source practices.
@@ -642,6 +651,7 @@ Contributions are welcome! This project follows standard open-source practices.
 ### Development Workflow
 
 1. **Fork the Repository**
+
    ```bash
    # Fork on GitHub, then clone your fork
    git clone https://github.com/yourusername/bankers-algorithm-simulator.git
@@ -649,11 +659,13 @@ Contributions are welcome! This project follows standard open-source practices.
    ```
 
 2. **Create a Branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
 3. **Install Dependencies**
+
    ```bash
    npm install
    ```
@@ -665,18 +677,20 @@ Contributions are welcome! This project follows standard open-source practices.
    - Update documentation as needed
 
 5. **Test Your Changes**
+
    ```bash
    # Run tests
    npm test
-   
+
    # Check linting
    npm run lint
-   
+
    # Build to verify
    npm run build
    ```
 
 6. **Commit and Push**
+
    ```bash
    git add .
    git commit -m "feat: add your feature description"
@@ -692,24 +706,28 @@ Contributions are welcome! This project follows standard open-source practices.
 ### Code Standards
 
 **TypeScript**
+
 - Use strict type checking
 - Avoid `any` types
 - Document complex types
 - Use interfaces for objects
 
 **React Components**
+
 - Use functional components
 - Implement proper prop types
 - Use hooks appropriately
 - Keep components focused
 
 **Testing**
+
 - Write tests for new features
 - Maintain >90% coverage
 - Test edge cases
 - Use descriptive test names
 
 **Documentation**
+
 - Update README for new features
 - Add JSDoc comments
 - Include usage examples
@@ -739,7 +757,6 @@ chore: maintenance tasks
 - ♿ **Accessibility**: Improve accessibility
 - 🌐 **i18n**: Add internationalization
 - ⚡ **Performance**: Optimize performance
-
 
 ## Algorithm Background
 
@@ -789,7 +806,6 @@ The Banker's Algorithm was developed by **Edsger Dijkstra** in 1965 as part of h
 - Tanenbaum, A. S. (2014). "Modern Operating Systems"
 - [GeeksforGeeks: Banker's Algorithm](https://www.geeksforgeeks.org/bankers-algorithm-in-operating-system-2/)
 
-
 ## Developer Information
 
 ### Project Maintainer
@@ -799,6 +815,7 @@ The Banker's Algorithm was developed by **Edsger Dijkstra** in 1965 as part of h
 #### Technical Expertise
 
 **Core Competencies:**
+
 - 🎓 Operating Systems & Concurrent Programming
 - 🧮 Algorithm Design & Analysis
 - 💻 Modern Web Technologies (React, Next.js, TypeScript)
@@ -807,6 +824,7 @@ The Banker's Algorithm was developed by **Edsger Dijkstra** in 1965 as part of h
 - 🏗️ System Architecture & Design Patterns
 
 **Technology Stack:**
+
 - **Frontend**: React 19, Next.js 16, TypeScript 5, Tailwind CSS
 - **State Management**: Zustand, React Hooks
 - **Animation**: Framer Motion, CSS Animations
@@ -815,6 +833,7 @@ The Banker's Algorithm was developed by **Edsger Dijkstra** in 1965 as part of h
 - **Development**: ESLint, Prettier, Git
 
 **Specializations:**
+
 - Deadlock avoidance algorithms and resource allocation
 - Interactive algorithm visualization
 - Real-time system simulation
@@ -859,6 +878,7 @@ Committed to creating high-quality educational tools that bridge the gap between
 ### Acknowledgments
 
 Special thanks to:
+
 - **Edsger Dijkstra** for the original algorithm
 - **Operating Systems community** for educational resources
 - **Open source contributors** for inspiration and tools

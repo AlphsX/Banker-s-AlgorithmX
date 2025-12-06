@@ -17,11 +17,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-        with: 
+        with:
           ref: ${{ github.ref }} # Checkout the branch or tag that triggered the workflow
 
       - name: Super-linter
-        uses: super-linter/super-linter@v8.3.0 
+        uses: super-linter/super-linter@v8.3.0
         env:
-          # DEFAULT_BRANCH: main 
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          # DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_BIOME_FORMAT: true
+          VALIDATE_BIOME_LINT: true
+          VALIDATE_CSS: true
+          VALIDATE_CSS_PRETTIER: true
+          VALIDATE_GITHUB_ACTIONS_ZIZMOR: true
+          VALIDATE_JSCPD: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_MARKDOWN_PRETTIER: true
+          VALIDATE_NATURAL_LANGUAGE: true
+          VALIDATE_TSX: true
+          VALIDATE_TYPESCRIPT_ES: true
+          VALIDATE_TYPESCRIPT_PRETTIER: true
+          VALIDATE_YAML_PRETTIER: true

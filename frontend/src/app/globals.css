@@ -1783,7 +1783,7 @@ Swipe gesture animations */
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--gray-300)) transparent;
   }
-  
+
   .dark .overflow-x-auto {
     scrollbar-color: hsl(var(--gray-700)) transparent;
   }
