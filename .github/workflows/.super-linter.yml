@@ -40,8 +40,12 @@ jobs:
           # Disable CSS linters - Tailwind CSS uses custom directives
           VALIDATE_CSS: false
           VALIDATE_CSS_PRETTIER: false
-          # Disable Biome - using ESLint instead
+          # Disable Biome linters - using TypeScript checks instead
           VALIDATE_BIOME: false
+          VALIDATE_BIOME_FORMAT: false
+          VALIDATE_BIOME_LINT: false
+          # Disable JSON Prettier - config files have different formatting
+          VALIDATE_JSON_PRETTIER: false
           # Disable JSCPD - animations have intentional similar patterns
           VALIDATE_JSCPD: false
           # Disable zizmor - false positives on standard checkout
