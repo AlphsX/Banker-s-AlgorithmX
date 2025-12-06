@@ -21,17 +21,28 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Super-linter
         uses: super-linter/super-linter@v8.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BRANCH: main
-          FILTER_REGEX_EXCLUDE: "(node_modules|.next|out|build)/.*"
+          FILTER_REGEX_EXCLUDE: "(node_modules|.next|out|build|.swc|coverage)/.*"
           VALIDATE_ALL_CODEBASE: false
+          # Disable TypeScript/JavaScript linters - using next lint instead
           VALIDATE_TSX: false
           VALIDATE_TYPESCRIPT_ES: false
           VALIDATE_TYPESCRIPT_STANDARD: false
           VALIDATE_JAVASCRIPT_ES: false
           VALIDATE_JAVASCRIPT_STANDARD: false
           VALIDATE_JSX: false
+          # Disable CSS linters - Tailwind CSS uses custom directives
+          VALIDATE_CSS: false
+          VALIDATE_CSS_PRETTIER: false
+          # Disable Biome - using ESLint instead
+          VALIDATE_BIOME: false
+          # Disable JSCPD - animations have intentional similar patterns
+          VALIDATE_JSCPD: false
+          # Disable zizmor - false positives on standard checkout
+          VALIDATE_GITHUB_ACTIONS_ZIZMOR: false
