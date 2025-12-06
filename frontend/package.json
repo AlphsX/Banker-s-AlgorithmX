@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --ext .ts,.tsx --fix",
+    "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
@@ -42,7 +42,7 @@
     "@typescript-eslint/eslint-plugin": "^8.48.1",
     "@typescript-eslint/parser": "^8.48.1",
     "autoprefixer": "^10.4.21",
-    "eslint": "^8.57.1",
+    "eslint": "^9.39.0",
     "eslint-config-next": "^16.0.7",
     "eslint-plugin-react": "^7.37.5",
     "jest": "^30.2.0",
