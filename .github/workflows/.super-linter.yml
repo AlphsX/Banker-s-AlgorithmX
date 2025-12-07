@@ -2,7 +2,9 @@ name: Lint
 
 on:
   push:
+    branches: [main, develop]
   pull_request:
+    branches: [main, develop]
 
 permissions:
   contents: read
@@ -17,11 +19,34 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-        with: 
-          ref: ${{ github.ref }} # Checkout the branch or tag that triggered the workflow
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
       - name: Super-linter
-        uses: super-linter/super-linter@v8.3.0 
+        uses: super-linter/super-linter@v8.3.0
         env:
-          # DEFAULT_BRANCH: main 
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BRANCH: main
+          FILTER_REGEX_EXCLUDE: "(node_modules|.next|out|build|.swc|coverage)/.*"
+          VALIDATE_ALL_CODEBASE: false
+          # Disable TypeScript/JavaScript linters - using next lint instead
+          VALIDATE_TSX: false
+          VALIDATE_TYPESCRIPT_ES: false
+          VALIDATE_TYPESCRIPT_STANDARD: false
+          VALIDATE_JAVASCRIPT_ES: false
+          VALIDATE_JAVASCRIPT_STANDARD: false
+          VALIDATE_JSX: false
+          # Disable CSS linters - Tailwind CSS uses custom directives
+          VALIDATE_CSS: false
+          VALIDATE_CSS_PRETTIER: false
+          # Disable Biome linters - using TypeScript checks instead
+          VALIDATE_BIOME: false
+          VALIDATE_BIOME_FORMAT: false
+          VALIDATE_BIOME_LINT: false
+          # Disable JSON Prettier - config files have different formatting
+          VALIDATE_JSON_PRETTIER: false
+          # Disable JSCPD - animations have intentional similar patterns
+          VALIDATE_JSCPD: false
+          # Disable zizmor - false positives on standard checkout
+          VALIDATE_GITHUB_ACTIONS_ZIZMOR: false

@@ -301,9 +301,7 @@ export class BankersAlgorithmCalculator {
         ", ",
       )})\nNeed[P${processId}] = (${need[processId].join(
         ", ",
-      )}) - (${requestVector.join(", ")}) = (${newNeed[processId].join(
-        ", ",
-      )})`,
+      )}) - (${requestVector.join(", ")}) = (${newNeed[processId].join(", ")})`,
       workVector: cloneVector(newAvailable),
       isHighlighted: true,
     });

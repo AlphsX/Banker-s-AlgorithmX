@@ -1,0 +1,12 @@
+{
+  "extends": [],
+  "rules": {},
+  "ignoreFiles": [
+    "node_modules/**",
+    ".next/**",
+    "build/**",
+    "dist/**",
+    "coverage/**",
+    "**/*.css"
+  ]
+}

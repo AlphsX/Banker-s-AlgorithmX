@@ -106,7 +106,7 @@ export const AvailableResourcesInput: React.FC<
         }, 80); // Repeat every 80ms for smoother experience
       }, 400); // Start repeating after 400ms hold
     },
-    [onAvailableChange, disabled, clearTimers]
+    [onAvailableChange, disabled, clearTimers],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -162,7 +162,7 @@ export const AvailableResourcesInput: React.FC<
                   value={value.toString()}
                   onChange={(e) => {
                     e.stopPropagation();
-                    const inputValue = e.target.value.replace(/[^0-9]/g, '');
+                    const inputValue = e.target.value.replace(/[^0-9]/g, "");
                     handleInputChange(index, inputValue);
                   }}
                   onBlur={(e) => {
@@ -204,8 +204,20 @@ export const AvailableResourcesInput: React.FC<
                     className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
                     aria-label="Increment"
                   >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M18 15l-6-6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M18 15l-6-6-6 6"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   </button>
                   <button
@@ -226,8 +238,20 @@ export const AvailableResourcesInput: React.FC<
                     className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
                     aria-label="Decrement"
                   >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M6 9l6 6 6-6"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   </button>
                 </div>

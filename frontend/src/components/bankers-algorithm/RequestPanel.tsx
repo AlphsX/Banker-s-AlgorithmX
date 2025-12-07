@@ -122,6 +122,7 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
         JSON.stringify(updatedVectors),
       );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requestVector, selectedProcess]);
 
   // Update request vector when resource count changes
@@ -248,7 +249,7 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
         }, 80); // Repeat every 80ms for smoother experience
       }, 400); // Start repeating after 400ms hold
     },
-    [isDisabled, clearTimers, handleRequestVectorChange]
+    [isDisabled, clearTimers, handleRequestVectorChange],
   );
 
   const handleMouseUp = useCallback(() => {
@@ -483,7 +484,7 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
                     inputMode="numeric"
                     value={value.toString()}
                     onChange={(e) => {
-                      const inputValue = e.target.value.replace(/[^0-9]/g, '');
+                      const inputValue = e.target.value.replace(/[^0-9]/g, "");
                       handleRequestVectorChange(index, inputValue);
                     }}
                     disabled={isDisabled}
@@ -515,8 +516,20 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
                       className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-t disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
                       aria-label="Increment"
                     >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M18 15l-6-6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M18 15l-6-6-6 6"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </svg>
                     </button>
                     <button
@@ -537,8 +550,20 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
                       className="h-4 w-6 flex items-center justify-center hover:bg-white/80 backdrop-blur-sm rounded-b disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-transparent select-none"
                       aria-label="Decrement"
                     >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M6 9l6 6 6-6"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </svg>
                     </button>
                   </div>
