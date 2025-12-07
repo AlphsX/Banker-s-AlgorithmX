@@ -1051,9 +1051,9 @@ export default function BankersAlgorithmPage() {
         <div className="flex-1 flex flex-col relative">
           {/* Top Bar - Clean and minimal */}
           <header
-            className={`absolute top-0 inset-x-0 z-20 transition-all duration-500 ease-in-out ${
+            className={`absolute top-0 inset-x-0 z-20 transition-all duration-700 ease-in-out ${
               isScrolled
-                ? "bg-white/5 dark:bg-zinc-950/5 backdrop-blur-xl supports-[backdrop-filter]:bg-white/20"
+                ? "bg-white/5 dark:bg-black/10 backdrop-blur-md saturate-150 supports-[backdrop-filter]:bg-white/5"
                 : "bg-transparent"
             }`}
           >
