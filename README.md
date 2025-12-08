@@ -119,8 +119,8 @@ This simulator handles all the complex algorithmic details while providing an in
 - 🔢 **Step Numbering**: Clear step numbers (1-4) matching textbook algorithms
 - ✅ **Safety Sequence Display**: Clear visualization of safe execution order
 - ❌ **Error Explanations**: Comprehensive error messages for invalid states
-- 📚 **Classical Examples**: Pre-loaded textbook examples for learning
-- 🎓 **Detailed Documentation**: Complete algorithm explanation in this README
+- 📚 **Classical Examples**: preloaded textbook examples for learning
+- 🎓 **Detailed Documentation**: Complete algorithm explanation in this readme
 
 ### Advanced Features
 
@@ -672,6 +672,7 @@ Contributions are welcome! This project follows standard open-source practices.
    ```
 
 4. **Make Changes**
+
    - Write clean, documented code
    - Follow existing code style
    - Add tests for new features
@@ -729,7 +730,7 @@ Contributions are welcome! This project follows standard open-source practices.
 
 #### Documentation
 
-- Update README for new features
+- Update readme for new features
 - Add JSDoc comments
 - Include usage examples
 - Document breaking changes
@@ -750,7 +751,7 @@ chore: maintenance tasks
 
 ### Areas for Contribution
 
-- 🐛 **Bug Fixes**: Report and fix bugs
+- 🐛 **Bugfixes**: Report and fix bugs
 - ✨ **Features**: Add new algorithm features
 - 📚 **Documentation**: Improve docs and examples
 - 🧪 **Tests**: Increase test coverage
@@ -830,7 +831,7 @@ The Banker's Algorithm was developed by **Edsger Dijkstra** in 1965 as part of h
 - **State Management**: Zustand, React Hooks
 - **Animation**: Framer Motion, CSS Animations
 - **Testing**: Jest 30, React Testing Library
-- **Build Tools**: Webpack, Turbopack, SWC
+- **Build Tools**: webpack, Turbopack, SWC
 - **Development**: ESLint, Prettier, Git
 
 **Specializations:**

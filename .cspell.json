@@ -41,7 +41,8 @@
     "MIUI",
     "EMUI",
     "Csvg",
-    "Nothin"
+    "Nothin",
+    "Greeksfor"
   ],
   "ignorePaths": [
     "node_modules",
