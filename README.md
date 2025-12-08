@@ -672,7 +672,6 @@ Contributions are welcome! This project follows standard open-source practices.
    ```
 
 4. **Make Changes**
-
    - Write clean, documented code
    - Follow existing code style
    - Add tests for new features
