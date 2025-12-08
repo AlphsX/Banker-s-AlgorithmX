@@ -134,7 +134,7 @@ This simulator handles all the complex algorithmic details while providing an in
 
 ### Prerequisites
 
-- Node.js 18+ and npm/yarn/pnpm
+- Bun 1.0+ (Node.js compatible)
 - Modern web browser (Chrome, Firefox, Safari, Edge)
 
 ### Installation
@@ -145,10 +145,10 @@ git clone https://github.com/AlphsX/Banker-s-AlgorithmX.git
 cd bankers-algorithm-simulator/frontend
 
 # Install dependencies
-npm install
+bun install
 
 # Start development server
-npm run dev
+bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -411,16 +411,16 @@ The project includes comprehensive test coverage with 31+ test cases:
 
 ```bash
 # Run all tests
-npm test
+bun run test
 
 # Run tests with coverage
-npm run test:coverage
+bun run test:coverage
 
 # Run tests in watch mode
-npm run test:watch
+bun run test:watch
 
 # Run specific test file
-npm test -- --testPathPattern=bankers-algorithm
+bun run test -- --testPathPattern=bankers-algorithm
 ```
 
 ### Test Categories
@@ -462,7 +462,7 @@ npm test -- --testPathPattern=bankers-algorithm
 ### Test Coverage
 
 ```bash
-npm run test:coverage
+bun run test:coverage
 ```
 
 Expected coverage:
@@ -555,8 +555,8 @@ bankers-algorithm-simulator/
 
 ```bash
 cd frontend
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
 Starts the development server at `http://localhost:3000` with:
@@ -570,10 +570,10 @@ Starts the development server at `http://localhost:3000` with:
 
 ```bash
 # Build optimized production bundle
-npm run build
+bun run build
 
 # Start production server
-npm start
+bun run start
 ```
 
 The build process:
@@ -588,27 +588,27 @@ The build process:
 For static hosting (GitHub Pages, Netlify, Vercel):
 
 ```bash
-npm run build
+bun run build
 # Output in .next/ directory
 ```
 
 ### Docker Deployment
 
 ```dockerfile
-FROM node:18-alpine AS base
+FROM oven/bun:1 AS base
 
 # Install dependencies
 FROM base AS deps
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
 # Build application
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN bun run build
 
 # Production image
 FROM base AS runner
@@ -622,7 +622,7 @@ COPY --from=builder /app/.next/static ./.next/static
 EXPOSE 3000
 ENV PORT 3000
 
-CMD ["node", "server.js"]
+CMD ["bun", "server.js"]
 ```
 
 Build and run:
@@ -667,10 +667,11 @@ Contributions are welcome! This project follows standard open-source practices.
 3. **Install Dependencies**
 
    ```bash
-   npm install
+   bun install
    ```
 
 4. **Make Changes**
+
    - Write clean, documented code
    - Follow existing code style
    - Add tests for new features
@@ -680,13 +681,13 @@ Contributions are welcome! This project follows standard open-source practices.
 
    ```bash
    # Run tests
-   npm test
+   bun run test
 
    # Check linting
-   npm run lint
+   bun run lint
 
    # Build to verify
-   npm run build
+   bun run build
    ```
 
 6. **Commit and Push**

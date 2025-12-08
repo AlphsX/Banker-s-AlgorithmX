@@ -1049,7 +1049,7 @@ export default function BankersAlgorithmPage() {
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col relative">
-          {/* Top Bar - Clean and minimal */}
+          {/* Top Bar */}
           <header
             className={`absolute top-0 inset-x-0 z-20 transition-all duration-700 ease-in-out ${
               isScrolled
