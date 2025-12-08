@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { CheckCircle, XCircle, X } from "lucide-react";
+import { ShieldCheck, ShieldAlert, X } from "lucide-react";
 
 export interface ToastMessage {
   id: string;
@@ -43,7 +43,7 @@ const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
     }
   }, [toast.duration, handleDismiss]);
 
-  const Icon = toast.type === "success" ? CheckCircle : XCircle;
+  const Icon = toast.type === "success" ? ShieldCheck : ShieldAlert;
   const bgColor =
     toast.type === "success"
       ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
