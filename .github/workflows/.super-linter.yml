@@ -28,7 +28,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BRANCH: main
-          FILTER_REGEX_EXCLUDE: "(node_modules|.next|out|build|.swc|coverage)/.*"
+          FILTER_REGEX_EXCLUDE: ".*(node_modules|.next|out|build|.swc|coverage)/.*"
           VALIDATE_ALL_CODEBASE: false
           # Disable TypeScript/JavaScript linters - using next lint instead
           VALIDATE_TSX: false

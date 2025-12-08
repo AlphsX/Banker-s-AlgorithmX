@@ -1,10 +1,11 @@
+<!-- markdownlint-disable MD033 MD041 MD013 -->
 <div align="center">
 
 # Banker's Algorithm Simulator ✨
 
 **The interactive, production-ready implementation of Dijkstra's deadlock avoidance algorithm.**
 
-_Built with modern web technologies for educational and research purposes_
+Built with modern web technologies for educational and research purposes
 
 [![Next.js](https://img.shields.io/badge/Next.js-16+-black?logo=next.js&logoColor=white)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -20,7 +21,7 @@ _Built with modern web technologies for educational and research purposes_
 
 > **Note**
 >
-> #### Production-Ready Banker's Algorithm Implementation
+> **Production-Ready Banker's Algorithm Implementation**
 >
 > This is a comprehensive, interactive implementation of Dijkstra's Banker's Algorithm for deadlock avoidance in operating systems. Built with modern web technologies, it provides real-time visualization, step-by-step algorithm execution, and comprehensive testing capabilities.
 >
@@ -119,7 +120,7 @@ This simulator handles all the complex algorithmic details while providing an in
 - ✅ **Safety Sequence Display**: Clear visualization of safe execution order
 - ❌ **Error Explanations**: Comprehensive error messages for invalid states
 - 📚 **Classical Examples**: Pre-loaded textbook examples for learning
-- 🎓 **Detailed Documentation**: Complete algorithm explanation in [REPORT.md](REPORT.md)
+- 🎓 **Detailed Documentation**: Complete algorithm explanation in this README
 
 ### Advanced Features
 
@@ -191,7 +192,7 @@ P1: [1, 1, 1]  // [1,2,1] - [0,1,0] = [1,1,1]
 
 Click "Check Safety" or press `Shift+Enter` to run the safety algorithm:
 
-```
+```text
 Step 1: Initialize Work = [2, 2, 3], Finish = [false, false]
 Step 2: Check P0: Need[P0] = [1,1,1] ≤ Work = [2,2,3] [PASS]
 Step 3: P0 finishes: Work = [2,2,3] + [1,0,0] = [3,2,3]
@@ -425,34 +426,34 @@ bun run test -- --testPathPattern=bankers-algorithm
 
 ### Test Categories
 
-**Safety Algorithm Tests (6 tests)**
+#### Safety Algorithm Tests (6 tests)
 
 - Classical textbook examples
 - Safe state identification
 - Unsafe state detection
 - Detailed step tracking
 
-**Resource Request Tests (9 tests)**
+#### Resource Request Tests (9 tests)
 
 - Request validation
 - Availability checking
 - Safety verification
 - Grant/deny logic
 
-**Process Completion Tests (3 tests)**
+#### Process Completion Tests (3 tests)
 
 - Resource release simulation
 - State updates
 - Completion validation
 
-**System Validation Tests (4 tests)**
+#### System Validation Tests (4 tests)
 
 - Matrix dimension validation
 - Value range checking
 - Constraint validation
 - Error reporting
 
-**Additional Tests (9 tests)**
+#### Additional Tests (9 tests)
 
 - System snapshots and statistics
 - Algorithm step numbering
@@ -476,7 +477,7 @@ Expected coverage:
 
 ### Project Structure
 
-```
+```text
 bankers-algorithm-simulator/
 ├── frontend/
 │   ├── src/
@@ -671,7 +672,6 @@ Contributions are welcome! This project follows standard open-source practices.
    ```
 
 4. **Make Changes**
-
    - Write clean, documented code
    - Follow existing code style
    - Add tests for new features
@@ -706,28 +706,28 @@ Contributions are welcome! This project follows standard open-source practices.
 
 ### Code Standards
 
-**TypeScript**
+#### TypeScript
 
 - Use strict type checking
 - Avoid `any` types
 - Document complex types
 - Use interfaces for objects
 
-**React Components**
+#### React Components
 
 - Use functional components
 - Implement proper prop types
 - Use hooks appropriately
 - Keep components focused
 
-**Testing**
+#### Testing Standards
 
 - Write tests for new features
 - Maintain >90% coverage
 - Test edge cases
 - Use descriptive test names
 
-**Documentation**
+#### Documentation
 
 - Update README for new features
 - Add JSDoc comments
@@ -738,7 +738,7 @@ Contributions are welcome! This project follows standard open-source practices.
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
-```
+```text
 feat: add new feature
 fix: bug fix
 docs: documentation changes
@@ -891,7 +891,7 @@ Special thanks to:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-```
+```text
 MIT License
 
 Copyright (c) 2025 [AlphsX]
