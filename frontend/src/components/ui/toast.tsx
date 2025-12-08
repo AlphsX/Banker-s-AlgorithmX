@@ -46,8 +46,8 @@ const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
   const Icon = toast.type === "success" ? ShieldCheck : ShieldAlert;
   const bgColor =
     toast.type === "success"
-      ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
-      : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800";
+      ? "bg-green-50/40 dark:bg-green-900/20 border-green-200/50 dark:border-green-800"
+      : "bg-red-50/40 dark:bg-red-900/20 border-red-200/50 dark:border-red-800";
   const iconColor =
     toast.type === "success"
       ? "text-green-500 dark:text-green-400"
