@@ -31,7 +31,7 @@ Built with modern web technologies for educational and research purposes
 
 **The Banker's Algorithm Simulator provides the fastest path from theory to practical understanding**, offering interactive visualization, real-time safety checking, and comprehensive algorithm analysis.
 
-The [Banker's Algorithm](https://en.wikipedia.org/wiki/Banker%27s_algorithm) is a resource allocation and deadlock avoidance algorithm developed by Edsger Dijkstra. This simulator makes understanding and experimenting with the algorithm simple, with real-time visualization, step-by-step execution, and comprehensive validation.
+The [Banker's Algorithm](https://en.wikipedia.org/wiki/Banker%27s_algorithm) is a resource allocation and deadlock avoidance algorithm developed by Edsger Dijkstra. This simulator makes understanding and experimenting with the algorithm straightforward, with real-time visualization, step-by-step execution, and comprehensive validation.
 
 ```typescript
 // Core algorithm implementation
@@ -76,7 +76,7 @@ The algorithm simulates a banker who lends money (resources) to customers (proce
 ### Key Concepts
 
 - **Safe State**: A state where there exists at least one sequence of process execution that allows all processes to complete
-- **Unsafe State**: A state that may lead to deadlock (but doesn't guarantee it)
+- **Unsafe State**: A state that may lead to deadlock (but does not guarantee it)
 - **Need Matrix**: `Need[i][j] = Max[i][j] - Allocation[i][j]` - remaining resource requirements
 - **Safe Sequence**: An ordering of processes that can all complete without deadlock
 
@@ -357,7 +357,7 @@ Comprehensive request processing with safety verification:
 ```typescript
 /**
  * Resource Request Steps:
- * 1. Check if Request[i] ≤ Need[i] (doesn't exceed declared maximum)
+ * 1. Check if Request[i] ≤ Need[i] (does not exceed declared maximum)
  * 2. Check if Request[i] ≤ Available (resources are available)
  * 3. Temporarily allocate resources and check if resulting state is safe
  * 4. If safe, grant request; otherwise, deny and rollback
@@ -672,6 +672,7 @@ Contributions are welcome! This project follows standard open-source practices.
    ```
 
 4. **Make Changes**
+
    - Write clean, documented code
    - Follow existing code style
    - Add tests for new features
@@ -700,7 +701,7 @@ Contributions are welcome! This project follows standard open-source practices.
 
 7. **Create Pull Request**
    - Open a PR on GitHub
-   - Describe your changes clearly
+   - Describe your changes in detail
    - Link any related issues
    - Wait for review
 
@@ -763,7 +764,7 @@ chore: maintenance tasks
 
 ### Historical Context
 
-The Banker's Algorithm was developed by **Edsger Dijkstra** in 1965 as part of his work on the THE multiprogramming system. It's named after the way bankers manage loans to ensure they can always meet withdrawal demands.
+The Banker's Algorithm was developed by **Edsger Dijkstra** in 1965 as part of his work on the THE multiprogramming system. It is named after the way bankers manage loans to ensure they can always meet withdrawal demands.
 
 ### Theoretical Foundation
 
