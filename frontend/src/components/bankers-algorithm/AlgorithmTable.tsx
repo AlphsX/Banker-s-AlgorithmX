@@ -136,9 +136,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
           <thead>
             {/* Main header row */}
             <tr style={{ borderBottom: "1px solid var(--table-border)" }}>
-              <th
-                className="text-left px-6 py-4 font-semibold text-gray-900 dark:text-gray-100 min-w-[100px]"
-              >
+              <th className="text-left px-6 py-4 font-semibold text-gray-900 dark:text-gray-100 min-w-[100px]">
                 Processes
               </th>
               <th className="text-center px-4 py-4 font-semibold text-gray-900 dark:text-gray-100">

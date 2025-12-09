@@ -31,7 +31,7 @@ Built with modern web technologies for educational and research purposes
 
 **The Banker's Algorithm Simulator provides the fastest path from theory to practical understanding**, offering interactive visualization, real-time safety checking, and comprehensive algorithm analysis.
 
-The [Banker's Algorithm](https://en.wikipedia.org/wiki/Banker%27s_algorithm) is a resource allocation and deadlock avoidance algorithm developed by Edsger Dijkstra. This simulator makes understanding and experimenting with the algorithm simple, with real-time visualization, step-by-step execution, and comprehensive validation.
+The [Banker's Algorithm](https://en.wikipedia.org/wiki/Banker%27s_algorithm) is a resource allocation and deadlock avoidance algorithm developed by Edsger Dijkstra. This simulator makes understanding and experimenting with the algorithm straightforward, with real-time visualization, step-by-step execution, and comprehensive validation.
 
 ```typescript
 // Core algorithm implementation
@@ -76,7 +76,7 @@ The algorithm simulates a banker who lends money (resources) to customers (proce
 ### Key Concepts
 
 - **Safe State**: A state where there exists at least one sequence of process execution that allows all processes to complete
-- **Unsafe State**: A state that may lead to deadlock (but doesn't guarantee it)
+- **Unsafe State**: A state that may lead to deadlock (but does not guarantee it)
 - **Need Matrix**: `Need[i][j] = Max[i][j] - Allocation[i][j]` - remaining resource requirements
 - **Safe Sequence**: An ordering of processes that can all complete without deadlock
 
@@ -119,8 +119,8 @@ This simulator handles all the complex algorithmic details while providing an in
 - 🔢 **Step Numbering**: Clear step numbers (1-4) matching textbook algorithms
 - ✅ **Safety Sequence Display**: Clear visualization of safe execution order
 - ❌ **Error Explanations**: Comprehensive error messages for invalid states
-- 📚 **Classical Examples**: Pre-loaded textbook examples for learning
-- 🎓 **Detailed Documentation**: Complete algorithm explanation in this README
+- 📚 **Classical Examples**: preloaded textbook examples for learning
+- 🎓 **Detailed Documentation**: Complete algorithm explanation in this readme
 
 ### Advanced Features
 
@@ -357,7 +357,7 @@ Comprehensive request processing with safety verification:
 ```typescript
 /**
  * Resource Request Steps:
- * 1. Check if Request[i] ≤ Need[i] (doesn't exceed declared maximum)
+ * 1. Check if Request[i] ≤ Need[i] (does not exceed declared maximum)
  * 2. Check if Request[i] ≤ Available (resources are available)
  * 3. Temporarily allocate resources and check if resulting state is safe
  * 4. If safe, grant request; otherwise, deny and rollback
@@ -700,7 +700,7 @@ Contributions are welcome! This project follows standard open-source practices.
 
 7. **Create Pull Request**
    - Open a PR on GitHub
-   - Describe your changes clearly
+   - Describe your changes in detail
    - Link any related issues
    - Wait for review
 
@@ -729,7 +729,7 @@ Contributions are welcome! This project follows standard open-source practices.
 
 #### Documentation
 
-- Update README for new features
+- Update readme for new features
 - Add JSDoc comments
 - Include usage examples
 - Document breaking changes
@@ -750,7 +750,7 @@ chore: maintenance tasks
 
 ### Areas for Contribution
 
-- 🐛 **Bug Fixes**: Report and fix bugs
+- 🐛 **Bugfixes**: Report and fix bugs
 - ✨ **Features**: Add new algorithm features
 - 📚 **Documentation**: Improve docs and examples
 - 🧪 **Tests**: Increase test coverage
@@ -763,7 +763,7 @@ chore: maintenance tasks
 
 ### Historical Context
 
-The Banker's Algorithm was developed by **Edsger Dijkstra** in 1965 as part of his work on the THE multiprogramming system. It's named after the way bankers manage loans to ensure they can always meet withdrawal demands.
+The Banker's Algorithm was developed by **Edsger Dijkstra** in 1965 as part of his work on the THE multiprogramming system. It is named after the way bankers manage loans to ensure they can always meet withdrawal demands.
 
 ### Theoretical Foundation
 
@@ -830,7 +830,7 @@ The Banker's Algorithm was developed by **Edsger Dijkstra** in 1965 as part of h
 - **State Management**: Zustand, React Hooks
 - **Animation**: Framer Motion, CSS Animations
 - **Testing**: Jest 30, React Testing Library
-- **Build Tools**: Webpack, Turbopack, SWC
+- **Build Tools**: webpack, Turbopack, SWC
 - **Development**: ESLint, Prettier, Git
 
 **Specializations:**

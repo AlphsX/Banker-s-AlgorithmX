@@ -32,7 +32,17 @@
     "Cspell",
     "tsparticles",
     "magicui",
-    "sentry"
+    "sentry",
+    "WCAG",
+    "glassmorphism",
+    "morphism",
+    "inputmode",
+    "checkmark",
+    "MIUI",
+    "EMUI",
+    "Csvg",
+    "Nothin",
+    "Greeksfor"
   ],
   "ignorePaths": [
     "node_modules",
@@ -41,6 +51,7 @@
     "bun.lock",
     "pnpm-lock.yaml",
     "yarn.lock",
-    "package-lock.json"
+    "package-lock.json",
+    "**/*.tsbuildinfo"
   ]
 }
