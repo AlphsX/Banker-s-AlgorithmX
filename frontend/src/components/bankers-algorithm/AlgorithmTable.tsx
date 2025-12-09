@@ -136,10 +136,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
           <thead>
             {/* Main header row */}
             <tr style={{ borderBottom: "1px solid var(--table-border)" }}>
-              <th
-                className="text-left px-6 py-4 font-semibold text-gray-900 dark:text-gray-100 sticky left-0 z-10 min-w-[100px]"
-                style={{ backgroundColor: "var(--table-bg)" }}
-              >
+              <th className="text-left px-6 py-4 font-semibold text-gray-900 dark:text-gray-100 min-w-[100px]">
                 Processes
               </th>
               <th className="text-center px-4 py-4 font-semibold text-gray-900 dark:text-gray-100">
@@ -166,7 +163,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                   key={processIndex}
                   className={`transition-all duration-300 ${
                     isHighlighted
-                      ? "bg-gray-100 dark:bg-gray-800/50 ring-2 ring-gray-300 dark:ring-gray-600 ring-inset"
+                      ? "bg-gray-100 dark:bg-gray-800 ring-2 ring-gray-300 dark:ring-gray-600 ring-inset"
                       : ""
                   }`}
                   style={{
@@ -177,10 +174,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                   }}
                 >
                   {/* Process name */}
-                  <td
-                    className="px-6 py-6 font-semibold text-gray-900 dark:text-gray-100 sticky left-0 z-10"
-                    style={{ backgroundColor: "var(--table-bg)" }}
-                  >
+                  <td className="px-6 py-6 font-semibold text-gray-900 dark:text-gray-100">
                     P{processIndex}
                   </td>
 

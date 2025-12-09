@@ -1,10 +1,11 @@
+<!-- markdownlint-disable MD033 MD041 MD013 -->
 <div align="center">
 
 # Banker's Algorithm Simulator ✨
 
 **The interactive, production-ready implementation of Dijkstra's deadlock avoidance algorithm.**
 
-_Built with modern web technologies for educational and research purposes_
+Built with modern web technologies for educational and research purposes
 
 [![Next.js](https://img.shields.io/badge/Next.js-16+-black?logo=next.js&logoColor=white)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5+-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -20,7 +21,7 @@ _Built with modern web technologies for educational and research purposes_
 
 > **Note**
 >
-> #### Production-Ready Banker's Algorithm Implementation
+> **Production-Ready Banker's Algorithm Implementation**
 >
 > This is a comprehensive, interactive implementation of Dijkstra's Banker's Algorithm for deadlock avoidance in operating systems. Built with modern web technologies, it provides real-time visualization, step-by-step algorithm execution, and comprehensive testing capabilities.
 >
@@ -30,7 +31,7 @@ _Built with modern web technologies for educational and research purposes_
 
 **The Banker's Algorithm Simulator provides the fastest path from theory to practical understanding**, offering interactive visualization, real-time safety checking, and comprehensive algorithm analysis.
 
-The [Banker's Algorithm](https://en.wikipedia.org/wiki/Banker%27s_algorithm) is a resource allocation and deadlock avoidance algorithm developed by Edsger Dijkstra. This simulator makes understanding and experimenting with the algorithm simple, with real-time visualization, step-by-step execution, and comprehensive validation.
+The [Banker's Algorithm](https://en.wikipedia.org/wiki/Banker%27s_algorithm) is a resource allocation and deadlock avoidance algorithm developed by Edsger Dijkstra. This simulator makes understanding and experimenting with the algorithm straightforward, with real-time visualization, step-by-step execution, and comprehensive validation.
 
 ```typescript
 // Core algorithm implementation
@@ -75,7 +76,7 @@ The algorithm simulates a banker who lends money (resources) to customers (proce
 ### Key Concepts
 
 - **Safe State**: A state where there exists at least one sequence of process execution that allows all processes to complete
-- **Unsafe State**: A state that may lead to deadlock (but doesn't guarantee it)
+- **Unsafe State**: A state that may lead to deadlock (but does not guarantee it)
 - **Need Matrix**: `Need[i][j] = Max[i][j] - Allocation[i][j]` - remaining resource requirements
 - **Safe Sequence**: An ordering of processes that can all complete without deadlock
 
@@ -118,8 +119,8 @@ This simulator handles all the complex algorithmic details while providing an in
 - 🔢 **Step Numbering**: Clear step numbers (1-4) matching textbook algorithms
 - ✅ **Safety Sequence Display**: Clear visualization of safe execution order
 - ❌ **Error Explanations**: Comprehensive error messages for invalid states
-- 📚 **Classical Examples**: Pre-loaded textbook examples for learning
-- 🎓 **Detailed Documentation**: Complete algorithm explanation in [REPORT.md](REPORT.md)
+- 📚 **Classical Examples**: preloaded textbook examples for learning
+- 🎓 **Detailed Documentation**: Complete algorithm explanation in this readme
 
 ### Advanced Features
 
@@ -134,7 +135,7 @@ This simulator handles all the complex algorithmic details while providing an in
 
 ### Prerequisites
 
-- Node.js 18+ and npm/yarn/pnpm
+- Bun 1.0+ (Node.js compatible)
 - Modern web browser (Chrome, Firefox, Safari, Edge)
 
 ### Installation
@@ -145,10 +146,10 @@ git clone https://github.com/AlphsX/Banker-s-AlgorithmX.git
 cd bankers-algorithm-simulator/frontend
 
 # Install dependencies
-npm install
+bun install
 
 # Start development server
-npm run dev
+bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -191,7 +192,7 @@ P1: [1, 1, 1]  // [1,2,1] - [0,1,0] = [1,1,1]
 
 Click "Check Safety" or press `Shift+Enter` to run the safety algorithm:
 
-```
+```text
 Step 1: Initialize Work = [2, 2, 3], Finish = [false, false]
 Step 2: Check P0: Need[P0] = [1,1,1] ≤ Work = [2,2,3] [PASS]
 Step 3: P0 finishes: Work = [2,2,3] + [1,0,0] = [3,2,3]
@@ -356,7 +357,7 @@ Comprehensive request processing with safety verification:
 ```typescript
 /**
  * Resource Request Steps:
- * 1. Check if Request[i] ≤ Need[i] (doesn't exceed declared maximum)
+ * 1. Check if Request[i] ≤ Need[i] (does not exceed declared maximum)
  * 2. Check if Request[i] ≤ Available (resources are available)
  * 3. Temporarily allocate resources and check if resulting state is safe
  * 4. If safe, grant request; otherwise, deny and rollback
@@ -411,48 +412,48 @@ The project includes comprehensive test coverage with 31+ test cases:
 
 ```bash
 # Run all tests
-npm test
+bun run test
 
 # Run tests with coverage
-npm run test:coverage
+bun run test:coverage
 
 # Run tests in watch mode
-npm run test:watch
+bun run test:watch
 
 # Run specific test file
-npm test -- --testPathPattern=bankers-algorithm
+bun run test -- --testPathPattern=bankers-algorithm
 ```
 
 ### Test Categories
 
-**Safety Algorithm Tests (6 tests)**
+#### Safety Algorithm Tests (6 tests)
 
 - Classical textbook examples
 - Safe state identification
 - Unsafe state detection
 - Detailed step tracking
 
-**Resource Request Tests (9 tests)**
+#### Resource Request Tests (9 tests)
 
 - Request validation
 - Availability checking
 - Safety verification
 - Grant/deny logic
 
-**Process Completion Tests (3 tests)**
+#### Process Completion Tests (3 tests)
 
 - Resource release simulation
 - State updates
 - Completion validation
 
-**System Validation Tests (4 tests)**
+#### System Validation Tests (4 tests)
 
 - Matrix dimension validation
 - Value range checking
 - Constraint validation
 - Error reporting
 
-**Additional Tests (9 tests)**
+#### Additional Tests (9 tests)
 
 - System snapshots and statistics
 - Algorithm step numbering
@@ -462,7 +463,7 @@ npm test -- --testPathPattern=bankers-algorithm
 ### Test Coverage
 
 ```bash
-npm run test:coverage
+bun run test:coverage
 ```
 
 Expected coverage:
@@ -476,7 +477,7 @@ Expected coverage:
 
 ### Project Structure
 
-```
+```text
 bankers-algorithm-simulator/
 ├── frontend/
 │   ├── src/
@@ -555,8 +556,8 @@ bankers-algorithm-simulator/
 
 ```bash
 cd frontend
-npm install
-npm run dev
+bun install
+bun run dev
 ```
 
 Starts the development server at `http://localhost:3000` with:
@@ -570,10 +571,10 @@ Starts the development server at `http://localhost:3000` with:
 
 ```bash
 # Build optimized production bundle
-npm run build
+bun run build
 
 # Start production server
-npm start
+bun run start
 ```
 
 The build process:
@@ -588,27 +589,27 @@ The build process:
 For static hosting (GitHub Pages, Netlify, Vercel):
 
 ```bash
-npm run build
+bun run build
 # Output in .next/ directory
 ```
 
 ### Docker Deployment
 
 ```dockerfile
-FROM node:18-alpine AS base
+FROM oven/bun:1 AS base
 
 # Install dependencies
 FROM base AS deps
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
 # Build application
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN bun run build
 
 # Production image
 FROM base AS runner
@@ -622,7 +623,7 @@ COPY --from=builder /app/.next/static ./.next/static
 EXPOSE 3000
 ENV PORT 3000
 
-CMD ["node", "server.js"]
+CMD ["bun", "server.js"]
 ```
 
 Build and run:
@@ -667,7 +668,7 @@ Contributions are welcome! This project follows standard open-source practices.
 3. **Install Dependencies**
 
    ```bash
-   npm install
+   bun install
    ```
 
 4. **Make Changes**
@@ -680,13 +681,13 @@ Contributions are welcome! This project follows standard open-source practices.
 
    ```bash
    # Run tests
-   npm test
+   bun run test
 
    # Check linting
-   npm run lint
+   bun run lint
 
    # Build to verify
-   npm run build
+   bun run build
    ```
 
 6. **Commit and Push**
@@ -699,36 +700,36 @@ Contributions are welcome! This project follows standard open-source practices.
 
 7. **Create Pull Request**
    - Open a PR on GitHub
-   - Describe your changes clearly
+   - Describe your changes in detail
    - Link any related issues
    - Wait for review
 
 ### Code Standards
 
-**TypeScript**
+#### TypeScript
 
 - Use strict type checking
 - Avoid `any` types
 - Document complex types
 - Use interfaces for objects
 
-**React Components**
+#### React Components
 
 - Use functional components
 - Implement proper prop types
 - Use hooks appropriately
 - Keep components focused
 
-**Testing**
+#### Testing Standards
 
 - Write tests for new features
 - Maintain >90% coverage
 - Test edge cases
 - Use descriptive test names
 
-**Documentation**
+#### Documentation
 
-- Update README for new features
+- Update readme for new features
 - Add JSDoc comments
 - Include usage examples
 - Document breaking changes
@@ -737,7 +738,7 @@ Contributions are welcome! This project follows standard open-source practices.
 
 Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
-```
+```text
 feat: add new feature
 fix: bug fix
 docs: documentation changes
@@ -749,7 +750,7 @@ chore: maintenance tasks
 
 ### Areas for Contribution
 
-- 🐛 **Bug Fixes**: Report and fix bugs
+- 🐛 **Bugfixes**: Report and fix bugs
 - ✨ **Features**: Add new algorithm features
 - 📚 **Documentation**: Improve docs and examples
 - 🧪 **Tests**: Increase test coverage
@@ -762,7 +763,7 @@ chore: maintenance tasks
 
 ### Historical Context
 
-The Banker's Algorithm was developed by **Edsger Dijkstra** in 1965 as part of his work on the THE multiprogramming system. It's named after the way bankers manage loans to ensure they can always meet withdrawal demands.
+The Banker's Algorithm was developed by **Edsger Dijkstra** in 1965 as part of his work on the THE multiprogramming system. It is named after the way bankers manage loans to ensure they can always meet withdrawal demands.
 
 ### Theoretical Foundation
 
@@ -829,7 +830,7 @@ The Banker's Algorithm was developed by **Edsger Dijkstra** in 1965 as part of h
 - **State Management**: Zustand, React Hooks
 - **Animation**: Framer Motion, CSS Animations
 - **Testing**: Jest 30, React Testing Library
-- **Build Tools**: Webpack, Turbopack, SWC
+- **Build Tools**: webpack, Turbopack, SWC
 - **Development**: ESLint, Prettier, Git
 
 **Specializations:**
@@ -890,7 +891,7 @@ Special thanks to:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-```
+```text
 MIT License
 
 Copyright (c) 2025 [AlphsX]

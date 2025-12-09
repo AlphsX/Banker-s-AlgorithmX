@@ -74,6 +74,7 @@ export default function BankersAlgorithmPage() {
   const mainContainerRef = useRef<HTMLDivElement>(null);
   const mainContentRef = useRef<HTMLDivElement>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   // Initialize calculator - use useMemo to avoid recreating on every render
   const calculator = useMemo(() => new BankersAlgorithmCalculator(), []);
@@ -762,6 +763,7 @@ export default function BankersAlgorithmPage() {
       const isScrollable = scrollHeight > clientHeight;
       const isNotAtBottom = scrollHeight - scrollTop - clientHeight > 100;
       setShowScrollButton(isScrollable && isNotAtBottom);
+      setIsScrolled(scrollTop > 10);
     };
 
     // Check on mount and when content changes
@@ -1047,12 +1049,13 @@ export default function BankersAlgorithmPage() {
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col relative">
-          {/* Top Bar - Clean and minimal */}
+          {/* Top Bar */}
           <header
-            className="bg-white"
-            style={{
-              backgroundColor: "var(--page-bg)",
-            }}
+            className={`absolute top-0 inset-x-0 z-20 transition-all duration-700 ease-in-out ${
+              isScrolled
+                ? "bg-white/5 dark:bg-black/10 backdrop-blur-md saturate-150 supports-[backdrop-filter]:bg-white/5"
+                : "bg-transparent"
+            }`}
           >
             <div className="px-6 py-4">
               <div className="flex items-center justify-between">
@@ -1163,7 +1166,7 @@ export default function BankersAlgorithmPage() {
           {/* Main Algorithm Interface */}
           <div
             ref={mainContentRef}
-            className="flex-1 overflow-y-auto bg-white relative"
+            className="flex-1 overflow-y-auto bg-white relative pt-20"
             style={{
               backgroundColor: "var(--page-bg)",
               scrollBehavior: "smooth",

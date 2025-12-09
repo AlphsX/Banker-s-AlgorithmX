@@ -12,8 +12,8 @@ export function useAppLoading() {
       // Mark as hydrated immediately
       setIsHydrated(true);
 
-      // Reduced loading time for better UX (800ms instead of 1500ms)
-      const minLoadTime = new Promise((resolve) => setTimeout(resolve, 800));
+      // Reduced loading time for better UX (400ms instead of 800ms)
+      const minLoadTime = new Promise((resolve) => setTimeout(resolve, 400));
 
       // Check if critical resources are loaded
       const resourcesLoaded = new Promise((resolve) => {

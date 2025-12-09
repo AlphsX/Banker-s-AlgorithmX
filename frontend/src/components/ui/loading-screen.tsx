@@ -39,7 +39,7 @@ export function LoadingScreen({
     if (!isLoading || !isHydrated) return;
 
     let startTime: number;
-    const duration = 800; // Match the useAppLoading duration
+    const duration = 400; // Match the useAppLoading duration
     let animationId: number;
 
     const updateProgress = (timestamp: number) => {
