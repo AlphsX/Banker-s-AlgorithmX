@@ -230,9 +230,7 @@ export const CountControl: React.FC<CountControlProps> = ({
       </div>
       <div
         className={`overflow-hidden transition-all duration-500 ${
-          count >= maxValue && mountMaxWarning
-            ? "max-h-6 mt-1"
-            : "max-h-0 mt-0"
+          count >= maxValue && mountMaxWarning ? "max-h-6 mt-1" : "max-h-0 mt-0"
         }`}
       >
         <p
