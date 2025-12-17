@@ -1,6 +1,3 @@
-/* Enhanced Animation Library for Premium UX */
-
-/* Core Animation Keyframes */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -67,7 +64,6 @@
   }
 }
 
-/* Theme Transition Animations */
 @keyframes themeTransition {
   0% {
     filter: brightness(1) contrast(1);
@@ -89,7 +85,6 @@
   }
 }
 
-/* Copy Button Animations */
 @keyframes copySuccess {
   0% {
     transform: scale(1);
@@ -123,7 +118,6 @@
   }
 }
 
-/* Streaming Content Animations */
 @keyframes streamingPulse {
   0%,
   100% {
@@ -164,7 +158,6 @@
   }
 }
 
-/* Loading Animations */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -205,7 +198,6 @@
   }
 }
 
-/* Micro-interaction Animations */
 @keyframes buttonPress {
   0% {
     transform: scale(1);
@@ -254,7 +246,6 @@
   }
 }
 
-/* Mobile Touch Animations */
 @keyframes touchRipple {
   0% {
     transform: scale(0);
@@ -281,7 +272,6 @@
   }
 }
 
-/* Glow Effects */
 @keyframes glow {
   0%,
   100% {
@@ -302,7 +292,6 @@
   }
 }
 
-/* Notification Animations */
 @keyframes slideIn {
   from {
     transform: translateX(-100%);
@@ -381,7 +370,6 @@
   }
 }
 
-/* Message Bubble Animations */
 @keyframes messageSlideIn {
   from {
     transform: translateX(-20px);
@@ -415,7 +403,6 @@
   }
 }
 
-/* Code Block Animations */
 @keyframes codeBlockExpand {
   from {
     max-height: 0;
@@ -436,7 +423,6 @@
   }
 }
 
-/* Utility Animation Classes */
 .animate-fade-in-up {
   animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
@@ -579,7 +565,6 @@
   animation: syntaxHighlight 1s ease-out;
 }
 
-/* Touch Interaction Classes */
 .touch-feedback {
   position: relative;
   overflow: hidden;
@@ -610,7 +595,6 @@
   animation: touchFeedback 0.15s ease-out;
 }
 
-/* Stagger Animation Support */
 .stagger-children > * {
   opacity: 0;
   transform: translateY(20px);
@@ -648,7 +632,6 @@
   animation-delay: 900ms;
 }
 
-/* Reduced Motion Support */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -673,7 +656,6 @@
   }
 }
 
-/* High Contrast Mode Support */
 @media (prefers-contrast: high) {
   .animate-shimmer,
   .animate-wave {
@@ -696,7 +678,6 @@
   }
 }
 
-/* Performance Optimizations */
 .will-change-transform {
   will-change: transform;
 }
@@ -709,14 +690,12 @@
   will-change: auto;
 }
 
-/* GPU Acceleration for Smooth Animations */
 .gpu-accelerated {
   transform: translateZ(0);
   backface-visibility: hidden;
   perspective: 1000px;
 }
 
-/* Animation State Classes */
 .animation-paused {
   animation-play-state: paused !important;
 }
@@ -725,7 +704,6 @@
   animation-play-state: running !important;
 }
 
-/* Custom Easing Functions */
 .ease-out-expo {
   transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
 }
@@ -742,7 +720,6 @@
   transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* Input Focus and Typing Animations */
 @keyframes inputFocusGlow {
   0% {
     box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
@@ -785,7 +762,6 @@
   }
 }
 
-/* Utility classes for input animations */
 .animate-input-focus-glow {
   animation: inputFocusGlow 0.3s ease-out forwards;
 }
