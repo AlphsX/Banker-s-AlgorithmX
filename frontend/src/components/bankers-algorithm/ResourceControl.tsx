@@ -2,6 +2,7 @@
 
 import React from "react";
 import { CountControl } from "./CountControl";
+import { CONTROL_CONFIGS } from "./constants";
 
 interface ResourceControlProps {
   resourceCount: number;
@@ -14,17 +15,18 @@ export const ResourceControl: React.FC<ResourceControlProps> = ({
   onResourceCountChange,
   disabled = false,
 }) => {
+  const config = CONTROL_CONFIGS.resource;
   return (
     <CountControl
-      label="Resources"
+      label={config.label}
       count={resourceCount}
       onCountChange={onResourceCountChange}
-      minValue={1}
-      maxValue={10}
-      minWarningMessage="Minimum 1 resource required"
-      maxWarningMessage="Maximum 10 resources allowed"
+      minValue={config.minValue}
+      maxValue={config.maxValue}
+      minWarningMessage={config.minWarningMessage}
+      maxWarningMessage={config.maxWarningMessage}
       disabled={disabled}
-      ariaLabel="resource"
+      ariaLabel={config.ariaLabel}
     />
   );
 };

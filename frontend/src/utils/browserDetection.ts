@@ -1,6 +1,9 @@
 /**
  * Browser Detection Utility
  * Detects supported browsers: Comet, Chrome, Arc Browser, Safari, Firefox, Brave
+ *
+ * Security: Uses compile-time regex patterns only (no user input in patterns)
+ * to prevent ReDoS attacks per OWASP guidelines.
  */
 
 export interface BrowserInfo {
@@ -10,107 +13,89 @@ export interface BrowserInfo {
   userAgent: string;
 }
 
+interface BrowserPattern {
+  pattern: RegExp;
+  name: string;
+  supported: boolean;
+  versionKey: "chrome" | "firefox" | "safari";
+  exclude?: RegExp;
+}
+
+const VERSION_PATTERNS: Record<string, RegExp> = {
+  chrome: /Chrome\/(\d+\.\d+)/,
+  firefox: /Firefox\/(\d+\.\d+)/,
+  safari: /Version\/(\d+\.\d+)/,
+} as const;
+
+function extractBrowserVersion(
+  userAgent: string,
+  versionKey: keyof typeof VERSION_PATTERNS,
+): string {
+  const pattern = VERSION_PATTERNS[versionKey];
+  const match = userAgent.match(pattern);
+  return match?.[1] ?? "Unknown";
+}
+
 export const detectBrowser = (): BrowserInfo => {
   const userAgent = navigator.userAgent;
   const userAgentLower = userAgent.toLowerCase();
 
-  // Browser detection patterns (order matters for accurate detection)
-  const browsers: Record<
-    string,
-    {
-      pattern: RegExp;
-      name: string;
-      supported: boolean;
-      exclude?: RegExp;
-    }
-  > = {
-    // Comet Browser (check first as it might be based on Chromium)
+  const browsers: Record<string, BrowserPattern> = {
     comet: {
       pattern: /comet/i,
       name: "Comet",
       supported: true,
+      versionKey: "chrome",
     },
-    // Arc Browser (check before Chrome as it's Chromium-based)
     arc: {
       pattern: /arc/i,
       name: "Arc Browser",
       supported: true,
+      versionKey: "chrome",
     },
-    // Brave Browser (check before Chrome as it's Chromium-based)
     brave: {
       pattern: /brave/i,
       name: "Brave",
       supported: true,
+      versionKey: "chrome",
     },
-    // Firefox (check before Chrome to avoid false positives)
     firefox: {
       pattern: /firefox/i,
       name: "Firefox",
       supported: true,
+      versionKey: "firefox",
     },
-    // Chrome (check after other Chromium-based browsers)
     chrome: {
       pattern: /chrome/i,
       name: "Chrome",
       supported: true,
-      exclude: /edg|opr|brave|arc|comet|firefox/i, // Exclude other browsers
+      versionKey: "chrome",
+      exclude: /edg|opr|brave|arc|comet|firefox/i,
     },
-    // Safari (check last as it might appear in other browser user agents)
     safari: {
       pattern: /safari/i,
       name: "Safari",
       supported: true,
-      exclude: /chrome|chromium|edg|opr|brave|arc|comet|firefox/i, // Exclude other browsers
+      versionKey: "safari",
+      exclude: /chrome|chromium|edg|opr|brave|arc|comet|firefox/i,
     },
   };
 
-  // Check each browser in order of priority
-  for (const [key, browser] of Object.entries(browsers)) {
+  for (const browser of Object.values(browsers)) {
     if (browser.pattern.test(userAgentLower)) {
-      // Check if this browser should be excluded (for Chrome/Safari detection)
       if (browser.exclude && browser.exclude.test(userAgentLower)) {
         continue;
       }
 
-      // Extract version
-      let version = "Unknown";
-      try {
-        if (key === "chrome") {
-          const match = userAgent.match(/Chrome\/(\d+\.\d+)/);
-          version = match ? match[1] : "Unknown";
-        } else if (key === "safari") {
-          const match = userAgent.match(/Version\/(\d+\.\d+)/);
-          version = match ? match[1] : "Unknown";
-        } else if (key === "firefox") {
-          const match = userAgent.match(/Firefox\/(\d+\.\d+)/);
-          version = match ? match[1] : "Unknown";
-        } else if (key === "brave") {
-          // Brave doesn't expose version in user agent, use Chrome version
-          const match = userAgent.match(/Chrome\/(\d+\.\d+)/);
-          version = match ? match[1] : "Unknown";
-        } else if (key === "arc") {
-          // Arc uses Chrome engine, use Chrome version
-          const match = userAgent.match(/Chrome\/(\d+\.\d+)/);
-          version = match ? match[1] : "Unknown";
-        } else if (key === "comet") {
-          // Comet might use Chrome engine, try to extract version
-          const match = userAgent.match(/Chrome\/(\d+\.\d+)/);
-          version = match ? match[1] : "Unknown";
-        }
-      } catch (error) {
-        console.warn("Error extracting browser version:", error);
-      }
-
       return {
         name: browser.name,
-        version,
+        version: extractBrowserVersion(userAgent, browser.versionKey),
         isSupported: browser.supported,
         userAgent,
       };
     }
   }
 
-  // If no supported browser is detected
   return {
     name: "Unknown",
     version: "Unknown",

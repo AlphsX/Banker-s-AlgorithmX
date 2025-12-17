@@ -2,6 +2,7 @@
 
 import React from "react";
 import { CountControl } from "./CountControl";
+import { CONTROL_CONFIGS } from "./constants";
 
 interface ProcessControlProps {
   processCount: number;
@@ -14,17 +15,18 @@ export const ProcessControl: React.FC<ProcessControlProps> = ({
   onProcessCountChange,
   disabled = false,
 }) => {
+  const config = CONTROL_CONFIGS.process;
   return (
     <CountControl
-      label="Processes"
+      label={config.label}
       count={processCount}
       onCountChange={onProcessCountChange}
-      minValue={1}
-      maxValue={10}
-      minWarningMessage="Minimum 1 process required"
-      maxWarningMessage="Maximum 10 processes allowed"
+      minValue={config.minValue}
+      maxValue={config.maxValue}
+      minWarningMessage={config.minWarningMessage}
+      maxWarningMessage={config.maxWarningMessage}
       disabled={disabled}
-      ariaLabel="process"
+      ariaLabel={config.ariaLabel}
     />
   );
 };
