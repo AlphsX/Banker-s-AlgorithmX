@@ -27,13 +27,6 @@ import {
 
 export class BankersAlgorithmCalculator {
   /**
-   * Calculate Need matrix: Need[i][j] = Max[i][j] - Allocation[i][j]
-   */
-  calculateNeedMatrix(max: number[][], allocation: number[][]): number[][] {
-    return calculateNeedMatrix(max, allocation);
-  }
-
-  /**
    * Safety Algorithm Implementation
    *
    * Algorithm Steps:
@@ -287,7 +280,7 @@ export class BankersAlgorithmCalculator {
     }
 
     // Recalculate need matrix after temporary allocation
-    const newNeed = this.calculateNeedMatrix(max, newAllocation);
+    const newNeed = calculateNeedMatrix(max, newAllocation);
 
     requestSteps.push({
       stepNumber: 3,
@@ -358,45 +351,6 @@ export class BankersAlgorithmCalculator {
   }
 
   /**
-   * Validates the entire system state
-   */
-  validateSystemState(state: BankersAlgorithmState): ValidationError[] {
-    const errors: ValidationError[] = [];
-
-    // Validate matrix dimensions
-    if (state.allocation.length !== state.processCount) {
-      errors.push({
-        field: "allocation",
-        message: "Allocation matrix rows must match process count",
-      });
-    }
-
-    if (state.max.length !== state.processCount) {
-      errors.push({
-        field: "max",
-        message: "Max matrix rows must match process count",
-      });
-    }
-
-    if (state.available.length !== state.resourceCount) {
-      errors.push({
-        field: "available",
-        message: "Available vector length must match resource count",
-      });
-    }
-
-    // Validate matrix values
-    errors.push(...validateMatrixValues(state.allocation));
-    errors.push(...validateMatrixValues(state.max));
-    errors.push(...validateVectorValues(state.available));
-
-    // Validate allocation constraints
-    errors.push(...validateAllocationConstraints(state.allocation, state.max));
-
-    return errors;
-  }
-
-  /**
    * Creates a default system state with example values
    * Based on classical Banker's Algorithm textbook example (guaranteed safe)
    */
@@ -418,7 +372,7 @@ export class BankersAlgorithmCalculator {
     // Available resources to ensure safety
     const available = [2, 2, 3]; // Available resources: A=2, B=2, C=3
 
-    const need = this.calculateNeedMatrix(max, allocation);
+    const need = calculateNeedMatrix(max, allocation);
 
     // Verify this is actually safe
     const safetyResult = this.checkSafety(available, allocation, need);
@@ -448,7 +402,7 @@ export class BankersAlgorithmCalculator {
     const allocation = createZeroMatrix(processCount, resourceCount);
     const max = createZeroMatrix(processCount, resourceCount);
     const available = createZeroVector(resourceCount);
-    const need = this.calculateNeedMatrix(max, allocation);
+    const need = calculateNeedMatrix(max, allocation);
 
     return {
       processCount,
@@ -492,7 +446,7 @@ export class BankersAlgorithmCalculator {
       newAvailable[j] = currentState.available[j] || 0;
     }
 
-    const newNeed = this.calculateNeedMatrix(newMax, newAllocation);
+    const newNeed = calculateNeedMatrix(newMax, newAllocation);
 
     return {
       ...currentState,
@@ -548,7 +502,7 @@ export class BankersAlgorithmCalculator {
     newFinish[processId] = true;
 
     // Recalculate need matrix
-    const newNeed = this.calculateNeedMatrix(state.max, newAllocation);
+    const newNeed = calculateNeedMatrix(state.max, newAllocation);
 
     // Check safety of new state
     const safetyResult = this.checkSafety(newAvailable, newAllocation, newNeed);

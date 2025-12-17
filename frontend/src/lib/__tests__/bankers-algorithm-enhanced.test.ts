@@ -12,6 +12,7 @@ import {
   BankersAlgorithmState,
   ResourceRequest,
 } from "@/types/bankers-algorithm";
+import { calculateNeedMatrix } from "@/utils/matrix-utils";
 
 describe("Enhanced Banker's Algorithm Calculator", () => {
   let calculator: BankersAlgorithmCalculator;
@@ -100,7 +101,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
         [0, 1, 1], // P1
         [1, 0, 1], // P2
       ];
-      const need = calculator.calculateNeedMatrix(max, allocation);
+      const need = calculateNeedMatrix(max, allocation);
 
       const result = calculator.checkSafety(available, allocation, need);
 
@@ -228,7 +229,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       };
 
       // Calculate need matrix
-      limitedSystemState.need = calculator.calculateNeedMatrix(
+      limitedSystemState.need = calculateNeedMatrix(
         limitedSystemState.max,
         limitedSystemState.allocation,
       );
@@ -284,7 +285,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       };
 
       // Calculate need matrix
-      unsafeSystemState.need = calculator.calculateNeedMatrix(
+      unsafeSystemState.need = calculateNeedMatrix(
         unsafeSystemState.max,
         unsafeSystemState.allocation,
       );

@@ -23,6 +23,7 @@ import {
   ResourceRequest,
 } from "@/types/bankers-algorithm";
 import { BankersAlgorithmCalculator } from "@/lib/bankers-algorithm-calculator";
+import { calculateNeedMatrix } from "@/utils/matrix-utils";
 import {
   SystemControls,
   AlgorithmTable,
@@ -227,10 +228,7 @@ export default function BankersAlgorithmPage() {
       newAllocation[processIndex][resourceIndex] = Math.max(0, value);
 
       // Recalculate need matrix
-      const newNeed = calculator.calculateNeedMatrix(
-        algorithmState.max,
-        newAllocation,
-      );
+      const newNeed = calculateNeedMatrix(algorithmState.max, newAllocation);
 
       setAlgorithmState((prev) => ({
         ...prev,
@@ -248,10 +246,7 @@ export default function BankersAlgorithmPage() {
       newMax[processIndex][resourceIndex] = Math.max(0, value);
 
       // Recalculate need matrix
-      const newNeed = calculator.calculateNeedMatrix(
-        newMax,
-        algorithmState.allocation,
-      );
+      const newNeed = calculateNeedMatrix(newMax, algorithmState.allocation);
 
       setAlgorithmState((prev) => ({
         ...prev,

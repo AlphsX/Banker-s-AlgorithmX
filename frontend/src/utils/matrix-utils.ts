@@ -262,27 +262,6 @@ export function isMatrixRectangular(matrix: number[][]): boolean {
 }
 
 /**
- * Formats a matrix for display purposes
- */
-export function formatMatrix(
-  matrix: number[][],
-  precision: number = 0,
-): string {
-  return matrix
-    .map(
-      (row) => "[" + row.map((val) => val.toFixed(precision)).join(", ") + "]",
-    )
-    .join("\n");
-}
-
-/**
- * Formats a vector for display purposes
- */
-export function formatVector(vector: number[], precision: number = 0): string {
-  return "[" + vector.map((val) => val.toFixed(precision)).join(", ") + "]";
-}
-
-/**
  * Checks if two vectors are equal
  */
 export function vectorsEqual(a: number[], b: number[]): boolean {
@@ -296,34 +275,4 @@ export function vectorsEqual(a: number[], b: number[]): boolean {
 export function matricesEqual(a: number[][], b: number[][]): boolean {
   if (a.length !== b.length) return false;
   return a.every((row, i) => vectorsEqual(row, b[i]));
-}
-
-/**
- * Creates an identity matrix of given size
- */
-export function createIdentityMatrix(size: number): number[][] {
-  const matrix = createZeroMatrix(size, size);
-  for (let i = 0; i < size; i++) {
-    matrix[i][i] = 1;
-  }
-  return matrix;
-}
-
-/**
- * Transposes a matrix
- */
-export function transposeMatrix(matrix: number[][]): number[][] {
-  if (matrix.length === 0) return [];
-
-  const rows = matrix.length;
-  const cols = matrix[0].length;
-  const transposed = createZeroMatrix(cols, rows);
-
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
-      transposed[j][i] = matrix[i][j];
-    }
-  }
-
-  return transposed;
 }
