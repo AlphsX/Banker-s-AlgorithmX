@@ -45,17 +45,7 @@ export function useDarkMode() {
 
       // Simply sync our state with what the document actually is
       setIsDarkMode(actualDocumentDark);
-
-      // Debug log for mobile
-      if (window.innerWidth < 768) {
-        console.log("Mobile Theme Sync:", {
-          savedTheme,
-          prefersDark,
-          actualDocumentDark,
-          syncing: "state to match document",
-        });
-      }
-    }, 50); // Small delay to ensure layout script runs first
+    }, 50);
 
     // Listen for system preference changes
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -119,18 +109,7 @@ export function useDarkMode() {
       document.documentElement.classList.add("dark");
     }
 
-    // Update state
     setIsDarkMode(newMode);
-
-    // Debug log for mobile
-    if (window.innerWidth < 768) {
-      console.log("Theme Toggle:", {
-        newTheme,
-        newMode,
-        localStorage: localStorage.getItem("theme"),
-        documentHasDark: document.documentElement.classList.contains("dark"),
-      });
-    }
   };
 
   // Add a function to reset to system preference
