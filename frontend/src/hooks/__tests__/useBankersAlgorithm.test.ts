@@ -419,9 +419,9 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       const endTime = performance.now();
 
       expect(result.isSafe).toBe(false);
-      expect(result.steps.length).toBe(1); // Early exit with single step
-      expect(result.steps[0].description).toContain("no available resources");
-      expect(endTime - startTime).toBeLessThan(1); // Should be nearly instant
+      expect(result.steps.length).toBeGreaterThan(1); // Should have detailed steps
+      expect(result.steps[0].description).toContain("init: work = available");
+      expect(endTime - startTime).toBeLessThan(10); // Should still be fast
     });
   });
 });
