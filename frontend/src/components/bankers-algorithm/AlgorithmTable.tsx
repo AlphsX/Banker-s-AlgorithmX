@@ -533,3 +533,24 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
     </div>
   );
 };
+
+// Memoized export to prevent unnecessary re-renders
+// Custom comparison ensures references are compared correctly
+export default React.memo(AlgorithmTable, (prevProps, nextProps) => {
+  return (
+    prevProps.processCount === nextProps.processCount &&
+    prevProps.resourceCount === nextProps.resourceCount &&
+    prevProps.isCalculating === nextProps.isCalculating &&
+    prevProps.isProcessingRequest === nextProps.isProcessingRequest &&
+    prevProps.currentStepIndex === nextProps.currentStepIndex &&
+    prevProps.onAllocationChange === nextProps.onAllocationChange &&
+    prevProps.onMaxChange === nextProps.onMaxChange &&
+    // Deep comparison for arrays (matrices change less frequently)
+    JSON.stringify(prevProps.allocation) ===
+      JSON.stringify(nextProps.allocation) &&
+    JSON.stringify(prevProps.max) === JSON.stringify(nextProps.max) &&
+    JSON.stringify(prevProps.need) === JSON.stringify(nextProps.need) &&
+    JSON.stringify(prevProps.finish) === JSON.stringify(nextProps.finish) &&
+    prevProps.algorithmSteps.length === nextProps.algorithmSteps.length
+  );
+});

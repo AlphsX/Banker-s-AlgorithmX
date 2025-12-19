@@ -42,6 +42,23 @@ export class BankersAlgorithmCalculator {
   ): SafetyResult {
     const processCount = allocation.length;
 
+    // Early exit: If no resources available, system cannot be safe
+    if (available.every((v) => v === 0) && processCount > 0) {
+      return {
+        isSafe: false,
+        safeSequence: [],
+        steps: [
+          {
+            stepNumber: 1,
+            description: "System has no available resources - UNSAFE",
+            workVector: available,
+            isHighlighted: true,
+          },
+        ],
+        finalFinishState: Array(processCount).fill(false),
+      };
+    }
+
     // Step 1: Initialize Work = Available and Finish[i] = false
     let work = cloneVector(available);
     const finish = Array(processCount).fill(false);
@@ -102,7 +119,7 @@ export class BankersAlgorithmCalculator {
               stepNumber: 3,
               description: `work = work + allocation[${processName}]: (${prevWork.join(", ")}) + (${allocation[
                 i
-              ].join(", ")})`, //  = (${work.join(", ")})
+              ].join(", ")})`,
               workVector: cloneVector(work),
               processChecked: processName,
               canFinish: true,
@@ -117,9 +134,14 @@ export class BankersAlgorithmCalculator {
 
       // If no process was found in this iteration, show why we're stopping
       if (!foundProcess && iterationCount > 1) {
-        const unfinishedProcesses = finish
-          .map((finished, index) => (finished ? null : `P${index}`))
-          .filter((p) => p !== null);
+        // Optimize: Use Set for O(1) membership test vs O(n) array operations
+        const finishedSet = new Set(safeSequence);
+        const unfinishedProcesses: string[] = [];
+        for (let i = 0; i < processCount; i++) {
+          if (!finishedSet.has(`P${i}`)) {
+            unfinishedProcesses.push(`P${i}`);
+          }
+        }
 
         steps.push({
           stepNumber: 2,
