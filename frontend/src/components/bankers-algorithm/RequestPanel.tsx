@@ -18,8 +18,6 @@ interface RequestPanelProps {
 export const RequestPanel: React.FC<RequestPanelProps> = ({
   processCount,
   resourceCount,
-  need: _need,
-  available: _available,
   onRequestSubmit,
   isProcessing,
   disabled = false,

@@ -102,7 +102,7 @@ export class BankersAlgorithmCalculator {
               stepNumber: 3,
               description: `work = work + allocation[${processName}]: (${prevWork.join(", ")}) + (${allocation[
                 i
-              ].join(", ")})`, //  = (${work.join(", ")})
+              ].join(", ")})`,
               workVector: cloneVector(work),
               processChecked: processName,
               canFinish: true,

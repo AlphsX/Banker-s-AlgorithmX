@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { ChevronsRight } from "lucide-react";
 
-// Import existing hooks and utilities
 import {
   useDarkMode,
   useSwipeGesture,
   useDynamicFavicon,
   useKeyboardShortcuts,
+  useBankersAlgorithm,
 } from "@/hooks";
 
 import { AnimatedThemeToggler } from "@/components/magicui";
@@ -17,20 +17,16 @@ import { BrowserCompatibilityWarning } from "@/components/ui/browser-compatibili
 import { ToastContainer, useToast } from "@/components/ui";
 import { useAppLoading } from "@/hooks/useAppLoading";
 
-// Import Banker's Algorithm types and calculator
-import {
-  BankersAlgorithmState,
-  ResourceRequest,
-} from "@/types/bankers-algorithm";
-import { BankersAlgorithmCalculator } from "@/lib/bankers-algorithm-calculator";
-import { calculateNeedMatrix } from "@/utils/matrix-utils";
 import {
   SystemControls,
   AlgorithmTable,
   StepByStepResults,
 } from "@/components/bankers-algorithm";
 
-// Updated Logo Icon Component for Banker's Algorithm with theme-dependent colors matching favicon
+/**
+ * Logo Icon Component for Banker's Algorithm
+ * Theme-dependent colors matching favicon
+ */
 const LogoIcon = ({ className }: { className?: string }) => (
   <svg
     width="14"
@@ -63,13 +59,27 @@ export default function BankersAlgorithmPage() {
   const [isDesktopSidebarCollapsed, setIsDesktopSidebarCollapsed] =
     useState(false);
 
-  // Banker's Algorithm state
-  const [algorithmState, setAlgorithmState] = useState<BankersAlgorithmState>(
-    () => {
-      const calculator = new BankersAlgorithmCalculator();
-      return calculator.createDefaultState();
-    },
-  );
+  // Use the consolidated Banker's Algorithm hook
+  const {
+    algorithmState,
+    isProcessingRequest,
+    requestResult,
+    stepNavigationState,
+    checkSafety,
+    processResourceRequest,
+    updateAllocation,
+    updateMax,
+    updateAvailable,
+    updateProcessCount,
+    updateResourceCount,
+    resetAlgorithm,
+    handleStepChange,
+    setRequestResult,
+  } = useBankersAlgorithm({
+    onSuccess: showSuccess,
+    onError: showError,
+    autoPreviewOnMount: true,
+  });
 
   const sidebarRef = useRef<HTMLDivElement>(null);
   const mainContainerRef = useRef<HTMLDivElement>(null);
@@ -77,20 +87,14 @@ export default function BankersAlgorithmPage() {
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Initialize calculator - use useMemo to avoid recreating on every render
-  const calculator = useMemo(() => new BankersAlgorithmCalculator(), []);
-
-  // Track if initial preview has been shown
-  const hasShownInitialPreview = useRef(false);
-
-  // Keyboard shortcuts
+  // Toggle sidebar callback
   const toggleSidebar = useCallback(() => {
     setIsSidebarOpen((prev) => !prev);
     setIsDesktopSidebarCollapsed((prev) => !prev);
   }, []);
 
+  // Focus first input callback
   const focusInput = useCallback(() => {
-    // Focus on first input field in the algorithm table
     const firstInput = document.querySelector(
       'input[type="number"]',
     ) as HTMLInputElement;
@@ -99,630 +103,18 @@ export default function BankersAlgorithmPage() {
     }
   }, []);
 
-  const resetAlgorithm = useCallback(() => {
-    // Preserve current process and resource counts
-    const currentProcessCount = algorithmState.processCount;
-    const currentResourceCount = algorithmState.resourceCount;
-
-    // Create fresh state with preserved counts
-    const freshState = calculator.createFreshState();
-    const newState = calculator.resizeMatrices(
-      freshState,
-      currentProcessCount,
-      currentResourceCount,
-    );
-
-    setAlgorithmState(newState);
+  // Enhanced reset with focus
+  const handleReset = useCallback(() => {
+    resetAlgorithm();
     focusInput();
-    showSuccess(
-      "System Reset",
-      "Matrix values have been reset while preserving process and resource counts.",
-      3000,
-    );
-  }, [
-    focusInput,
-    calculator,
-    showSuccess,
-    algorithmState.processCount,
-    algorithmState.resourceCount,
-  ]);
-
-  // Load default example
-  const loadDefaultExample = useCallback(() => {
-    const defaultState = calculator.createDefaultState();
-    setAlgorithmState(defaultState);
-    showSuccess(
-      "Example Loaded",
-      "Classical Banker's Algorithm example has been loaded successfully.",
-      4000,
-    );
-  }, [calculator, showSuccess]);
-
-  // Complete a process (simulate process finishing its task)
-  const completeProcess = useCallback(
-    (processId: number) => {
-      try {
-        const newState = calculator.completeProcess(algorithmState, processId);
-
-        if (newState !== algorithmState) {
-          setAlgorithmState({
-            ...newState,
-            lastUpdated: new Date(),
-          });
-
-          showSuccess(
-            "Process Completed",
-            `Process P${processId} has completed execution and released all resources.`,
-            5000,
-          );
-        } else {
-          showError(
-            "Cannot Complete Process",
-            `Process P${processId} cannot be completed yet. It still has unfinished tasks.`,
-            5000,
-          );
-        }
-      } catch (error) {
-        showError(
-          "Process Completion Error",
-          error instanceof Error ? error.message : "Failed to complete process",
-          5000,
-        );
-      }
-    },
-    [algorithmState, calculator, showSuccess, showError],
-  );
-
-  // Update process count
-  const updateProcessCount = useCallback(
-    (newCount: number) => {
-      const minCount = 1;
-      const maxCount = 10;
-      const validCount = Math.max(minCount, Math.min(maxCount, newCount));
-
-      const newState = calculator.resizeMatrices(
-        algorithmState,
-        validCount,
-        algorithmState.resourceCount,
-      );
-      setAlgorithmState(newState);
-    },
-    [algorithmState, calculator],
-  );
-
-  // Update resource count
-  const updateResourceCount = useCallback(
-    (newCount: number) => {
-      const minCount = 1;
-      const maxCount = 10;
-      const validCount = Math.max(minCount, Math.min(maxCount, newCount));
-
-      const newState = calculator.resizeMatrices(
-        algorithmState,
-        algorithmState.processCount,
-        validCount,
-      );
-      setAlgorithmState(newState);
-    },
-    [algorithmState, calculator],
-  );
-
-  // Update available resources
-  const updateAvailable = useCallback(
-    (index: number, value: number) => {
-      const newAvailable = [...algorithmState.available];
-      newAvailable[index] = Math.max(0, value);
-
-      setAlgorithmState((prev) => ({
-        ...prev,
-        available: newAvailable,
-      }));
-    },
-    [algorithmState.available],
-  );
-
-  // Update allocation matrix
-  const updateAllocation = useCallback(
-    (processIndex: number, resourceIndex: number, value: number) => {
-      const newAllocation = algorithmState.allocation.map((row) => [...row]);
-      newAllocation[processIndex][resourceIndex] = Math.max(0, value);
-
-      // Recalculate need matrix
-      const newNeed = calculateNeedMatrix(algorithmState.max, newAllocation);
-
-      setAlgorithmState((prev) => ({
-        ...prev,
-        allocation: newAllocation,
-        need: newNeed,
-      }));
-    },
-    [algorithmState.allocation, algorithmState.max, calculator],
-  );
-
-  // Update max matrix
-  const updateMax = useCallback(
-    (processIndex: number, resourceIndex: number, value: number) => {
-      const newMax = algorithmState.max.map((row) => [...row]);
-      newMax[processIndex][resourceIndex] = Math.max(0, value);
-
-      // Recalculate need matrix
-      const newNeed = calculateNeedMatrix(newMax, algorithmState.allocation);
-
-      setAlgorithmState((prev) => ({
-        ...prev,
-        max: newMax,
-        need: newNeed,
-      }));
-    },
-    [algorithmState.max, algorithmState.allocation, calculator],
-  );
-
-  // Check safety with enhanced validation
-  const checkSafety = useCallback(() => {
-    // First validate the system state
-    const validationErrors = calculator.validateSystemData(algorithmState);
-
-    if (validationErrors.length > 0) {
-      showError(
-        "System Validation Failed",
-        `Please fix the following issues: ${validationErrors
-          .map((e) => e.message)
-          .join(", ")}`,
-        8000,
-      );
-      return;
-    }
-
-    // Clear previous calculation data before starting new calculation
-    setAlgorithmState((prev) => ({
-      ...prev,
-      isCalculating: true,
-      // Clear previous calculation results
-      algorithmSteps: [],
-      safeSequence: [],
-      finish: Array(prev.processCount).fill(false),
-      isSafe: undefined,
-    }));
-
-    // Clear request result since this is just a safety check
-    setRequestResult({ isRequest: false });
-
-    // Reset step navigation
-    setCurrentStepIndex(undefined);
-    setStepStates([]);
-
-    // Add a small delay to show loading state
-    setTimeout(() => {
-      const safetyResult = calculator.checkSafety(
-        algorithmState.available,
-        algorithmState.allocation,
-        algorithmState.need,
-      );
-
-      // Save original state before updating
-      // Note: We don't need to save 'available' because it never changes during navigation
-      setOriginalStateBeforeSteps({
-        available: [...algorithmState.available], // Keep original available
-        allocation: algorithmState.allocation.map((row) => [...row]),
-        need: algorithmState.need.map((row) => [...row]),
-        finish: [...algorithmState.finish],
-      });
-
-      setAlgorithmState((prev) => ({
-        ...prev,
-        finish: safetyResult.finalFinishState,
-        safeSequence: safetyResult.safeSequence,
-        algorithmSteps: safetyResult.steps,
-        isSafe: safetyResult.isSafe,
-        isCalculating: false,
-        lastUpdated: new Date(),
-      }));
-
-      // Build step states for navigation - track complete state at each step
-      const states: Array<{
-        work: number[];
-        finish: boolean[];
-        allocation: number[][];
-        need: number[][];
-        available?: number[]; // Not used for safety check, available stays constant
-      }> = [];
-      let currentWork = [...algorithmState.available];
-      let currentFinish = Array(algorithmState.processCount).fill(false);
-      // For safety checks, allocation and need never change - they're just the current state
-      const constantAllocation = algorithmState.allocation.map((row) => [
-        ...row,
-      ]);
-      const constantNeed = algorithmState.need.map((row) => [...row]);
-
-      safetyResult.steps.forEach((step) => {
-        if (step.workVector && step.workVector.length > 0) {
-          currentWork = [...step.workVector];
-        }
-        if (step.processChecked && step.canFinish) {
-          const processIndex = parseInt(step.processChecked.replace("P", ""));
-          if (!isNaN(processIndex)) {
-            currentFinish = [...currentFinish];
-            currentFinish[processIndex] = true;
-          }
-        }
-        states.push({
-          work: [...currentWork],
-          finish: [...currentFinish],
-          allocation: constantAllocation.map((row) => [...row]),
-          need: constantNeed.map((row) => [...row]),
-          // Don't include available - it should remain constant for safety checks
-        });
-      });
-
-      setStepStates(states);
-
-      // Show result notification
-      if (safetyResult.isSafe) {
-        showSuccess(
-          "System is Safe",
-          `Safe execution sequence found: ${safetyResult.safeSequence.join(
-            " → ",
-          )}`,
-          6000,
-        );
-      } else {
-        showError(
-          "System is Unsafe",
-          "The current system state could lead to deadlock. Please review resource allocation.",
-          8000,
-        );
-      }
-    }, 300);
-  }, [algorithmState, calculator, showSuccess, showError]);
-
-  // Auto-preview on initial page load (only once)
-  useEffect(() => {
-    if (!hasShownInitialPreview.current) {
-      const runInitialPreview = () => {
-        setTimeout(() => {
-          checkSafety();
-          hasShownInitialPreview.current = true;
-        }, 1000);
-      };
-
-      runInitialPreview();
-    }
-  }, [checkSafety]);
+  }, [resetAlgorithm, focusInput]);
 
   // Keyboard shortcuts
   useKeyboardShortcuts({
     onToggleSidebar: toggleSidebar,
     onToggleTheme: toggleDarkMode,
-    onCheckSafety: checkSafety, // Check safety with Shift+Enter
+    onCheckSafety: checkSafety,
   });
-
-  // Process resource request with enhanced error handling
-  const [isProcessingRequest, setIsProcessingRequest] = useState(false);
-  const [requestResult, setRequestResult] = useState<{
-    isRequest: boolean;
-    wasGranted?: boolean;
-    processId?: number;
-    requestVector?: number[];
-    shouldResetRequest?: boolean;
-  }>({ isRequest: false });
-
-  // Step navigation state
-  const [currentStepIndex, setCurrentStepIndex] = useState<number | undefined>(
-    undefined,
-  );
-  const [stepStates, setStepStates] = useState<
-    Array<{
-      work: number[];
-      finish: boolean[];
-      allocation: number[][];
-      need: number[][];
-      available?: number[]; // Optional: only used for request steps
-    }>
-  >([]);
-  const [originalStateBeforeSteps, setOriginalStateBeforeSteps] = useState<{
-    available: number[];
-    allocation: number[][];
-    need: number[][];
-    finish: boolean[];
-  } | null>(null);
-
-  // Handle step navigation
-  const handleStepChange = useCallback(
-    (stepIndex: number | undefined) => {
-      setCurrentStepIndex(stepIndex);
-
-      // If stepIndex is undefined, reset to final state (exit navigation mode)
-      if (stepIndex === undefined) {
-        // Restore the original state from before step navigation
-        if (originalStateBeforeSteps) {
-          setAlgorithmState((prev) => ({
-            ...prev,
-            available: [...originalStateBeforeSteps.available],
-            allocation: originalStateBeforeSteps.allocation.map((row) => [
-              ...row,
-            ]),
-            need: originalStateBeforeSteps.need.map((row) => [...row]),
-            finish: [...originalStateBeforeSteps.finish],
-          }));
-        }
-        return;
-      }
-
-      // Update the UI to reflect the state at this step
-      if (stepStates[stepIndex]) {
-        const stepState = stepStates[stepIndex];
-        setAlgorithmState((prev) => ({
-          ...prev,
-          // For request steps, update available if it's tracked; otherwise use work vector
-          available: stepState.available
-            ? [...stepState.available]
-            : [...stepState.work],
-          allocation: stepState.allocation.map((row) => [...row]),
-          need: stepState.need.map((row) => [...row]),
-          finish: [...stepState.finish],
-        }));
-      }
-    },
-    [stepStates, originalStateBeforeSteps],
-  );
-
-  const processResourceRequest = useCallback(
-    (request: ResourceRequest) => {
-      setIsProcessingRequest(true);
-
-      // Clear previous calculation data before starting new request processing
-      setAlgorithmState((prev) => ({
-        ...prev,
-        // Clear previous calculation results
-        algorithmSteps: [],
-        safeSequence: [],
-        finish: Array(prev.processCount).fill(false),
-        isSafe: undefined,
-      }));
-
-      // Reset step navigation
-      setCurrentStepIndex(undefined);
-      setStepStates([]);
-
-      // Add a small delay to show loading state
-      setTimeout(() => {
-        const requestResult = calculator.processRequest(
-          request,
-          algorithmState,
-        );
-
-        if (requestResult.canGrant && requestResult.newState) {
-          // Request can be granted - update state with enhanced final step
-          const enhancedSteps = [...(requestResult.simulationSteps || [])];
-
-          // Add request result information to the final step
-          if (enhancedSteps.length > 0) {
-            const lastStep = enhancedSteps[enhancedSteps.length - 1];
-            if (lastStep.description.includes("System is SAFE")) {
-              lastStep.description += `\n\n[REQUEST GRANTED]: Process P${request.processId} successfully allocated [${request.requestVector.join(", ")}] resources. The system remains in a safe state.`;
-            }
-          }
-
-          // Save original state before updating for step navigation
-          // For granted requests, save the NEW state (after allocation)
-          setOriginalStateBeforeSteps({
-            available: [...requestResult.newState.available], // New available after allocation
-            allocation: requestResult.newState.allocation.map((row) => [
-              ...row,
-            ]),
-            need: requestResult.newState.need.map((row) => [...row]),
-            finish: [...requestResult.newState.finish],
-          });
-
-          setAlgorithmState({
-            ...requestResult.newState,
-            algorithmSteps: enhancedSteps,
-            lastUpdated: new Date(),
-          });
-
-          // Build step states for navigation
-          const states: Array<{
-            work: number[];
-            finish: boolean[];
-            allocation: number[][];
-            need: number[][];
-            available: number[]; // Track available separately for request steps
-          }> = [];
-          let currentWork = [...requestResult.newState.available];
-          let currentFinish = Array(requestResult.newState.processCount).fill(
-            false,
-          );
-          // Start with original state before allocation
-          let currentAllocation = algorithmState.allocation.map((row) => [
-            ...row,
-          ]);
-          let currentNeed = algorithmState.need.map((row) => [...row]);
-          let currentAvailable = [...algorithmState.available]; // Start with original available
-
-          enhancedSteps.forEach((step, index) => {
-            // Check if this step is where allocation happens (step 3 in request process)
-            if (
-              step.description.includes("Temporarily allocate resources") &&
-              requestResult.newState
-            ) {
-              // Update to new state after allocation
-              currentAvailable = [...requestResult.newState.available];
-              currentAllocation = requestResult.newState.allocation.map(
-                (row) => [...row],
-              );
-              currentNeed = requestResult.newState.need.map((row) => [...row]);
-            }
-
-            if (step.workVector && step.workVector.length > 0) {
-              currentWork = [...step.workVector];
-            }
-            if (step.processChecked && step.canFinish) {
-              const processIndex = parseInt(
-                step.processChecked.replace("P", ""),
-              );
-              if (!isNaN(processIndex)) {
-                currentFinish = [...currentFinish];
-                currentFinish[processIndex] = true;
-              }
-            }
-            states.push({
-              work: [...currentWork],
-              finish: [...currentFinish],
-              allocation: currentAllocation.map((row) => [...row]),
-              need: currentNeed.map((row) => [...row]),
-              available: [...currentAvailable], // Store the correct available for this step
-            });
-          });
-
-          setStepStates(states);
-
-          // Set request result state
-          setRequestResult({
-            isRequest: true,
-            wasGranted: true,
-            processId: request.processId,
-            requestVector: request.requestVector,
-            shouldResetRequest: true, // Signal to reset request panel
-          });
-
-          // Show success message with detailed information
-          showSuccess(
-            "Request Granted",
-            requestResult.errorMessage ||
-              `Process P${
-                request.processId
-              } allocated [${request.requestVector.join(
-                ", ",
-              )}]. System remains safe.`,
-            6000,
-          );
-        } else {
-          // Request cannot be granted - show detailed error with enhanced final step
-          const enhancedSteps = [...(requestResult.simulationSteps || [])];
-
-          // Add request result information to the final step
-          if (enhancedSteps.length > 0) {
-            const lastStep = enhancedSteps[enhancedSteps.length - 1];
-            if (lastStep.description.includes("System is UNSAFE")) {
-              lastStep.description += `\n\n[REQUEST DENIED]: Process P${request.processId} request [${request.requestVector.join(", ")}] cannot be granted as it would lead to an unsafe state (potential deadlock).`;
-            }
-          }
-
-          // Set request result state
-          setRequestResult({
-            isRequest: true,
-            wasGranted: false,
-            processId: request.processId,
-            requestVector: request.requestVector,
-          });
-
-          showError(
-            "Request Denied",
-            requestResult.errorMessage ||
-              `Process P${
-                request.processId
-              } request [${request.requestVector.join(
-                ", ",
-              )}] cannot be granted.`,
-            8000,
-          );
-
-          // Show the simulation steps even for denied requests to help user understand why
-          if (requestResult.simulationSteps) {
-            // Save original state before updating for step navigation
-            // Note: We don't need to save 'available' because it never changes during navigation
-            setOriginalStateBeforeSteps({
-              available: [...algorithmState.available], // Keep original available
-              allocation: algorithmState.allocation.map((row) => [...row]),
-              need: algorithmState.need.map((row) => [...row]),
-              finish: [...algorithmState.finish],
-            });
-
-            setAlgorithmState((prev) => ({
-              ...prev,
-              algorithmSteps: enhancedSteps,
-              safeSequence: [],
-              finish: prev.finish.map(() => false),
-              isSafe: false,
-              lastUpdated: new Date(),
-            }));
-
-            // Build step states for navigation
-            const states: Array<{
-              work: number[];
-              finish: boolean[];
-              allocation: number[][];
-              need: number[][];
-              available?: number[];
-            }> = [];
-            let currentWork = [...algorithmState.available];
-            let currentFinish = Array(algorithmState.processCount).fill(false);
-            let currentAllocation = algorithmState.allocation.map((row) => [
-              ...row,
-            ]);
-            let currentNeed = algorithmState.need.map((row) => [...row]);
-            let currentAvailable = [...algorithmState.available]; // Start with original available
-
-            // For denied requests, we still need to track when allocation would have happened
-            enhancedSteps.forEach((step) => {
-              // Check if this step is where allocation would happen (step 3 in request process)
-              if (step.description.includes("Temporarily allocate resources")) {
-                // Extract the new available from the description or calculate it
-                // For denied requests, we simulate what would have happened
-                const requestVector = request.requestVector;
-                const processId = request.processId;
-
-                // Update available (subtract request)
-                currentAvailable = algorithmState.available.map(
-                  (val, idx) => val - requestVector[idx],
-                );
-
-                // Update allocation (add request to process)
-                currentAllocation = algorithmState.allocation.map(
-                  (row, pIdx) =>
-                    pIdx === processId
-                      ? row.map((val, rIdx) => val + requestVector[rIdx])
-                      : [...row],
-                );
-
-                // Update need (subtract request from process)
-                currentNeed = algorithmState.need.map((row, pIdx) =>
-                  pIdx === processId
-                    ? row.map((val, rIdx) => val - requestVector[rIdx])
-                    : [...row],
-                );
-              }
-
-              if (step.workVector && step.workVector.length > 0) {
-                currentWork = [...step.workVector];
-              }
-              if (step.processChecked && step.canFinish) {
-                const processIndex = parseInt(
-                  step.processChecked.replace("P", ""),
-                );
-                if (!isNaN(processIndex)) {
-                  currentFinish = [...currentFinish];
-                  currentFinish[processIndex] = true;
-                }
-              }
-              states.push({
-                work: [...currentWork],
-                finish: [...currentFinish],
-                allocation: currentAllocation.map((row) => [...row]),
-                need: currentNeed.map((row) => [...row]),
-                available: [...currentAvailable],
-              });
-            });
-
-            setStepStates(states);
-          }
-        }
-
-        setIsProcessingRequest(false);
-      }, 500);
-    },
-    [algorithmState, calculator, showSuccess, showError],
-  );
 
   // Setup swipe gestures for mobile sidebar
   const { attachToElement } = useSwipeGesture({
@@ -761,13 +153,8 @@ export default function BankersAlgorithmPage() {
       setIsScrolled(scrollTop > 10);
     };
 
-    // Check on mount and when content changes
     checkScrollable();
-
-    // Check on scroll
     mainContent.addEventListener("scroll", checkScrollable);
-
-    // Check on resize
     const resizeObserver = new ResizeObserver(checkScrollable);
     resizeObserver.observe(mainContent);
 
@@ -795,11 +182,7 @@ export default function BankersAlgorithmPage() {
   return (
     <>
       {/* Browser Compatibility Warning */}
-      <BrowserCompatibilityWarning
-        onDismiss={() => {
-          /* Browser warning dismissed */
-        }}
-      />
+      <BrowserCompatibilityWarning onDismiss={() => {}} />
 
       {/* Toast Notifications */}
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
@@ -842,7 +225,7 @@ export default function BankersAlgorithmPage() {
                     className="flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-200"
                     onClick={(e) => {
                       e.stopPropagation();
-                      resetAlgorithm();
+                      handleReset();
                     }}
                   >
                     <LogoIcon className="h-6 w-6" />
@@ -851,7 +234,7 @@ export default function BankersAlgorithmPage() {
               </div>
             </div>
 
-            {/* Mobile System Controls - Scrollable Content */}
+            {/* Mobile System Controls */}
             <div className="flex-1 overflow-y-auto">
               <SystemControls
                 processCount={algorithmState.processCount}
@@ -875,7 +258,7 @@ export default function BankersAlgorithmPage() {
               />
             </div>
 
-            {/* Mobile Sidebar Footer - Always at bottom */}
+            {/* Mobile Sidebar Footer */}
             <div className="p-4 flex-shrink-0">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
@@ -945,7 +328,7 @@ export default function BankersAlgorithmPage() {
                   className="flex items-center justify-center cursor-pointer hover:scale-105 transition-transform duration-200"
                   onClick={(e) => {
                     e.stopPropagation();
-                    resetAlgorithm();
+                    handleReset();
                   }}
                 >
                   <LogoIcon className="h-6 w-6" />
@@ -954,7 +337,7 @@ export default function BankersAlgorithmPage() {
             </div>
           </div>
 
-          {/* Desktop System Controls - Scrollable Content */}
+          {/* Desktop System Controls */}
           <div className="flex-1 overflow-y-auto">
             <SystemControls
               processCount={algorithmState.processCount}
@@ -978,7 +361,7 @@ export default function BankersAlgorithmPage() {
             />
           </div>
 
-          {/* Sidebar Footer - Always at bottom */}
+          {/* Sidebar Footer */}
           <div className="flex-shrink-0 p-4">
             {!isDesktopSidebarCollapsed ? (
               <div className="flex items-center justify-between">
@@ -1114,7 +497,7 @@ export default function BankersAlgorithmPage() {
                   </button>
 
                   <button
-                    onClick={resetAlgorithm}
+                    onClick={handleReset}
                     disabled={
                       algorithmState.isCalculating || isProcessingRequest
                     }
@@ -1179,12 +562,12 @@ export default function BankersAlgorithmPage() {
                 algorithmSteps={algorithmState.algorithmSteps}
                 isCalculating={algorithmState.isCalculating}
                 isProcessingRequest={isProcessingRequest}
-                currentStepIndex={currentStepIndex}
+                currentStepIndex={stepNavigationState.currentStepIndex}
                 onAllocationChange={updateAllocation}
                 onMaxChange={updateMax}
               />
 
-              {/* Mobile Action Buttons - Only show on mobile */}
+              {/* Mobile Action Buttons */}
               <div className="sm:hidden flex flex-col gap-3">
                 <button
                   onClick={checkSafety}
@@ -1218,7 +601,7 @@ export default function BankersAlgorithmPage() {
 
                 <div className="flex gap-3">
                   <button
-                    onClick={resetAlgorithm}
+                    onClick={handleReset}
                     disabled={
                       algorithmState.isCalculating || isProcessingRequest
                     }
@@ -1259,7 +642,7 @@ export default function BankersAlgorithmPage() {
                 }
                 requestResult={requestResult}
                 onStepChange={handleStepChange}
-                currentStepIndex={currentStepIndex}
+                currentStepIndex={stepNavigationState.currentStepIndex}
               />
             </div>
 
