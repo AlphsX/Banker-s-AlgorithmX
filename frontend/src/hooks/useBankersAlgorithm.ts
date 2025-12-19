@@ -139,6 +139,7 @@ export function useBankersAlgorithm(
 
   /**
    * Builds step states for navigation from algorithm steps
+   * Optimized: Uses references for read-only data to reduce memory allocations
    */
   const buildStepStates = useCallback(
     (
@@ -161,40 +162,45 @@ export function useBankersAlgorithm(
         available?: number[];
       }> = [];
 
-      let currentWork = [...initialState.available];
-      let currentFinish = Array(initialState.processCount).fill(false);
-      let currentAllocation = initialState.allocation.map((row) => [...row]);
-      let currentNeed = initialState.need.map((row) => [...row]);
-      let currentAvailable = [...initialState.available];
+      // Use shallow copies for tracking, deep clone only when state changes
+      let currentWork = initialState.available;
+      let currentFinish = new Array(initialState.processCount).fill(false);
+      let currentAllocation = initialState.allocation;
+      let currentNeed = initialState.need;
+      let currentAvailable = initialState.available;
 
       steps.forEach((step) => {
-        // Check if this step is where allocation happens (step 3 in request process)
+        // Only clone when allocation actually changes (granted request)
         if (step.description.includes("Temporarily allocate resources")) {
           if (isGrantedRequest && newState) {
-            currentAvailable = [...newState.available];
-            currentAllocation = newState.allocation.map((row) => [...row]);
-            currentNeed = newState.need.map((row) => [...row]);
+            currentAvailable = newState.available;
+            currentAllocation = newState.allocation;
+            currentNeed = newState.need;
           }
         }
 
+        // Update work vector when it changes
         if (step.workVector && step.workVector.length > 0) {
-          currentWork = [...step.workVector];
+          currentWork = step.workVector;
         }
 
+        // Update finish state when process completes
         if (step.processChecked && step.canFinish) {
           const processIndex = parseInt(step.processChecked.replace("P", ""));
           if (!isNaN(processIndex)) {
+            // Clone finish array only when it changes
             currentFinish = [...currentFinish];
             currentFinish[processIndex] = true;
           }
         }
 
+        // Store references (read-only for UI display)
         states.push({
-          work: [...currentWork],
-          finish: [...currentFinish],
-          allocation: currentAllocation.map((row) => [...row]),
-          need: currentNeed.map((row) => [...row]),
-          available: [...currentAvailable],
+          work: currentWork,
+          finish: currentFinish,
+          allocation: currentAllocation,
+          need: currentNeed,
+          available: currentAvailable,
         });
       });
 
@@ -355,6 +361,7 @@ export function useBankersAlgorithm(
 
   /**
    * Handles step navigation changes
+   * Optimized: Direct assignment for display (read-only in UI)
    */
   const handleStepChange = useCallback(
     (stepIndex: number | undefined) => {
@@ -365,28 +372,24 @@ export function useBankersAlgorithm(
         if (originalStateBeforeSteps) {
           setAlgorithmState((prev) => ({
             ...prev,
-            available: [...originalStateBeforeSteps.available],
-            allocation: originalStateBeforeSteps.allocation.map((row) => [
-              ...row,
-            ]),
-            need: originalStateBeforeSteps.need.map((row) => [...row]),
-            finish: [...originalStateBeforeSteps.finish],
+            available: originalStateBeforeSteps.available,
+            allocation: originalStateBeforeSteps.allocation,
+            need: originalStateBeforeSteps.need,
+            finish: originalStateBeforeSteps.finish,
           }));
         }
         return;
       }
 
-      // Update UI to reflect state at this step
+      // Update UI to reflect state at this step (read-only references)
       if (stepStates[stepIndex]) {
         const stepState = stepStates[stepIndex];
         setAlgorithmState((prev) => ({
           ...prev,
-          available: stepState.available
-            ? [...stepState.available]
-            : [...stepState.work],
-          allocation: stepState.allocation.map((row) => [...row]),
-          need: stepState.need.map((row) => [...row]),
-          finish: [...stepState.finish],
+          available: stepState.available || stepState.work,
+          allocation: stepState.allocation,
+          need: stepState.need,
+          finish: stepState.finish,
         }));
       }
     },

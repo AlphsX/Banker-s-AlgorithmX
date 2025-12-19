@@ -405,6 +405,24 @@ describe("useBankersAlgorithm - Logic Validation", () => {
 
       expect(result.canGrant).toBe(true);
     });
+
+    test("should quickly detect unsafe state with zero available resources", () => {
+      const state = calculator.createDefaultState();
+      state.available = [0, 0, 0];
+
+      const startTime = performance.now();
+      const result = calculator.checkSafety(
+        state.available,
+        state.allocation,
+        state.need,
+      );
+      const endTime = performance.now();
+
+      expect(result.isSafe).toBe(false);
+      expect(result.steps.length).toBe(1); // Early exit with single step
+      expect(result.steps[0].description).toContain("no available resources");
+      expect(endTime - startTime).toBeLessThan(1); // Should be nearly instant
+    });
   });
 });
 
