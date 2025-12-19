@@ -42,23 +42,6 @@ export class BankersAlgorithmCalculator {
   ): SafetyResult {
     const processCount = allocation.length;
 
-    // Early exit: If no resources available, system cannot be safe
-    if (available.every((v) => v === 0) && processCount > 0) {
-      return {
-        isSafe: false,
-        safeSequence: [],
-        steps: [
-          {
-            stepNumber: 1,
-            description: "System has no available resources - UNSAFE",
-            workVector: available,
-            isHighlighted: true,
-          },
-        ],
-        finalFinishState: Array(processCount).fill(false),
-      };
-    }
-
     // Step 1: Initialize Work = Available and Finish[i] = false
     let work = cloneVector(available);
     const finish = Array(processCount).fill(false);
