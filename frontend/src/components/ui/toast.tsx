@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useCallback } from "react";
-import { ShieldCheck, ShieldAlert, X } from "lucide-react";
+import React, {useState, useEffect, useCallback} from 'react';
+import {ShieldCheck, ShieldAlert, X} from 'lucide-react';
 
 export interface ToastMessage {
   id: string;
-  type: "success" | "error";
+  type: 'success' | 'error';
   title: string;
   message: string;
   duration?: number;
@@ -16,7 +16,7 @@ interface ToastProps {
   onDismiss: (id: string) => void;
 }
 
-const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
+const Toast: React.FC<ToastProps> = ({toast, onDismiss}) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
 
@@ -43,19 +43,19 @@ const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
     }
   }, [toast.duration, handleDismiss]);
 
-  const Icon = toast.type === "success" ? ShieldCheck : ShieldAlert;
+  const Icon = toast.type === 'success' ? ShieldCheck : ShieldAlert;
   const bgColor =
-    toast.type === "success"
-      ? "bg-green-50/40 dark:bg-green-900/20 border-green-200/50 dark:border-green-800"
-      : "bg-red-50/40 dark:bg-red-900/20 border-red-200/50 dark:border-red-800";
+    toast.type === 'success'
+      ? 'bg-green-50/40 dark:bg-green-900/20 border-green-200/50 dark:border-green-800'
+      : 'bg-red-50/40 dark:bg-red-900/20 border-red-200/50 dark:border-red-800';
   const iconColor =
-    toast.type === "success"
-      ? "text-green-500 dark:text-green-400"
-      : "text-red-500 dark:text-red-400";
+    toast.type === 'success'
+      ? 'text-green-500 dark:text-green-400'
+      : 'text-red-500 dark:text-red-400';
   const textColor =
-    toast.type === "success"
-      ? "text-green-800 dark:text-green-200"
-      : "text-red-800 dark:text-red-200";
+    toast.type === 'success'
+      ? 'text-green-800 dark:text-green-200'
+      : 'text-red-800 dark:text-red-200';
 
   return (
     <div
@@ -63,8 +63,8 @@ const Toast: React.FC<ToastProps> = ({ toast, onDismiss }) => {
         relative flex items-start space-x-3 p-4 rounded-lg border shadow-lg backdrop-blur-sm
         transition-all duration-300 ease-out
         ${bgColor}
-        ${isVisible && !isExiting ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"}
-        ${isExiting ? "scale-95" : "scale-100"}
+        ${isVisible && !isExiting ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}
+        ${isExiting ? 'scale-95' : 'scale-100'}
       `}
     >
       <Icon className={`h-5 w-5 flex-shrink-0 mt-0.5 ${iconColor}`} />
@@ -110,7 +110,7 @@ export const useToast = () => {
 
   const showToast = useCallback(
     (
-      type: "success" | "error",
+      type: 'success' | 'error',
       title: string,
       message: string,
       duration: number = 5000,
@@ -135,14 +135,14 @@ export const useToast = () => {
 
   const showSuccess = useCallback(
     (title: string, message: string, duration?: number) => {
-      showToast("success", title, message, duration);
+      showToast('success', title, message, duration);
     },
     [showToast],
   );
 
   const showError = useCallback(
     (title: string, message: string, duration?: number) => {
-      showToast("error", title, message, duration);
+      showToast('error', title, message, duration);
     },
     [showToast],
   );

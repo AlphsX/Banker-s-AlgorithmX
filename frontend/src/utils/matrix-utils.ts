@@ -4,7 +4,7 @@
  * Based on the matrix operations from GreeksforGreeks implementation
  */
 
-import { ValidationError } from "@/types/bankers-algorithm";
+import {ValidationError} from '@/types/bankers-algorithm';
 
 /**
  * Creates a matrix filled with zeros
@@ -33,7 +33,7 @@ export function calculateNeedMatrix(
   const cols = max[0]?.length || 0;
 
   if (allocation.length !== rows || (allocation[0]?.length || 0) !== cols) {
-    throw new Error("Matrix dimensions do not match");
+    throw new Error('Matrix dimensions do not match');
   }
 
   const need: number[][] = [];
@@ -69,7 +69,7 @@ export function isVectorLessOrEqual(a: number[], b: number[]): boolean {
  */
 export function addVectors(a: number[], b: number[]): number[] {
   if (a.length !== b.length) {
-    throw new Error("Vector dimensions do not match");
+    throw new Error('Vector dimensions do not match');
   }
 
   return a.map((val, index) => val + b[index]);
@@ -80,7 +80,7 @@ export function addVectors(a: number[], b: number[]): number[] {
  */
 export function subtractVectors(a: number[], b: number[]): number[] {
   if (a.length !== b.length) {
-    throw new Error("Vector dimensions do not match");
+    throw new Error('Vector dimensions do not match');
   }
 
   return a.map((val, index) => val - b[index]);
@@ -151,8 +151,8 @@ export function validateAllocationConstraints(
 
   if (allocation.length !== max.length) {
     errors.push({
-      field: "matrices",
-      message: "Allocation and Max matrices must have the same number of rows",
+      field: 'matrices',
+      message: 'Allocation and Max matrices must have the same number of rows',
     });
     return errors;
   }
@@ -162,7 +162,7 @@ export function validateAllocationConstraints(
       errors.push({
         field: `row[${i}]`,
         message:
-          "Allocation and Max matrices must have the same number of columns",
+          'Allocation and Max matrices must have the same number of columns',
       });
       continue;
     }
@@ -193,8 +193,8 @@ export function validateResourceRequest(
 
   if (request.length !== need.length || request.length !== available.length) {
     errors.push({
-      field: "request",
-      message: "Request vector dimensions do not match system dimensions",
+      field: 'request',
+      message: 'Request vector dimensions do not match system dimensions',
     });
     return errors;
   }

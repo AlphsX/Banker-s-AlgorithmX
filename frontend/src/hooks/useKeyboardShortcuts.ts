@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useCallback } from "react";
+import {useEffect, useCallback} from 'react';
 
 interface KeyboardShortcutsConfig {
   onToggleSidebar?: () => void;
@@ -9,7 +9,7 @@ interface KeyboardShortcutsConfig {
 }
 
 export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
-  const { onToggleSidebar, onToggleTheme, onCheckSafety } = config;
+  const {onToggleSidebar, onToggleTheme, onCheckSafety} = config;
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -18,7 +18,7 @@ export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
 
       // Handle Shift+Enter for Check Safety
       if (
-        event.key === "Enter" &&
+        event.key === 'Enter' &&
         event.shiftKey &&
         !isModifierPressed &&
         onCheckSafety
@@ -32,7 +32,7 @@ export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
 
       // Prevent default behavior for our shortcuts
       switch (event.key) {
-        case "[":
+        case '[':
           // Cmd+[ or Ctrl+[ - Toggle sidebar
           if (onToggleSidebar) {
             event.preventDefault();
@@ -40,7 +40,7 @@ export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
           }
           break;
 
-        case "d":
+        case 'd':
           // Cmd+D or Ctrl+D - Toggle dark mode
           if (onToggleTheme) {
             event.preventDefault();
@@ -54,21 +54,21 @@ export function useKeyboardShortcuts(config: KeyboardShortcutsConfig) {
 
   useEffect(() => {
     // Add event listener for keydown events
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
 
     // Cleanup function to remove event listener
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, [handleKeyDown]);
 
   // Return helper function to check if shortcuts are supported
   return {
-    isSupported: typeof window !== "undefined",
+    isSupported: typeof window !== 'undefined',
     shortcuts: {
-      toggleSidebar: navigator.userAgent.includes("Mac") ? "Cmd+[" : "Ctrl+[",
-      toggleTheme: navigator.userAgent.includes("Mac") ? "Cmd+D" : "Ctrl+D",
-      checkSafety: "Shift+Enter",
+      toggleSidebar: navigator.userAgent.includes('Mac') ? 'Cmd+[' : 'Ctrl+[',
+      toggleTheme: navigator.userAgent.includes('Mac') ? 'Cmd+D' : 'Ctrl+D',
+      checkSafety: 'Shift+Enter',
     },
   };
 }

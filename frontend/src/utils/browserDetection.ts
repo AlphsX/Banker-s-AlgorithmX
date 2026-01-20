@@ -17,7 +17,7 @@ interface BrowserPattern {
   pattern: RegExp;
   name: string;
   supported: boolean;
-  versionKey: "chrome" | "firefox" | "safari";
+  versionKey: 'chrome' | 'firefox' | 'safari';
   exclude?: RegExp;
 }
 
@@ -33,7 +33,7 @@ function extractBrowserVersion(
 ): string {
   const pattern = VERSION_PATTERNS[versionKey];
   const match = userAgent.match(pattern);
-  return match?.[1] ?? "Unknown";
+  return match?.[1] ?? 'Unknown';
 }
 
 export const detectBrowser = (): BrowserInfo => {
@@ -43,40 +43,40 @@ export const detectBrowser = (): BrowserInfo => {
   const browsers: Record<string, BrowserPattern> = {
     comet: {
       pattern: /comet/i,
-      name: "Comet",
+      name: 'Comet',
       supported: true,
-      versionKey: "chrome",
+      versionKey: 'chrome',
     },
     arc: {
       pattern: /arc/i,
-      name: "Arc Browser",
+      name: 'Arc Browser',
       supported: true,
-      versionKey: "chrome",
+      versionKey: 'chrome',
     },
     brave: {
       pattern: /brave/i,
-      name: "Brave",
+      name: 'Brave',
       supported: true,
-      versionKey: "chrome",
+      versionKey: 'chrome',
     },
     firefox: {
       pattern: /firefox/i,
-      name: "Firefox",
+      name: 'Firefox',
       supported: true,
-      versionKey: "firefox",
+      versionKey: 'firefox',
     },
     chrome: {
       pattern: /chrome/i,
-      name: "Chrome",
+      name: 'Chrome',
       supported: true,
-      versionKey: "chrome",
+      versionKey: 'chrome',
       exclude: /edg|opr|brave|arc|comet|firefox/i,
     },
     safari: {
       pattern: /safari/i,
-      name: "Safari",
+      name: 'Safari',
       supported: true,
-      versionKey: "safari",
+      versionKey: 'safari',
       exclude: /chrome|chromium|edg|opr|brave|arc|comet|firefox/i,
     },
   };
@@ -97,15 +97,15 @@ export const detectBrowser = (): BrowserInfo => {
   }
 
   return {
-    name: "Unknown",
-    version: "Unknown",
+    name: 'Unknown',
+    version: 'Unknown',
     isSupported: false,
     userAgent,
   };
 };
 
 export const getSupportedBrowsers = (): string[] => {
-  return ["Comet", "Chrome", "Arc Browser", "Safari", "Firefox", "Brave"];
+  return ['Comet', 'Chrome', 'Arc Browser', 'Safari', 'Firefox', 'Brave'];
 };
 
 export const getBrowserRecommendation = (
@@ -116,7 +116,7 @@ export const getBrowserRecommendation = (
   }
 
   const supportedBrowsers = getSupportedBrowsers();
-  return `Your browser (${currentBrowser.name}) is not supported. Please use one of these browsers: ${supportedBrowsers.join(", ")}.`;
+  return `Your browser (${currentBrowser.name}) is not supported. Please use one of these browsers: ${supportedBrowsers.join(', ')}.`;
 };
 
 // Check if current browser supports speech recognition
@@ -129,7 +129,7 @@ export const checkSpeechRecognitionSupport = (
   if (!browserInfo.isSupported) {
     return {
       supported: false,
-      message: `Voice input is not available in ${browserInfo.name}. Please use a supported browser: ${getSupportedBrowsers().join(", ")}.`,
+      message: `Voice input is not available in ${browserInfo.name}. Please use a supported browser: ${getSupportedBrowsers().join(', ')}.`,
     };
   }
 
@@ -142,9 +142,9 @@ export const checkSpeechRecognitionSupport = (
     // Provide specific guidance for supported browsers and mobile OS
     const userAgent = navigator.userAgent;
 
-    if (browserInfo.name === "Firefox") {
+    if (browserInfo.name === 'Firefox') {
       message = `Voice input is not yet supported in Firefox. Please use Chrome, Safari, Brave, or Arc Browser for voice features.`;
-    } else if (browserInfo.name === "Safari") {
+    } else if (browserInfo.name === 'Safari') {
       if (/iPhone|iPad|iPod/i.test(userAgent)) {
         message = `Voice input requires iOS 14.5+ and Safari 14.1+. Please update your device.`;
       } else {

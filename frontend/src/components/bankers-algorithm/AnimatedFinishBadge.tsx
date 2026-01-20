@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useRef } from "react";
-import { BooleanBadge } from "@/components/ui/BooleanBadge";
-import { AlgorithmStep } from "@/types/bankers-algorithm";
+import React, {useState, useEffect, useRef} from 'react';
+import {BooleanBadge} from '@/components/ui/BooleanBadge';
+import {AlgorithmStep} from '@/types/bankers-algorithm';
 
 interface AnimatedFinishBadgeProps {
   processIndex: number;
@@ -74,12 +74,12 @@ export const AnimatedFinishBadge: React.FC<AnimatedFinishBadgeProps> = ({
             step.stepNumber === 3 &&
             step.processChecked &&
             step.canFinish === true &&
-            (step.description.includes("work =") ||
-              step.description.includes("Work ="));
+            (step.description.includes('work =') ||
+              step.description.includes('Work ='));
 
           if (isProcessFinishingStep && step.processChecked) {
             const processName = step.processChecked;
-            const processNum = parseInt(processName.replace("P", ""));
+            const processNum = parseInt(processName.replace('P', ''));
 
             console.log(
               `P${processIndex} - Found finishing step for ${processName} (${processNum})`,
@@ -138,10 +138,10 @@ export const AnimatedFinishBadge: React.FC<AnimatedFinishBadgeProps> = ({
       <div
         className={`transition-all duration-300 ease-out transform ${
           isAnimating
-            ? "animate-finish-badge-bounce"
+            ? 'animate-finish-badge-bounce'
             : currentFinishState
-              ? "scale-100 opacity-100"
-              : "scale-100 opacity-100"
+              ? 'scale-100 opacity-100'
+              : 'scale-100 opacity-100'
         }`}
       >
         <BooleanBadge value={currentFinishState} />
@@ -151,7 +151,7 @@ export const AnimatedFinishBadge: React.FC<AnimatedFinishBadgeProps> = ({
       {isCalculating && (
         <div
           className="absolute inset-0 flex items-center justify-center rounded-full backdrop-blur-sm"
-          style={{ backgroundColor: "var(--table-bg, #ffffff)" }}
+          style={{backgroundColor: 'var(--table-bg, #ffffff)'}}
         >
           <div className="animate-spin rounded-full h-4 w-4 border-2 border-gray-300 border-t-gray-600 dark:border-gray-600 dark:border-t-gray-300"></div>
         </div>

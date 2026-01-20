@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
@@ -6,7 +6,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Card: React.FC<CardProps> = ({
   children,
-  className = "",
+  className = '',
   ...props
 }) => {
   return (
@@ -25,7 +25,7 @@ export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const CardHeader: React.FC<CardHeaderProps> = ({
   children,
-  className = "",
+  className = '',
   ...props
 }) => {
   return (
@@ -41,7 +41,7 @@ export interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement>
 
 export const CardTitle: React.FC<CardTitleProps> = ({
   children,
-  className = "",
+  className = '',
   ...props
 }) => {
   return (
@@ -60,7 +60,7 @@ export interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraph
 
 export const CardDescription: React.FC<CardDescriptionProps> = ({
   children,
-  className = "",
+  className = '',
   ...props
 }) => {
   return (
@@ -76,7 +76,7 @@ export interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const CardContent: React.FC<CardContentProps> = ({
   children,
-  className = "",
+  className = '',
   ...props
 }) => {
   return (
@@ -92,7 +92,7 @@ export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const CardFooter: React.FC<CardFooterProps> = ({
   children,
-  className = "",
+  className = '',
   ...props
 }) => {
   return (

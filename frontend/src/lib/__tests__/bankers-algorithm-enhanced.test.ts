@@ -5,14 +5,14 @@
  * npm test -- --testPathPatterns=bankers-algorithm-enhanced.test.ts --testNamePattern="should show detailed steps for unsafe state"
  */
 
-import { describe, test, expect, beforeEach } from "bun:test";
+import {describe, test, expect, beforeEach} from 'bun:test';
 
-import { BankersAlgorithmCalculator } from "../bankers-algorithm-calculator";
+import {BankersAlgorithmCalculator} from '../bankers-algorithm-calculator';
 import {
   BankersAlgorithmState,
   ResourceRequest,
-} from "@/types/bankers-algorithm";
-import { calculateNeedMatrix } from "@/utils/matrix-utils";
+} from '@/types/bankers-algorithm';
+import {calculateNeedMatrix} from '@/utils/matrix-utils';
 
 describe("Enhanced Banker's Algorithm Calculator", () => {
   let calculator: BankersAlgorithmCalculator;
@@ -21,8 +21,8 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
     calculator = new BankersAlgorithmCalculator();
   });
 
-  describe("Safety Algorithm - Classical Examples", () => {
-    test("should correctly identify safe state with textbook example", () => {
+  describe('Safety Algorithm - Classical Examples', () => {
+    test('should correctly identify safe state with textbook example', () => {
       // Classic safe state from operating systems textbooks (corrected)
       const available = [3, 3, 2];
       const allocation = [
@@ -46,11 +46,11 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
 
       // Verify the algorithm steps are logical
       const initStep = result.steps[0];
-      expect(initStep.description).toContain("init: work = available");
+      expect(initStep.description).toContain('init: work = available');
       expect(initStep.workVector).toEqual([3, 3, 2]);
     });
 
-    test("should correctly identify safe state with corrected example", () => {
+    test('should correctly identify safe state with corrected example', () => {
       // Use the default state which is known to be safe
       const state = calculator.createDefaultState();
       const result = calculator.checkSafety(
@@ -64,7 +64,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       expect(result.steps.length).toBeGreaterThan(0);
     });
 
-    test("should correctly identify unsafe state", () => {
+    test('should correctly identify unsafe state', () => {
       // Modified example that creates unsafe state
       const available = [1, 0, 0]; // Very limited resources
       const allocation = [
@@ -85,10 +85,10 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
 
       // Should have steps showing why it's unsafe
       const finalStep = result.steps[result.steps.length - 1];
-      expect(finalStep.description).toContain("UNSAFE");
+      expect(finalStep.description).toContain('UNSAFE');
     });
 
-    test("should show detailed steps for unsafe state - matching user example", () => {
+    test('should show detailed steps for unsafe state - matching user example', () => {
       // User's exact example: Processes: 2, Resource: 3, Available = (0, 0, 0)
       const available = [0, 0, 0];
       const allocation = [
@@ -112,7 +112,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       // Should have initialization step
       const initStep = result.steps.find((step) => step.stepNumber === 1);
       expect(initStep).toBeDefined();
-      expect(initStep?.description).toContain("init: work = available");
+      expect(initStep?.description).toContain('init: work = available');
       expect(initStep?.workVector).toEqual([0, 0, 0]);
 
       // Should have process checking steps showing why each process cannot finish
@@ -123,19 +123,19 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
 
       // Should show that no processes can finish with available resources
       processCheckSteps.forEach((step) => {
-        expect(step.description).toContain("need[P");
-        expect(step.description).toContain("≤ work");
+        expect(step.description).toContain('need[P');
+        expect(step.description).toContain('≤ work');
         expect(step.canFinish).toBe(false);
       });
 
       // Should have final step explaining why system is unsafe
       const finalStep = result.steps[result.steps.length - 1];
       expect(finalStep.stepNumber).toBe(4);
-      expect(finalStep.description).toContain("System is UNSAFE");
-      expect(finalStep.description).toContain("cannot finish");
+      expect(finalStep.description).toContain('System is UNSAFE');
+      expect(finalStep.description).toContain('cannot finish');
     });
 
-    test("should handle edge case with single process", () => {
+    test('should handle edge case with single process', () => {
       const available = [2, 1];
       const allocation = [[1, 0]];
       const need = [[1, 1]];
@@ -143,10 +143,10 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       const result = calculator.checkSafety(available, allocation, need);
 
       expect(result.isSafe).toBe(true);
-      expect(result.safeSequence).toEqual(["P0"]);
+      expect(result.safeSequence).toEqual(['P0']);
     });
 
-    test("should handle empty system", () => {
+    test('should handle empty system', () => {
       const available: number[] = [];
       const allocation: number[][] = [];
       const need: number[][] = [];
@@ -158,7 +158,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
     });
   });
 
-  describe("Resource Request Processing - Enhanced Validation", () => {
+  describe('Resource Request Processing - Enhanced Validation', () => {
     let safeSystemState: BankersAlgorithmState;
 
     beforeEach(() => {
@@ -167,7 +167,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       safeSystemState = calculator.createDefaultState();
     });
 
-    test("should grant safe resource request", () => {
+    test('should grant safe resource request', () => {
       // Use a small request that should be safe
       const request: ResourceRequest = {
         processId: 0,
@@ -178,11 +178,11 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
 
       expect(result.canGrant).toBe(true);
       expect(result.newState).toBeDefined();
-      expect(result.errorMessage).toContain("GRANTED");
-      expect(result.errorMessage).toContain("SAFE state");
+      expect(result.errorMessage).toContain('GRANTED');
+      expect(result.errorMessage).toContain('SAFE state');
     });
 
-    test("should deny request exceeding need with detailed message", () => {
+    test('should deny request exceeding need with detailed message', () => {
       const request: ResourceRequest = {
         processId: 1,
         requestVector: [2, 3, 3], // Exceeds need [1, 2, 2]
@@ -191,9 +191,9 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       const result = calculator.processRequest(request, safeSystemState);
 
       expect(result.canGrant).toBe(false);
-      expect(result.errorMessage).toContain("exceeds declared maximum need");
+      expect(result.errorMessage).toContain('exceeds declared maximum need');
       expect(result.errorMessage).toContain(
-        "cannot request more resources than it declared",
+        'cannot request more resources than it declared',
       );
       expect(result.simulationSteps).toBeDefined();
       expect(result.simulationSteps!.length).toBeGreaterThan(0);
@@ -203,11 +203,11 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
         (step) => step.stepNumber === 1,
       );
       expect(step1).toBeDefined();
-      expect(step1!.description).toContain("Check if Request");
+      expect(step1!.description).toContain('Check if Request');
       expect(step1!.canFinish).toBe(false);
     });
 
-    test("should deny request exceeding available resources with detailed message", () => {
+    test('should deny request exceeding available resources with detailed message', () => {
       // Create a system state where request passes need check but fails availability check
       const limitedSystemState: BankersAlgorithmState = {
         processCount: 2,
@@ -242,9 +242,9 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       const result = calculator.processRequest(request, limitedSystemState);
 
       expect(result.canGrant).toBe(false);
-      expect(result.errorMessage).toContain("Insufficient resources available");
+      expect(result.errorMessage).toContain('Insufficient resources available');
       expect(result.errorMessage).toContain(
-        "must wait until more resources become available",
+        'must wait until more resources become available',
       );
       expect(result.simulationSteps).toBeDefined();
 
@@ -261,7 +261,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       expect(step2!.canFinish).toBe(false); // Should fail availability check
     });
 
-    test("should deny request leading to unsafe state with detailed explanation", () => {
+    test('should deny request leading to unsafe state with detailed explanation', () => {
       // Create a system state that would become unsafe
       const unsafeSystemState: BankersAlgorithmState = {
         processCount: 3,
@@ -298,10 +298,10 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       const result = calculator.processRequest(request, unsafeSystemState);
 
       expect(result.canGrant).toBe(false);
-      expect(result.errorMessage).toContain("UNSAFE state");
-      expect(result.errorMessage).toContain("potential deadlock");
+      expect(result.errorMessage).toContain('UNSAFE state');
+      expect(result.errorMessage).toContain('potential deadlock');
       expect(result.errorMessage).toContain(
-        "cannot guarantee that all processes can complete",
+        'cannot guarantee that all processes can complete',
       );
       expect(result.simulationSteps).toBeDefined();
 
@@ -313,7 +313,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       expect(steps.some((step) => step.stepNumber === 4)).toBe(true); // Run Safety Algorithm
     });
 
-    test("should handle requests that exceed both need and available resources", () => {
+    test('should handle requests that exceed both need and available resources', () => {
       const request: ResourceRequest = {
         processId: 0,
         requestVector: [999, 999, 999], // Exceeds everything
@@ -323,12 +323,12 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
 
       expect(result.canGrant).toBe(false);
       // Should fail at step 1 (exceeds need) before checking availability
-      expect(result.errorMessage).toContain("exceeds declared maximum need");
+      expect(result.errorMessage).toContain('exceeds declared maximum need');
       expect(result.simulationSteps).toBeDefined();
       expect(result.simulationSteps!.length).toBe(1); // Should stop at step 1
     });
 
-    test("should provide detailed simulation steps for granted requests", () => {
+    test('should provide detailed simulation steps for granted requests', () => {
       const request: ResourceRequest = {
         processId: 0,
         requestVector: [1, 0, 0], // Small safe request
@@ -339,7 +339,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       if (result.canGrant) {
         expect(result.simulationSteps).toBeDefined();
         expect(result.simulationSteps!.length).toBeGreaterThan(4); // Should include safety algorithm steps
-        expect(result.errorMessage).toContain("execution sequence");
+        expect(result.errorMessage).toContain('execution sequence');
         expect(result.newState).toBeDefined();
 
         // Verify the new state has updated allocation and available resources
@@ -352,7 +352,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       }
     });
 
-    test("should handle zero request vector", () => {
+    test('should handle zero request vector', () => {
       const request: ResourceRequest = {
         processId: 0,
         requestVector: [0, 0, 0], // Zero request
@@ -366,7 +366,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       expect(result.simulationSteps).toBeDefined();
     });
 
-    test("should handle invalid process ID", () => {
+    test('should handle invalid process ID', () => {
       const request: ResourceRequest = {
         processId: 999, // Invalid process ID
         requestVector: [1, 0, 0],
@@ -375,10 +375,10 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       const result = calculator.processRequest(request, safeSystemState);
 
       expect(result.canGrant).toBe(false);
-      expect(result.errorMessage).toContain("Invalid process ID");
+      expect(result.errorMessage).toContain('Invalid process ID');
     });
 
-    test("should handle malformed system state", () => {
+    test('should handle malformed system state', () => {
       const malformedState: BankersAlgorithmState = {
         ...safeSystemState,
         allocation: [], // Empty allocation matrix
@@ -392,12 +392,12 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       const result = calculator.processRequest(request, malformedState);
 
       expect(result.canGrant).toBe(false);
-      expect(result.errorMessage).toContain("Invalid system state");
+      expect(result.errorMessage).toContain('Invalid system state');
     });
   });
 
-  describe("Process Completion Simulation", () => {
-    test("should complete process and release resources", () => {
+  describe('Process Completion Simulation', () => {
+    test('should complete process and release resources', () => {
       const state = calculator.createDefaultState();
 
       // Manually set a process to be ready for completion (need = 0)
@@ -422,46 +422,46 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       expect(newState).toEqual(state);
     });
 
-    test("should handle invalid process ID", () => {
+    test('should handle invalid process ID', () => {
       const state = calculator.createDefaultState();
 
       expect(() => {
         calculator.completeProcess(state, 999);
-      }).toThrow("Invalid process ID");
+      }).toThrow('Invalid process ID');
     });
   });
 
-  describe("System Validation - Comprehensive Checks", () => {
-    test("should validate correct system state", () => {
+  describe('System Validation - Comprehensive Checks', () => {
+    test('should validate correct system state', () => {
       const state = calculator.createDefaultState();
       const errors = calculator.validateSystemData(state);
 
       expect(errors).toHaveLength(0);
     });
 
-    test("should detect negative values", () => {
+    test('should detect negative values', () => {
       const state = calculator.createDefaultState();
       state.allocation[0][0] = -1;
 
       const errors = calculator.validateSystemData(state);
 
       expect(errors.length).toBeGreaterThan(0);
-      expect(errors.some((e) => e.message.includes("non-negative"))).toBe(true);
+      expect(errors.some((e) => e.message.includes('non-negative'))).toBe(true);
     });
 
-    test("should detect allocation exceeding maximum", () => {
+    test('should detect allocation exceeding maximum', () => {
       const state = calculator.createDefaultState();
       state.allocation[0][0] = state.max[0][0] + 1;
 
       const errors = calculator.validateSystemData(state);
 
       expect(errors.length).toBeGreaterThan(0);
-      expect(errors.some((e) => e.message.includes("cannot exceed"))).toBe(
+      expect(errors.some((e) => e.message.includes('cannot exceed'))).toBe(
         true,
       );
     });
 
-    test("should detect dimension mismatches", () => {
+    test('should detect dimension mismatches', () => {
       const state = calculator.createDefaultState();
       state.allocation = [[1, 2]]; // Wrong dimensions - should have 3 columns
       state.processCount = 1; // Adjust process count to match
@@ -472,14 +472,14 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       expect(
         errors.some(
           (e) =>
-            e.message.includes("must have") || e.message.includes("dimensions"),
+            e.message.includes('must have') || e.message.includes('dimensions'),
         ),
       ).toBe(true);
     });
   });
 
-  describe("System Snapshot and Statistics", () => {
-    test("should generate comprehensive system snapshot", () => {
+  describe('System Snapshot and Statistics', () => {
+    test('should generate comprehensive system snapshot', () => {
       const state = calculator.createDefaultState();
       const snapshot = calculator.getSystemSnapshot(state);
 
@@ -493,7 +493,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       expect(snapshot.statistics).toBeDefined();
     });
 
-    test("should calculate resource utilization correctly", () => {
+    test('should calculate resource utilization correctly', () => {
       const state = calculator.createDefaultState();
       const snapshot = calculator.getSystemSnapshot(state);
 
@@ -510,8 +510,8 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
     });
   });
 
-  describe("Algorithm Step Numbering", () => {
-    test("should use correct step numbers for Safety Algorithm", () => {
+  describe('Algorithm Step Numbering', () => {
+    test('should use correct step numbers for Safety Algorithm', () => {
       // Create a simple safe state
       const available = [1, 0, 3];
       const allocation = [
@@ -532,7 +532,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
 
       // Should start with step 1 (initialization)
       expect(stepNumbers[0]).toBe(1);
-      expect(result.steps[0].description).toContain("init: work = available");
+      expect(result.steps[0].description).toContain('init: work = available');
 
       // Should have step 2 (process checks)
       expect(stepNumbers.some((num) => num === 2)).toBe(true);
@@ -550,7 +550,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       );
     });
 
-    test("should use correct step numbers for Resource Request Algorithm", () => {
+    test('should use correct step numbers for Resource Request Algorithm', () => {
       const state = calculator.createDefaultState();
 
       const request: ResourceRequest = {
@@ -585,15 +585,15 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
           (step) => step.stepNumber === 4,
         );
 
-        expect(step1?.description).toContain("Check if Request");
-        expect(step1?.description).toContain("Need");
-        expect(step2?.description).toContain("Available");
-        expect(step3?.description).toContain("Temporarily allocate");
-        expect(step4?.description).toContain("Run Safety Algorithm");
+        expect(step1?.description).toContain('Check if Request');
+        expect(step1?.description).toContain('Need');
+        expect(step2?.description).toContain('Available');
+        expect(step3?.description).toContain('Temporarily allocate');
+        expect(step4?.description).toContain('Run Safety Algorithm');
       }
     });
 
-    test("should format step descriptions correctly", () => {
+    test('should format step descriptions correctly', () => {
       const available = [1, 0, 3];
       const allocation = [[0, 5, 1]];
       const need = [[1, 0, 3]];
@@ -602,20 +602,20 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
 
       // Check initialization step format
       const initStep = result.steps.find((step) => step.stepNumber === 1);
-      expect(initStep?.description).toBe("init: work = available");
+      expect(initStep?.description).toBe('init: work = available');
       expect(initStep?.workVector).toEqual([1, 0, 3]);
 
       // Check process check step format
       const processCheckStep = result.steps.find(
         (step) => step.stepNumber === 2,
       );
-      expect(processCheckStep?.description).toContain("need[P0] ≤ work");
-      expect(processCheckStep?.description).toContain("(1, 0, 3) ≤ (1, 0, 3)");
+      expect(processCheckStep?.description).toContain('need[P0] ≤ work');
+      expect(processCheckStep?.description).toContain('(1, 0, 3) ≤ (1, 0, 3)');
     });
   });
 
-  describe("Safe Sequence Finding", () => {
-    test("should find correct safe sequence", () => {
+  describe('Safe Sequence Finding', () => {
+    test('should find correct safe sequence', () => {
       const state = calculator.createDefaultState();
 
       // First check if the default state is actually safe
@@ -628,7 +628,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       if (safetyResult.isSafe) {
         const safeSequence = calculator.findSafeSequence(state);
         expect(safeSequence.length).toBeGreaterThan(0);
-        expect(safeSequence.every((p) => p.startsWith("P"))).toBe(true);
+        expect(safeSequence.every((p) => p.startsWith('P'))).toBe(true);
       } else {
         // If default state is not safe, test with a known safe state
         const safeState = {
@@ -640,7 +640,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       }
     });
 
-    test("should return empty sequence for unsafe state", () => {
+    test('should return empty sequence for unsafe state', () => {
       const state = calculator.createDefaultState();
       state.available = [0, 0, 0]; // Make it unsafe
 
@@ -650,8 +650,8 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
     });
   });
 
-  describe("Matrix Resizing", () => {
-    test("should resize matrices correctly", () => {
+  describe('Matrix Resizing', () => {
+    test('should resize matrices correctly', () => {
       const state = calculator.createDefaultState();
       const resized = calculator.resizeMatrices(state, 5, 4);
 
@@ -664,7 +664,7 @@ describe("Enhanced Banker's Algorithm Calculator", () => {
       expect(resized.available.length).toBe(4);
     });
 
-    test("should preserve existing data when resizing", () => {
+    test('should preserve existing data when resizing', () => {
       const state = calculator.createDefaultState();
       const originalValue = state.allocation[0][0];
 

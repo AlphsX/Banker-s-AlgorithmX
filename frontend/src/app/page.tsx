@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { ChevronsRight } from "lucide-react";
+import {useState, useEffect, useRef, useCallback} from 'react';
+import {ChevronsRight} from 'lucide-react';
 
 import {
   useDarkMode,
@@ -9,25 +9,25 @@ import {
   useDynamicFavicon,
   useKeyboardShortcuts,
   useBankersAlgorithm,
-} from "@/hooks";
+} from '@/hooks';
 
-import { AnimatedThemeToggler } from "@/components/magicui";
-import { LoadingScreen } from "@/components/ui/loading-screen";
-import { BrowserCompatibilityWarning } from "@/components/ui/browser-compatibility-warning";
-import { ToastContainer, useToast } from "@/components/ui";
-import { useAppLoading } from "@/hooks/useAppLoading";
+import {AnimatedThemeToggler} from '@/components/magicui';
+import {LoadingScreen} from '@/components/ui/loading-screen';
+import {BrowserCompatibilityWarning} from '@/components/ui/browser-compatibility-warning';
+import {ToastContainer, useToast} from '@/components/ui';
+import {useAppLoading} from '@/hooks/useAppLoading';
 
 import {
   SystemControls,
   AlgorithmTable,
   StepByStepResults,
-} from "@/components/bankers-algorithm";
+} from '@/components/bankers-algorithm';
 
 /**
  * Logo Icon Component for Banker's Algorithm
  * Theme-dependent colors matching favicon
  */
-const LogoIcon = ({ className }: { className?: string }) => (
+const LogoIcon = ({className}: {className?: string}) => (
   <svg
     width="14"
     height="14"
@@ -47,9 +47,9 @@ const LogoIcon = ({ className }: { className?: string }) => (
 );
 
 export default function BankersAlgorithmPage() {
-  const { isDarkMode, toggleDarkMode, isUsingSystemPreference } = useDarkMode();
-  const { isLoading: appIsLoading } = useAppLoading();
-  const { toasts, showSuccess, showError, dismissToast } = useToast();
+  const {isDarkMode, toggleDarkMode, isUsingSystemPreference} = useDarkMode();
+  const {isLoading: appIsLoading} = useAppLoading();
+  const {toasts, showSuccess, showError, dismissToast} = useToast();
 
   // Dynamic favicon based on theme
   useDynamicFavicon(isDarkMode);
@@ -117,14 +117,14 @@ export default function BankersAlgorithmPage() {
   });
 
   // Setup swipe gestures for mobile sidebar
-  const { attachToElement } = useSwipeGesture({
+  const {attachToElement} = useSwipeGesture({
     onSwipeRight: () => {
-      if (typeof window !== "undefined" && window.innerWidth < 768) {
+      if (typeof window !== 'undefined' && window.innerWidth < 768) {
         setIsSidebarOpen(true);
       }
     },
     onSwipeLeft: () => {
-      if (typeof window !== "undefined" && window.innerWidth < 768) {
+      if (typeof window !== 'undefined' && window.innerWidth < 768) {
         setIsSidebarOpen(false);
       }
     },
@@ -146,7 +146,7 @@ export default function BankersAlgorithmPage() {
     if (!mainContent) return;
 
     const checkScrollable = () => {
-      const { scrollTop, scrollHeight, clientHeight } = mainContent;
+      const {scrollTop, scrollHeight, clientHeight} = mainContent;
       const isScrollable = scrollHeight > clientHeight;
       const isNotAtBottom = scrollHeight - scrollTop - clientHeight > 100;
       setShowScrollButton(isScrollable && isNotAtBottom);
@@ -154,12 +154,12 @@ export default function BankersAlgorithmPage() {
     };
 
     checkScrollable();
-    mainContent.addEventListener("scroll", checkScrollable);
+    mainContent.addEventListener('scroll', checkScrollable);
     const resizeObserver = new ResizeObserver(checkScrollable);
     resizeObserver.observe(mainContent);
 
     return () => {
-      mainContent.removeEventListener("scroll", checkScrollable);
+      mainContent.removeEventListener('scroll', checkScrollable);
       resizeObserver.disconnect();
     };
   }, [algorithmState.algorithmSteps]);
@@ -169,7 +169,7 @@ export default function BankersAlgorithmPage() {
     if (mainContentRef.current) {
       mainContentRef.current.scrollTo({
         top: mainContentRef.current.scrollHeight,
-        behavior: "smooth",
+        behavior: 'smooth',
       });
     }
   }, []);
@@ -190,14 +190,14 @@ export default function BankersAlgorithmPage() {
       <div
         ref={mainContainerRef}
         className="swipe-container flex h-screen bg-gray-50 text-gray-900 dark:text-gray-50 transition-all duration-300"
-        style={{ backgroundColor: "var(--page-bg, #f9fafb)" }}
+        style={{backgroundColor: 'var(--page-bg, #f9fafb)'}}
       >
         {/* Mobile Sidebar Overlay */}
         <div
           className={`md:hidden fixed inset-0 z-50 flex transition-opacity duration-300 ease-out ${
             isSidebarOpen
-              ? "opacity-100 pointer-events-auto"
-              : "opacity-0 pointer-events-none"
+              ? 'opacity-100 pointer-events-auto'
+              : 'opacity-0 pointer-events-none'
           }`}
         >
           <div
@@ -210,11 +210,11 @@ export default function BankersAlgorithmPage() {
           ></div>
           <div
             className={`relative w-64 bg-[#fdfdfd] border-r border-[#f2f2f2] flex flex-col z-10 transition-transform duration-300 ease-out shadow-xl ${
-              isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+              isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
             }`}
             style={{
-              backgroundColor: "var(--sidebar-bg, #fdfdfd)",
-              borderColor: "var(--sidebar-border, #f2f2f2)",
+              backgroundColor: 'var(--sidebar-bg, #fdfdfd)',
+              borderColor: 'var(--sidebar-border, #f2f2f2)',
             }}
           >
             {/* Mobile Sidebar Header */}
@@ -276,13 +276,13 @@ export default function BankersAlgorithmPage() {
                       e.stopPropagation();
                       setIsSidebarOpen(!isSidebarOpen);
                     }}
-                    title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+                    title={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
                   >
                     <ChevronsRight
                       className={`h-[18px] w-[18px] mx-auto transition-transform duration-200 ${
-                        isSidebarOpen ? "rotate-180" : ""
+                        isSidebarOpen ? 'rotate-180' : ''
                       }`}
-                      style={{ color: "var(--text-secondary, #6b7280)" }}
+                      style={{color: 'var(--text-secondary, #6b7280)'}}
                     />
                   </button>
                 </div>
@@ -297,17 +297,17 @@ export default function BankersAlgorithmPage() {
           className={`hidden md:flex bg-[#fdfdfd] border-r border-[#f2f2f2] flex-col transition-all duration-300 ease-out shadow-sm
           ${
             isDesktopSidebarCollapsed
-              ? "w-16 cursor-e-resize"
-              : "w-64 cursor-w-resize"
+              ? 'w-16 cursor-e-resize'
+              : 'w-64 cursor-w-resize'
           } overflow-hidden`}
           style={{
-            backgroundColor: "var(--sidebar-bg, #fdfdfd)",
-            borderColor: "var(--sidebar-border, #f2f2f2)",
+            backgroundColor: 'var(--sidebar-bg, #fdfdfd)',
+            borderColor: 'var(--sidebar-border, #f2f2f2)',
           }}
           onClick={(e) => {
             const target = e.target as HTMLElement;
             const isInteractiveElement = target.closest(
-              "button, a, input, textarea, select",
+              'button, a, input, textarea, select',
             );
 
             if (!isInteractiveElement) {
@@ -321,7 +321,7 @@ export default function BankersAlgorithmPage() {
             <div className="flex items-center justify-center">
               <div
                 className={`flex items-center w-full ${
-                  isDesktopSidebarCollapsed ? "justify-center" : "justify-start"
+                  isDesktopSidebarCollapsed ? 'justify-center' : 'justify-start'
                 }`}
               >
                 <div
@@ -382,15 +382,15 @@ export default function BankersAlgorithmPage() {
                     }}
                     title={
                       isDesktopSidebarCollapsed
-                        ? "Open sidebar"
-                        : "Close sidebar"
+                        ? 'Open sidebar'
+                        : 'Close sidebar'
                     }
                   >
                     <ChevronsRight
                       className={`h-[18px] w-[18px] mx-auto transition-transform duration-200 ${
-                        isDesktopSidebarCollapsed ? "" : "rotate-180"
+                        isDesktopSidebarCollapsed ? '' : 'rotate-180'
                       }`}
-                      style={{ color: "var(--text-secondary, #6b7280)" }}
+                      style={{color: 'var(--text-secondary, #6b7280)'}}
                     />
                   </button>
                 </div>
@@ -410,14 +410,14 @@ export default function BankersAlgorithmPage() {
                     setIsDesktopSidebarCollapsed(!isDesktopSidebarCollapsed);
                   }}
                   title={
-                    isDesktopSidebarCollapsed ? "Open sidebar" : "Close sidebar"
+                    isDesktopSidebarCollapsed ? 'Open sidebar' : 'Close sidebar'
                   }
                 >
                   <ChevronsRight
                     className={`h-[18px] w-[18px] mx-auto transition-transform duration-200 ${
-                      isDesktopSidebarCollapsed ? "" : "rotate-180"
+                      isDesktopSidebarCollapsed ? '' : 'rotate-180'
                     }`}
-                    style={{ color: "var(--text-secondary, #6b7280)" }}
+                    style={{color: 'var(--text-secondary, #6b7280)'}}
                   />
                 </button>
               </div>
@@ -431,8 +431,8 @@ export default function BankersAlgorithmPage() {
           <header
             className={`absolute top-0 inset-x-0 z-20 transition-all duration-700 ease-in-out ${
               isScrolled
-                ? "bg-white/5 dark:bg-black/10 backdrop-blur-md saturate-150 supports-[backdrop-filter]:bg-white/5"
-                : "bg-transparent"
+                ? 'bg-white/5 dark:bg-black/10 backdrop-blur-md saturate-150 supports-[backdrop-filter]:bg-white/5'
+                : 'bg-transparent'
             }`}
           >
             <div className="px-6 py-4">
@@ -442,7 +442,7 @@ export default function BankersAlgorithmPage() {
                   <button
                     className="btn-hover md:hidden p-2 rounded-full transition-colors flex items-center justify-center touch-manipulation min-h-[44px] min-w-[44px]"
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                    title={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+                    title={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
                   >
                     <svg
                       width="20"
@@ -450,7 +450,7 @@ export default function BankersAlgorithmPage() {
                       viewBox="0 0 20 20"
                       fill="currentColor"
                       xmlns="http://www.w3.org/2000/svg"
-                      style={{ color: "var(--text-secondary, #6b7280)" }}
+                      style={{color: 'var(--text-secondary, #6b7280)'}}
                     >
                       <path d="M11.6663 12.6686L11.801 12.6823C12.1038 12.7445 12.3313 13.0125 12.3313 13.3337C12.3311 13.6547 12.1038 13.9229 11.801 13.985L11.6663 13.9987H3.33325C2.96609 13.9987 2.66839 13.7008 2.66821 13.3337C2.66821 12.9664 2.96598 12.6686 3.33325 12.6686H11.6663ZM16.6663 6.00163L16.801 6.0153C17.1038 6.07747 17.3313 6.34546 17.3313 6.66667C17.3313 6.98788 17.1038 7.25586 16.801 7.31803L16.6663 7.33171H3.33325C2.96598 7.33171 2.66821 7.03394 2.66821 6.66667C2.66821 6.2994 2.96598 6.00163 3.33325 6.00163H16.6663Z"></path>
                     </svg>
@@ -491,8 +491,8 @@ export default function BankersAlgorithmPage() {
                     )}
                     <span className="text-sm">
                       {algorithmState.isCalculating
-                        ? "Analyzing..."
-                        : "Check Safety"}
+                        ? 'Analyzing...'
+                        : 'Check Safety'}
                     </span>
                   </button>
 
@@ -503,20 +503,20 @@ export default function BankersAlgorithmPage() {
                     }
                     className="hidden sm:flex items-center space-x-2 px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-full font-medium transition-colors duration-200 touch-manipulation min-h-[40px] disabled:bg-gray-200 disabled:cursor-not-allowed"
                     style={{
-                      backgroundColor: "var(--button-bg, #ffffff)",
-                      borderColor: "var(--button-border, #e1e1e1)",
-                      color: "var(--foreground)",
+                      backgroundColor: 'var(--button-bg, #ffffff)',
+                      borderColor: 'var(--button-border, #e1e1e1)',
+                      color: 'var(--foreground)',
                     }}
                     onMouseEnter={(e) => {
                       if (!e.currentTarget.disabled) {
                         e.currentTarget.style.backgroundColor =
-                          "var(--button-bg, #f9fafb)";
+                          'var(--button-bg, #f9fafb)';
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (!e.currentTarget.disabled) {
                         e.currentTarget.style.backgroundColor =
-                          "var(--button-bg, #ffffff)";
+                          'var(--button-bg, #ffffff)';
                       }
                     }}
                     title="Reset to empty state"
@@ -546,8 +546,8 @@ export default function BankersAlgorithmPage() {
             ref={mainContentRef}
             className="flex-1 overflow-y-auto bg-white relative pt-20"
             style={{
-              backgroundColor: "var(--page-bg)",
-              scrollBehavior: "smooth",
+              backgroundColor: 'var(--page-bg)',
+              scrollBehavior: 'smooth',
             }}
           >
             <div className="max-w-7xl mx-auto p-6 space-y-6">
@@ -594,8 +594,8 @@ export default function BankersAlgorithmPage() {
                   )}
                   <span className="text-sm">
                     {algorithmState.isCalculating
-                      ? "Calculating..."
-                      : "Check Safety"}
+                      ? 'Calculating...'
+                      : 'Check Safety'}
                   </span>
                 </button>
 
@@ -607,9 +607,9 @@ export default function BankersAlgorithmPage() {
                     }
                     className="flex-1 px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-full font-medium transition-colors duration-200 flex items-center justify-center space-x-2 touch-manipulation min-h-[48px] disabled:bg-gray-200 disabled:cursor-not-allowed"
                     style={{
-                      backgroundColor: "var(--button-bg, #ffffff)",
-                      borderColor: "var(--button-border, #e1e1e1)",
-                      color: "var(--foreground)",
+                      backgroundColor: 'var(--button-bg, #ffffff)',
+                      borderColor: 'var(--button-border, #e1e1e1)',
+                      color: 'var(--foreground)',
                     }}
                   >
                     <svg
@@ -650,19 +650,19 @@ export default function BankersAlgorithmPage() {
             <div
               className={`fixed right-6 bottom-6 z-30 transition-all duration-300 ease-in-out ${
                 showScrollButton
-                  ? "opacity-100 translate-y-0 pointer-events-auto"
-                  : "opacity-0 translate-y-4 pointer-events-none"
+                  ? 'opacity-100 translate-y-0 pointer-events-auto'
+                  : 'opacity-0 translate-y-4 pointer-events-none'
               }`}
             >
               <button
                 onClick={scrollToBottom}
                 className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium leading-[normal] cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-60 disabled:cursor-not-allowed transition-all duration-300 ease-in-out select-none h-10 w-10 rounded-full shadow-lg hover:shadow-xl hover:scale-110"
                 style={{
-                  backgroundColor: isDarkMode ? "#292929" : "#ffffff",
-                  borderWidth: "1px",
-                  borderStyle: "solid",
-                  borderColor: isDarkMode ? "#3a3a3a" : "#e6e6e6",
-                  color: isDarkMode ? "#9e9e9e" : "#0d0d0d",
+                  backgroundColor: isDarkMode ? '#292929' : '#ffffff',
+                  borderWidth: '1px',
+                  borderStyle: 'solid',
+                  borderColor: isDarkMode ? '#3a3a3a' : '#e6e6e6',
+                  color: isDarkMode ? '#9e9e9e' : '#0d0d0d',
                 }}
                 type="button"
                 aria-label="Scroll to bottom"

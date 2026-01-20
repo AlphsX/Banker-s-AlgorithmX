@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { AlertTriangle, X, ExternalLink } from "lucide-react";
+import {useEffect, useState} from 'react';
+import {AlertTriangle, X, ExternalLink} from 'lucide-react';
 import {
   detectBrowser,
   getBrowserRecommendation,
   getSupportedBrowsers,
   type BrowserInfo,
-} from "@/utils/browserDetection";
+} from '@/utils/browserDetection';
 
 interface BrowserCompatibilityWarningProps {
   onDismiss?: () => void;
@@ -27,8 +27,8 @@ export const BrowserCompatibilityWarning = ({
     setBrowserInfo(browser);
 
     // Check if user has previously dismissed the warning
-    const dismissed = localStorage.getItem("browser-warning-dismissed");
-    setIsDismissed(dismissed === "true");
+    const dismissed = localStorage.getItem('browser-warning-dismissed');
+    setIsDismissed(dismissed === 'true');
 
     // Show warning if browser is not supported and not dismissed
     if (!browser.isSupported && (!dismissed || showAlways)) {
@@ -39,17 +39,17 @@ export const BrowserCompatibilityWarning = ({
   const handleDismiss = () => {
     setIsVisible(false);
     setIsDismissed(true);
-    localStorage.setItem("browser-warning-dismissed", "true");
+    localStorage.setItem('browser-warning-dismissed', 'true');
     onDismiss?.();
   };
 
   const downloadLinks = {
-    Chrome: "https://www.google.com/chrome/",
-    Firefox: "https://www.mozilla.org/firefox/",
-    Safari: "https://www.apple.com/safari/",
-    Brave: "https://brave.com/",
-    "Arc Browser": "https://arc.net/",
-    Comet: "https://cometbrowser.com/", // Update with actual URL when available
+    Chrome: 'https://www.google.com/chrome/',
+    Firefox: 'https://www.mozilla.org/firefox/',
+    Safari: 'https://www.apple.com/safari/',
+    Brave: 'https://brave.com/',
+    'Arc Browser': 'https://arc.net/',
+    Comet: 'https://cometbrowser.com/', // Update with actual URL when available
   };
 
   if (!browserInfo || !isVisible) {
@@ -139,6 +139,6 @@ export const useBrowserCompatibility = () => {
     browserInfo,
     isSupported,
     supportedBrowsers: getSupportedBrowsers(),
-    recommendation: browserInfo ? getBrowserRecommendation(browserInfo) : "",
+    recommendation: browserInfo ? getBrowserRecommendation(browserInfo) : '',
   };
 };

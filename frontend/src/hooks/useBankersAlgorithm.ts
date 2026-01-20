@@ -14,13 +14,13 @@
  * @module hooks/useBankersAlgorithm
  */
 
-import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import {useState, useCallback, useMemo, useRef, useEffect} from 'react';
 import {
   BankersAlgorithmState,
   ResourceRequest,
-} from "@/types/bankers-algorithm";
-import { BankersAlgorithmCalculator } from "@/lib/bankers-algorithm-calculator";
-import { calculateNeedMatrix } from "@/utils/matrix-utils";
+} from '@/types/bankers-algorithm';
+import {BankersAlgorithmCalculator} from '@/lib/bankers-algorithm-calculator';
+import {calculateNeedMatrix} from '@/utils/matrix-utils';
 
 export interface UseBankersAlgorithmReturn {
   algorithmState: BankersAlgorithmState;
@@ -83,13 +83,13 @@ export interface UseBankersAlgorithmOptions {
   autoPreviewOnMount?: boolean;
 }
 
-const PROCESS_COUNT_LIMITS = { min: 1, max: 10 } as const;
-const RESOURCE_COUNT_LIMITS = { min: 1, max: 10 } as const;
+const PROCESS_COUNT_LIMITS = {min: 1, max: 10} as const;
+const RESOURCE_COUNT_LIMITS = {min: 1, max: 10} as const;
 
 export function useBankersAlgorithm(
   options: UseBankersAlgorithmOptions = {},
 ): UseBankersAlgorithmReturn {
-  const { onSuccess, onError, autoPreviewOnMount = true } = options;
+  const {onSuccess, onError, autoPreviewOnMount = true} = options;
 
   // Memoized calculator instance
   const calculator = useMemo(() => new BankersAlgorithmCalculator(), []);
@@ -132,7 +132,7 @@ export function useBankersAlgorithm(
    * Clamps a count value within allowed limits
    */
   const clampCount = useCallback(
-    (value: number, limits: { min: number; max: number }) =>
+    (value: number, limits: {min: number; max: number}) =>
       Math.max(limits.min, Math.min(limits.max, value)),
     [],
   );
@@ -143,7 +143,7 @@ export function useBankersAlgorithm(
    */
   const buildStepStates = useCallback(
     (
-      steps: BankersAlgorithmState["algorithmSteps"],
+      steps: BankersAlgorithmState['algorithmSteps'],
       initialState: {
         available: number[];
         allocation: number[][];
@@ -171,7 +171,7 @@ export function useBankersAlgorithm(
 
       steps.forEach((step) => {
         // Only clone when allocation actually changes (granted request)
-        if (step.description.includes("Temporarily allocate resources")) {
+        if (step.description.includes('Temporarily allocate resources')) {
           if (isGrantedRequest && newState) {
             currentAvailable = newState.available;
             currentAllocation = newState.allocation;
@@ -186,7 +186,7 @@ export function useBankersAlgorithm(
 
         // Update finish state when process completes
         if (step.processChecked && step.canFinish) {
-          const processIndex = parseInt(step.processChecked.replace("P", ""));
+          const processIndex = parseInt(step.processChecked.replace('P', ''));
           if (!isNaN(processIndex)) {
             // Clone finish array only when it changes
             currentFinish = [...currentFinish];
@@ -256,7 +256,7 @@ export function useBankersAlgorithm(
     setAlgorithmState((prev) => {
       const newAvailable = [...prev.available];
       newAvailable[index] = Math.max(0, value);
-      return { ...prev, available: newAvailable };
+      return {...prev, available: newAvailable};
     });
   }, []);
 
@@ -300,10 +300,10 @@ export function useBankersAlgorithm(
     });
     setCurrentStepIndex(undefined);
     setStepStates([]);
-    setRequestResult({ isRequest: false });
+    setRequestResult({isRequest: false});
     onSuccess?.(
-      "System Reset",
-      "Matrix values have been reset while preserving process and resource counts.",
+      'System Reset',
+      'Matrix values have been reset while preserving process and resource counts.',
       3000,
     );
   }, [calculator, onSuccess]);
@@ -317,7 +317,7 @@ export function useBankersAlgorithm(
     setCurrentStepIndex(undefined);
     setStepStates([]);
     onSuccess?.(
-      "Example Loaded",
+      'Example Loaded',
       "Classical Banker's Algorithm example has been loaded successfully.",
       4000,
     );
@@ -337,21 +337,21 @@ export function useBankersAlgorithm(
             lastUpdated: new Date(),
           });
           onSuccess?.(
-            "Process Completed",
+            'Process Completed',
             `Process P${processId} has completed execution and released all resources.`,
             5000,
           );
         } else {
           onError?.(
-            "Cannot Complete Process",
+            'Cannot Complete Process',
             `Process P${processId} cannot be completed yet. It still has unfinished tasks.`,
             5000,
           );
         }
       } catch (error) {
         onError?.(
-          "Process Completion Error",
-          error instanceof Error ? error.message : "Failed to complete process",
+          'Process Completion Error',
+          error instanceof Error ? error.message : 'Failed to complete process',
           5000,
         );
       }
@@ -404,10 +404,10 @@ export function useBankersAlgorithm(
     const validationErrors = calculator.validateSystemData(algorithmState);
     if (validationErrors.length > 0) {
       onError?.(
-        "System Validation Failed",
+        'System Validation Failed',
         `Please fix the following issues: ${validationErrors
           .map((e) => e.message)
-          .join(", ")}`,
+          .join(', ')}`,
         8000,
       );
       return;
@@ -422,7 +422,7 @@ export function useBankersAlgorithm(
       finish: Array(prev.processCount).fill(false),
       isSafe: undefined,
     }));
-    setRequestResult({ isRequest: false });
+    setRequestResult({isRequest: false});
     setCurrentStepIndex(undefined);
     setStepStates([]);
 
@@ -465,16 +465,16 @@ export function useBankersAlgorithm(
       // Show result notification
       if (safetyResult.isSafe) {
         onSuccess?.(
-          "System is Safe",
+          'System is Safe',
           `Safe execution sequence found: ${safetyResult.safeSequence.join(
-            " → ",
+            ' → ',
           )}`,
           6000,
         );
       } else {
         onError?.(
-          "System is Unsafe",
-          "The current system state could lead to deadlock. Please review resource allocation.",
+          'System is Unsafe',
+          'The current system state could lead to deadlock. Please review resource allocation.',
           8000,
         );
       }
@@ -509,11 +509,11 @@ export function useBankersAlgorithm(
           // Enhance final step with grant message
           if (enhancedSteps.length > 0) {
             const lastStep = enhancedSteps[enhancedSteps.length - 1];
-            if (lastStep.description.includes("System is SAFE")) {
+            if (lastStep.description.includes('System is SAFE')) {
               lastStep.description += `\n\n[REQUEST GRANTED]: Process P${
                 request.processId
               } successfully allocated [${request.requestVector.join(
-                ", ",
+                ', ',
               )}] resources. The system remains in a safe state.`;
             }
           }
@@ -554,12 +554,12 @@ export function useBankersAlgorithm(
           });
 
           onSuccess?.(
-            "Request Granted",
+            'Request Granted',
             result.errorMessage ||
               `Process P${
                 request.processId
               } allocated [${request.requestVector.join(
-                ", ",
+                ', ',
               )}]. System remains safe.`,
             6000,
           );
@@ -569,11 +569,11 @@ export function useBankersAlgorithm(
 
           if (enhancedSteps.length > 0) {
             const lastStep = enhancedSteps[enhancedSteps.length - 1];
-            if (lastStep.description.includes("System is UNSAFE")) {
+            if (lastStep.description.includes('System is UNSAFE')) {
               lastStep.description += `\n\n[REQUEST DENIED]: Process P${
                 request.processId
               } request [${request.requestVector.join(
-                ", ",
+                ', ',
               )}] cannot be granted as it would lead to an unsafe state (potential deadlock).`;
             }
           }
@@ -586,12 +586,12 @@ export function useBankersAlgorithm(
           });
 
           onError?.(
-            "Request Denied",
+            'Request Denied',
             result.errorMessage ||
               `Process P${
                 request.processId
               } request [${request.requestVector.join(
-                ", ",
+                ', ',
               )}] cannot be granted.`,
             8000,
           );

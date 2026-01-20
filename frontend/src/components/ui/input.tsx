@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 
 export type InputProps = React.InputHTMLAttributes<HTMLInputElement>;
 
 export const Input: React.FC<InputProps> = ({
-  className = "",
-  type = "text",
+  className = '',
+  type = 'text',
   ...props
 }) => {
   return (
