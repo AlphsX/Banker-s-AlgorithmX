@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useState, useRef, useCallback } from "react";
+import React, {useState, useRef, useCallback} from 'react';
 
 interface AvailableResourcesInputProps {
   available: number[];
@@ -15,7 +15,7 @@ interface ValidationError {
 
 export const AvailableResourcesInput: React.FC<
   AvailableResourcesInputProps
-> = ({ available, onAvailableChange, disabled = false }) => {
+> = ({available, onAvailableChange, disabled = false}) => {
   const [errors, setErrors] = useState<ValidationError[]>([]);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -23,13 +23,13 @@ export const AvailableResourcesInput: React.FC<
 
   const validateInput = (index: number, value: number): string | null => {
     if (isNaN(value)) {
-      return "Must be a valid number";
+      return 'Must be a valid number';
     }
     if (value < 0) {
-      return "Must be non-negative";
+      return 'Must be non-negative';
     }
     if (!Number.isInteger(value)) {
-      return "Must be a whole number";
+      return 'Must be a whole number';
     }
     return null;
   };
@@ -42,7 +42,7 @@ export const AvailableResourcesInput: React.FC<
     setErrors((prevErrors) => {
       const newErrors = prevErrors.filter((error) => error.index !== index);
       if (validationError) {
-        newErrors.push({ index, message: validationError });
+        newErrors.push({index, message: validationError});
       }
       return newErrors;
     });
@@ -134,22 +134,22 @@ export const AvailableResourcesInput: React.FC<
         {available.map((value, index) => {
           const error = getErrorForIndex(index);
           const resourceLabels = [
-            "A",
-            "B",
-            "C",
-            "D",
-            "E",
-            "F",
-            "G",
-            "H",
-            "I",
-            "J",
+            'A',
+            'B',
+            'C',
+            'D',
+            'E',
+            'F',
+            'G',
+            'H',
+            'I',
+            'J',
           ];
           return (
             <div key={index} className="space-y-1">
               <label
                 className="text-sm font-medium text-center block"
-                style={{ color: "var(--text-secondary, #6b7280)" }}
+                style={{color: 'var(--text-secondary, #6b7280)'}}
                 htmlFor={`available-resource-${index}`}
               >
                 {resourceLabels[index] || `R${index}`}
@@ -162,7 +162,7 @@ export const AvailableResourcesInput: React.FC<
                   value={value.toString()}
                   onChange={(e) => {
                     e.stopPropagation();
-                    const inputValue = e.target.value.replace(/[^0-9]/g, "");
+                    const inputValue = e.target.value.replace(/[^0-9]/g, '');
                     handleInputChange(index, inputValue);
                   }}
                   onBlur={(e) => {
@@ -171,16 +171,16 @@ export const AvailableResourcesInput: React.FC<
                   disabled={disabled}
                   className={`w-full h-10 px-3 text-center text-sm border rounded-full bg-white text-gray-900 font-medium transition-colors duration-200 touch-manipulation disabled:opacity-50 disabled:cursor-not-allowed ${
                     error
-                      ? "border-red-500 focus:ring-red-500"
-                      : "border-gray-300 focus:ring-blue-500"
+                      ? 'border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:ring-blue-500'
                   } focus:outline-none focus:ring-2 focus:ring-opacity-50`}
                   style={{
-                    backgroundColor: "var(--input-bg, #ffffff)",
+                    backgroundColor: 'var(--input-bg, #ffffff)',
                     borderColor: error
-                      ? "#ef4444"
-                      : "var(--input-border, #e1e1e1)",
-                    color: "var(--foreground)",
-                    borderRadius: "9999px",
+                      ? '#ef4444'
+                      : 'var(--input-border, #e1e1e1)',
+                    color: 'var(--foreground)',
+                    borderRadius: '9999px',
                   }}
                   aria-label={`Available resources for resource type ${index}`}
                   aria-describedby={error ? `error-${index}` : undefined}

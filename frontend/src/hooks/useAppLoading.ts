@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
+import {useState, useEffect} from 'react';
 
 export function useAppLoading() {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,10 +17,10 @@ export function useAppLoading() {
 
       // Check if critical resources are loaded
       const resourcesLoaded = new Promise((resolve) => {
-        if (document.readyState === "complete") {
+        if (document.readyState === 'complete') {
           resolve(true);
         } else {
-          window.addEventListener("load", () => resolve(true), { once: true });
+          window.addEventListener('load', () => resolve(true), {once: true});
         }
       });
 
@@ -34,5 +34,5 @@ export function useAppLoading() {
     initializeApp();
   }, []);
 
-  return { isLoading, isHydrated };
+  return {isLoading, isHydrated};
 }

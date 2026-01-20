@@ -1,17 +1,17 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/next";
+import type {Metadata} from 'next';
+import {Inter} from 'next/font/google';
+import './globals.css';
+import {SpeedInsights} from '@vercel/speed-insights/next';
+import {Analytics} from '@vercel/analytics/next';
 
 const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
+  variable: '--font-inter',
+  subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
-  title: "Accio",
+  title: 'Accio',
   description:
     "Unlock the power of Dijkstra’s Banker's Algorithm. Interactive simulator for visualizing, testing, and mastering deadlock-free resource allocation.", // Nothin' SpecialX~。
 };

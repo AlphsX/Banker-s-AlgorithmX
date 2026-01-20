@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React from "react";
-import { CountControl } from "./CountControl";
-import { CONTROL_CONFIGS } from "./constants";
+import React from 'react';
+import {CountControl} from './CountControl';
+import {CONTROL_CONFIGS} from './constants';
 
 interface ProcessControlProps {
   processCount: number;

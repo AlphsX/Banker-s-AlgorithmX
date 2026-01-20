@@ -10,29 +10,29 @@
  * - Input Validation: Algorithm validates all matrix inputs
  */
 
-import { describe, test, expect } from "bun:test";
-import { BankersAlgorithmCalculator } from "../bankers-algorithm-calculator";
+import {describe, test, expect} from 'bun:test';
+import {BankersAlgorithmCalculator} from '../bankers-algorithm-calculator';
 import {
   validateMatrixValues,
   validateVectorValues,
   isVectorLessOrEqual,
   calculateNeedMatrix,
-} from "@/utils/matrix-utils";
+} from '@/utils/matrix-utils';
 
-describe("Security Tests - Input Validation", () => {
+describe('Security Tests - Input Validation', () => {
   const calculator = new BankersAlgorithmCalculator();
 
-  describe("Injection Prevention (Matrix Input Validation)", () => {
-    test("should reject negative values in allocation matrix", () => {
+  describe('Injection Prevention (Matrix Input Validation)', () => {
+    test('should reject negative values in allocation matrix', () => {
       const state = calculator.createDefaultState();
       state.allocation[0][0] = -1;
 
       const errors = calculator.validateSystemData(state);
       expect(errors.length).toBeGreaterThan(0);
-      expect(errors.some((e) => e.message.includes("non-negative"))).toBe(true);
+      expect(errors.some((e) => e.message.includes('non-negative'))).toBe(true);
     });
 
-    test("should reject NaN values", () => {
+    test('should reject NaN values', () => {
       const errors = validateMatrixValues([
         [NaN, 1],
         [2, 3],
@@ -40,12 +40,12 @@ describe("Security Tests - Input Validation", () => {
       expect(errors.length).toBeGreaterThan(0);
     });
 
-    test("should reject Infinity values", () => {
+    test('should reject Infinity values', () => {
       const errors = validateVectorValues([Infinity, 1, 2]);
       expect(errors.length).toBeGreaterThan(0);
     });
 
-    test("should reject non-integer values", () => {
+    test('should reject non-integer values', () => {
       const errors = validateMatrixValues([
         [1.5, 2],
         [3, 4],
@@ -53,7 +53,7 @@ describe("Security Tests - Input Validation", () => {
       expect(errors.length).toBeGreaterThan(0);
     });
 
-    test("should handle extremely large values safely", () => {
+    test('should handle extremely large values safely', () => {
       const largeValue = Number.MAX_SAFE_INTEGER;
       const errors = validateVectorValues([largeValue, 1, 2]);
       // Should not throw, just validate
@@ -61,8 +61,8 @@ describe("Security Tests - Input Validation", () => {
     });
   });
 
-  describe("Resource Exhaustion Prevention", () => {
-    test("should handle large process counts without stack overflow", () => {
+  describe('Resource Exhaustion Prevention', () => {
+    test('should handle large process counts without stack overflow', () => {
       const state = calculator.createDefaultState();
       const resized = calculator.resizeMatrices(state, 100, 10);
 
@@ -70,7 +70,7 @@ describe("Security Tests - Input Validation", () => {
       expect(resized.allocation.length).toBe(100);
     });
 
-    test("should prevent infinite loops in safety algorithm", () => {
+    test('should prevent infinite loops in safety algorithm', () => {
       // Algorithm has maxIterations guard
       const available = [0, 0, 0];
       const allocation = [
@@ -94,8 +94,8 @@ describe("Security Tests - Input Validation", () => {
     });
   });
 
-  describe("Data Integrity", () => {
-    test("should not mutate input arrays", () => {
+  describe('Data Integrity', () => {
+    test('should not mutate input arrays', () => {
       const original = [1, 2, 3];
       const copy = [...original];
 
@@ -104,7 +104,7 @@ describe("Security Tests - Input Validation", () => {
       expect(original).toEqual(copy);
     });
 
-    test("should create deep copies of matrices", () => {
+    test('should create deep copies of matrices', () => {
       const max = [
         [2, 1],
         [1, 2],
@@ -122,41 +122,41 @@ describe("Security Tests - Input Validation", () => {
     });
   });
 
-  describe("Request Validation (Authorization Check)", () => {
-    test("should reject invalid process IDs", () => {
+  describe('Request Validation (Authorization Check)', () => {
+    test('should reject invalid process IDs', () => {
       const state = calculator.createDefaultState();
 
       const result = calculator.processRequest(
-        { processId: -1, requestVector: [1, 0, 0] },
+        {processId: -1, requestVector: [1, 0, 0]},
         state,
       );
 
       expect(result.canGrant).toBe(false);
-      expect(result.errorMessage).toContain("Invalid");
+      expect(result.errorMessage).toContain('Invalid');
     });
 
-    test("should reject out-of-bounds process IDs", () => {
+    test('should reject out-of-bounds process IDs', () => {
       const state = calculator.createDefaultState();
 
       const result = calculator.processRequest(
-        { processId: 999, requestVector: [1, 0, 0] },
+        {processId: 999, requestVector: [1, 0, 0]},
         state,
       );
 
       expect(result.canGrant).toBe(false);
-      expect(result.errorMessage).toContain("Invalid process ID");
+      expect(result.errorMessage).toContain('Invalid process ID');
     });
 
-    test("should reject requests exceeding declared maximum", () => {
+    test('should reject requests exceeding declared maximum', () => {
       const state = calculator.createDefaultState();
 
       const result = calculator.processRequest(
-        { processId: 0, requestVector: [999, 999, 999] },
+        {processId: 0, requestVector: [999, 999, 999]},
         state,
       );
 
       expect(result.canGrant).toBe(false);
-      expect(result.errorMessage).toContain("exceeds declared maximum");
+      expect(result.errorMessage).toContain('exceeds declared maximum');
     });
   });
 });

@@ -5,7 +5,7 @@
 
 export function generateFaviconSvg(isDarkMode: boolean): string {
   // Color based on theme - matches system theme
-  const color = isDarkMode ? "#ffffff" : "#000000";
+  const color = isDarkMode ? '#ffffff' : '#000000';
 
   // SVG markup for the LogoIcon
   const svg = `
@@ -21,8 +21,8 @@ export function generateFaviconSvg(isDarkMode: boolean): string {
 
   // Convert SVG to data URI
   const encoded = encodeURIComponent(svg)
-    .replace(/'/g, "%27")
-    .replace(/"/g, "%22");
+    .replace(/'/g, '%27')
+    .replace(/"/g, '%22');
 
   return `data:image/svg+xml,${encoded}`;
 }

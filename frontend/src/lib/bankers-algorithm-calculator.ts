@@ -10,7 +10,7 @@ import {
   SafetyResult,
   RequestResult,
   ValidationError,
-} from "@/types/bankers-algorithm";
+} from '@/types/bankers-algorithm';
 
 import {
   calculateNeedMatrix,
@@ -23,7 +23,7 @@ import {
   validateAllocationConstraints,
   createZeroMatrix,
   createZeroVector,
-} from "@/utils/matrix-utils";
+} from '@/utils/matrix-utils';
 
 export class BankersAlgorithmCalculator {
   /**
@@ -79,8 +79,8 @@ export class BankersAlgorithmCalculator {
           steps.push({
             stepNumber: 2,
             description: `need[${processName}] ≤ work:\n(${need[i].join(
-              ", ",
-            )}) ${canFinish ? "≤" : "≰"} (${work.join(", ")})`,
+              ', ',
+            )}) ${canFinish ? '≤' : '≰'} (${work.join(', ')})`,
             workVector: cloneVector(work),
             processChecked: processName,
             canFinish,
@@ -100,9 +100,9 @@ export class BankersAlgorithmCalculator {
             // Show resource release step using step (3)
             steps.push({
               stepNumber: 3,
-              description: `work = work + allocation[${processName}]: (${prevWork.join(", ")}) + (${allocation[
+              description: `work = work + allocation[${processName}]: (${prevWork.join(', ')}) + (${allocation[
                 i
-              ].join(", ")})`,
+              ].join(', ')})`,
               workVector: cloneVector(work),
               processChecked: processName,
               canFinish: true,
@@ -129,7 +129,7 @@ export class BankersAlgorithmCalculator {
         steps.push({
           stepNumber: 2,
           description: `No more processes can finish. Remaining processes ${unfinishedProcesses.join(
-            ", ",
+            ', ',
           )} cannot satisfy their needs with current available resources.`,
           workVector: cloneVector(work),
           isHighlighted: false,
@@ -144,7 +144,7 @@ export class BankersAlgorithmCalculator {
       steps.push({
         stepNumber: 4,
         description: `All processes can finish safely. Safe sequence: ${safeSequence.join(
-          " → ",
+          ' → ',
         )}`,
         workVector: cloneVector(work),
         isHighlighted: true,
@@ -158,7 +158,7 @@ export class BankersAlgorithmCalculator {
       steps.push({
         stepNumber: 4,
         description: `System is UNSAFE • Processes ${unfinishedProcesses.join(
-          ", ",
+          ', ',
         )} cannot finish (potential deadlock)`,
         workVector: cloneVector(work),
         isHighlighted: true,
@@ -186,15 +186,15 @@ export class BankersAlgorithmCalculator {
     request: ResourceRequest,
     currentState: BankersAlgorithmState,
   ): RequestResult {
-    const { processId, requestVector } = request;
-    const { allocation, max, available, need } = currentState;
+    const {processId, requestVector} = request;
+    const {allocation, max, available, need} = currentState;
     const requestSteps: AlgorithmStep[] = [];
 
     // Validate inputs
     if (!allocation || !max || !available || !need) {
       return {
         canGrant: false,
-        errorMessage: "Invalid system state: missing required matrices",
+        errorMessage: 'Invalid system state: missing required matrices',
       };
     }
 
@@ -208,7 +208,7 @@ export class BankersAlgorithmCalculator {
     if (allocation.length === 0 || !allocation[processId]) {
       return {
         canGrant: false,
-        errorMessage: "Invalid system state: allocation matrix is malformed",
+        errorMessage: 'Invalid system state: allocation matrix is malformed',
       };
     }
 
@@ -224,8 +224,8 @@ export class BankersAlgorithmCalculator {
     requestSteps.push({
       stepNumber: 1,
       description: `Check if Request[P${processId}] ≤ Need[P${processId}]: (${requestVector.join(
-        ", ",
-      )}) ${step1Valid ? "≤" : "≰"} (${need[processId].join(", ")})`,
+        ', ',
+      )}) ${step1Valid ? '≤' : '≰'} (${need[processId].join(', ')})`,
       workVector: cloneVector(available),
       canFinish: step1Valid,
       isHighlighted: step1Valid,
@@ -235,9 +235,9 @@ export class BankersAlgorithmCalculator {
       return {
         canGrant: false,
         errorMessage: `Request DENIED: Process P${processId} request [${requestVector.join(
-          ", ",
+          ', ',
         )}] exceeds declared maximum need [${need[processId].join(
-          ", ",
+          ', ',
         )}]. A process cannot request more resources than it declared as its maximum requirement.`,
         simulationSteps: requestSteps,
       };
@@ -255,8 +255,8 @@ export class BankersAlgorithmCalculator {
     requestSteps.push({
       stepNumber: 2,
       description: `Check if Request[P${processId}] ≤ Available: (${requestVector.join(
-        ", ",
-      )}) ${step2Valid ? "≤" : "≰"} (${available.join(", ")})`,
+        ', ',
+      )}) ${step2Valid ? '≤' : '≰'} (${available.join(', ')})`,
       workVector: cloneVector(available),
       canFinish: step2Valid,
       isHighlighted: step2Valid,
@@ -266,9 +266,9 @@ export class BankersAlgorithmCalculator {
       return {
         canGrant: false,
         errorMessage: `Request DENIED: Insufficient resources available. Process P${processId} requested [${requestVector.join(
-          ", ",
+          ', ',
         )}] but only [${available.join(
-          ", ",
+          ', ',
         )}] resources are currently available. Process must wait until more resources become available.`,
         simulationSteps: requestSteps,
       };
@@ -290,16 +290,16 @@ export class BankersAlgorithmCalculator {
     requestSteps.push({
       stepNumber: 3,
       description: `Temporarily allocate resources:\nAvailable = (${available.join(
-        ", ",
-      )}) - (${requestVector.join(", ")}) = (${newAvailable.join(
-        ", ",
+        ', ',
+      )}) - (${requestVector.join(', ')}) = (${newAvailable.join(
+        ', ',
       )})\nAllocation[P${processId}] = (${allocation[processId].join(
-        ", ",
-      )}) + (${requestVector.join(", ")}) = (${newAllocation[processId].join(
-        ", ",
+        ', ',
+      )}) + (${requestVector.join(', ')}) = (${newAllocation[processId].join(
+        ', ',
       )})\nNeed[P${processId}] = (${need[processId].join(
-        ", ",
-      )}) - (${requestVector.join(", ")}) = (${newNeed[processId].join(", ")})`,
+        ', ',
+      )}) - (${requestVector.join(', ')}) = (${newNeed[processId].join(', ')})`,
       workVector: cloneVector(newAvailable),
       isHighlighted: true,
     });
@@ -310,7 +310,7 @@ export class BankersAlgorithmCalculator {
     requestSteps.push({
       stepNumber: 4,
       description: `Run Safety Algorithm: System is ${
-        safetyResult.isSafe ? "SAFE" : "UNSAFE"
+        safetyResult.isSafe ? 'SAFE' : 'UNSAFE'
       }`,
       workVector: cloneVector(newAvailable),
       canFinish: safetyResult.isSafe,
@@ -338,9 +338,9 @@ export class BankersAlgorithmCalculator {
         newState,
         simulationSteps: allSteps,
         errorMessage: `Request GRANTED: Process P${processId} successfully allocated [${requestVector.join(
-          ", ",
+          ', ',
         )}] resources. System remains in SAFE state with execution sequence: ${safetyResult.safeSequence.join(
-          " → ",
+          ' → ',
         )}.`,
       };
     } else {
@@ -348,7 +348,7 @@ export class BankersAlgorithmCalculator {
       return {
         canGrant: false,
         errorMessage: `Request DENIED: Granting request [${requestVector.join(
-          ", ",
+          ', ',
         )}] to Process P${processId} would lead to an UNSAFE state (potential deadlock). The system cannot guarantee that all processes can complete their execution. Process must wait for a safer system state.`,
         simulationSteps: allSteps,
       };
@@ -546,29 +546,29 @@ export class BankersAlgorithmCalculator {
     // Basic dimension validation
     if (state.processCount <= 0) {
       errors.push({
-        field: "processCount",
-        message: "Process count must be positive",
+        field: 'processCount',
+        message: 'Process count must be positive',
       });
     }
 
     if (state.resourceCount <= 0) {
       errors.push({
-        field: "resourceCount",
-        message: "Resource count must be positive",
+        field: 'resourceCount',
+        message: 'Resource count must be positive',
       });
     }
 
     // Matrix dimension validation
     if (state.allocation.length !== state.processCount) {
       errors.push({
-        field: "allocation",
+        field: 'allocation',
         message: `Allocation matrix must have ${state.processCount} rows`,
       });
     }
 
     if (state.max.length !== state.processCount) {
       errors.push({
-        field: "max",
+        field: 'max',
         message: `Maximum matrix must have ${state.processCount} rows`,
       });
     }
@@ -576,7 +576,7 @@ export class BankersAlgorithmCalculator {
     // Resource vector validation
     if (state.available.length !== state.resourceCount) {
       errors.push({
-        field: "available",
+        field: 'available',
         message: `Available vector must have ${state.resourceCount} elements`,
       });
     }

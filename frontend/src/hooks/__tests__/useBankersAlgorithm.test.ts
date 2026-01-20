@@ -7,25 +7,25 @@
  * Run: bun test src/hooks/__tests__/useBankersAlgorithm.test.ts
  */
 
-import { describe, test, expect, beforeEach } from "bun:test";
-import { BankersAlgorithmCalculator } from "@/lib/bankers-algorithm-calculator";
-import { calculateNeedMatrix } from "@/utils/matrix-utils";
-import { ResourceRequest } from "@/types/bankers-algorithm";
+import {describe, test, expect, beforeEach} from 'bun:test';
+import {BankersAlgorithmCalculator} from '@/lib/bankers-algorithm-calculator';
+import {calculateNeedMatrix} from '@/utils/matrix-utils';
+import {ResourceRequest} from '@/types/bankers-algorithm';
 
 /**
  * Since useBankersAlgorithm is a React hook and requires React context,
  * we test the underlying logic functions directly.
  * This validates that the extracted logic works correctly.
  */
-describe("useBankersAlgorithm - Logic Validation", () => {
+describe('useBankersAlgorithm - Logic Validation', () => {
   let calculator: BankersAlgorithmCalculator;
 
   beforeEach(() => {
     calculator = new BankersAlgorithmCalculator();
   });
 
-  describe("State Initialization", () => {
-    test("should create default state with valid structure", () => {
+  describe('State Initialization', () => {
+    test('should create default state with valid structure', () => {
       const state = calculator.createDefaultState();
 
       expect(state.processCount).toBeGreaterThan(0);
@@ -38,7 +38,7 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(state.isCalculating).toBe(false);
     });
 
-    test("should create fresh state with all zeros", () => {
+    test('should create fresh state with all zeros', () => {
       const state = calculator.createFreshState();
 
       expect(
@@ -51,8 +51,8 @@ describe("useBankersAlgorithm - Logic Validation", () => {
     });
   });
 
-  describe("Matrix Update Operations", () => {
-    test("updateAllocation should update value and recalculate need", () => {
+  describe('Matrix Update Operations', () => {
+    test('updateAllocation should update value and recalculate need', () => {
       const state = calculator.createDefaultState();
       const originalAllocation = state.allocation[0][0];
       const newValue = originalAllocation + 1;
@@ -66,7 +66,7 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(newNeed[0][0]).toBe(state.max[0][0] - newValue);
     });
 
-    test("updateMax should update value and recalculate need", () => {
+    test('updateMax should update value and recalculate need', () => {
       const state = calculator.createDefaultState();
       const newMaxValue = 10;
 
@@ -79,7 +79,7 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(newNeed[0][0]).toBe(newMaxValue - state.allocation[0][0]);
     });
 
-    test("updateAvailable should update value with non-negative constraint", () => {
+    test('updateAvailable should update value with non-negative constraint', () => {
       const state = calculator.createDefaultState();
 
       // Test positive value
@@ -93,8 +93,8 @@ describe("useBankersAlgorithm - Logic Validation", () => {
     });
   });
 
-  describe("Count Update Operations", () => {
-    test("updateProcessCount should resize matrices correctly", () => {
+  describe('Count Update Operations', () => {
+    test('updateProcessCount should resize matrices correctly', () => {
       const state = calculator.createDefaultState();
       const newProcessCount = 5;
 
@@ -111,7 +111,7 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(newState.finish.length).toBe(newProcessCount);
     });
 
-    test("updateResourceCount should resize matrices correctly", () => {
+    test('updateResourceCount should resize matrices correctly', () => {
       const state = calculator.createDefaultState();
       const newResourceCount = 5;
 
@@ -127,18 +127,16 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(newState.available.length).toBe(newResourceCount);
     });
 
-    test("should clamp process count to valid range (1-10)", () => {
-      const clampCount = (
-        value: number,
-        limits: { min: number; max: number },
-      ) => Math.max(limits.min, Math.min(limits.max, value));
+    test('should clamp process count to valid range (1-10)', () => {
+      const clampCount = (value: number, limits: {min: number; max: number}) =>
+        Math.max(limits.min, Math.min(limits.max, value));
 
-      expect(clampCount(0, { min: 1, max: 10 })).toBe(1);
-      expect(clampCount(15, { min: 1, max: 10 })).toBe(10);
-      expect(clampCount(5, { min: 1, max: 10 })).toBe(5);
+      expect(clampCount(0, {min: 1, max: 10})).toBe(1);
+      expect(clampCount(15, {min: 1, max: 10})).toBe(10);
+      expect(clampCount(5, {min: 1, max: 10})).toBe(5);
     });
 
-    test("should preserve existing data when resizing", () => {
+    test('should preserve existing data when resizing', () => {
       const state = calculator.createDefaultState();
       const originalValue = state.allocation[0][0];
 
@@ -152,8 +150,8 @@ describe("useBankersAlgorithm - Logic Validation", () => {
     });
   });
 
-  describe("Safety Check Operations", () => {
-    test("checkSafety should identify safe state", () => {
+  describe('Safety Check Operations', () => {
+    test('checkSafety should identify safe state', () => {
       const state = calculator.createDefaultState();
       const result = calculator.checkSafety(
         state.available,
@@ -166,7 +164,7 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(result.steps.length).toBeGreaterThan(0);
     });
 
-    test("checkSafety should identify unsafe state", () => {
+    test('checkSafety should identify unsafe state', () => {
       const state = calculator.createDefaultState();
       state.available = [0, 0, 0]; // No resources available
 
@@ -180,19 +178,19 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(result.safeSequence).toEqual([]);
     });
 
-    test("checkSafety should validate system data before running", () => {
+    test('checkSafety should validate system data before running', () => {
       const state = calculator.createDefaultState();
       state.allocation[0][0] = -1; // Invalid negative value
 
       const errors = calculator.validateSystemData(state);
 
       expect(errors.length).toBeGreaterThan(0);
-      expect(errors.some((e) => e.message.includes("non-negative"))).toBe(true);
+      expect(errors.some((e) => e.message.includes('non-negative'))).toBe(true);
     });
   });
 
-  describe("Resource Request Operations", () => {
-    test("processRequest should grant safe request", () => {
+  describe('Resource Request Operations', () => {
+    test('processRequest should grant safe request', () => {
       const state = calculator.createDefaultState();
       const request: ResourceRequest = {
         processId: 0,
@@ -206,7 +204,7 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(result.simulationSteps).toBeDefined();
     });
 
-    test("processRequest should deny request exceeding need", () => {
+    test('processRequest should deny request exceeding need', () => {
       const state = calculator.createDefaultState();
       const request: ResourceRequest = {
         processId: 0,
@@ -216,10 +214,10 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       const result = calculator.processRequest(request, state);
 
       expect(result.canGrant).toBe(false);
-      expect(result.errorMessage).toContain("exceeds declared maximum");
+      expect(result.errorMessage).toContain('exceeds declared maximum');
     });
 
-    test("processRequest should deny request exceeding available", () => {
+    test('processRequest should deny request exceeding available', () => {
       const state = calculator.createDefaultState();
       state.available = [0, 0, 0];
       // Set a small need so request passes need check but fails availability
@@ -233,12 +231,12 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       const result = calculator.processRequest(request, state);
 
       expect(result.canGrant).toBe(false);
-      expect(result.errorMessage).toContain("Insufficient resources");
+      expect(result.errorMessage).toContain('Insufficient resources');
     });
   });
 
-  describe("Reset and Load Operations", () => {
-    test("resetAlgorithm should preserve process and resource counts", () => {
+  describe('Reset and Load Operations', () => {
+    test('resetAlgorithm should preserve process and resource counts', () => {
       const state = calculator.createDefaultState();
 
       // Resize first
@@ -259,7 +257,7 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       ).toBe(true);
     });
 
-    test("loadDefaultExample should restore default state", () => {
+    test('loadDefaultExample should restore default state', () => {
       const defaultState = calculator.createDefaultState();
 
       expect(defaultState.processCount).toBe(2);
@@ -268,8 +266,8 @@ describe("useBankersAlgorithm - Logic Validation", () => {
     });
   });
 
-  describe("Process Completion Operations", () => {
-    test("completeProcess should release resources when need is zero", () => {
+  describe('Process Completion Operations', () => {
+    test('completeProcess should release resources when need is zero', () => {
       const state = calculator.createDefaultState();
       state.need[0] = [0, 0, 0]; // Process 0 has completed its task
 
@@ -279,7 +277,7 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(newState.allocation[0]).toEqual([0, 0, 0]);
     });
 
-    test("completeProcess should not complete process with remaining need", () => {
+    test('completeProcess should not complete process with remaining need', () => {
       const state = calculator.createDefaultState();
       // Process 0 still has need
 
@@ -288,17 +286,17 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(newState).toEqual(state); // No change
     });
 
-    test("completeProcess should throw for invalid process ID", () => {
+    test('completeProcess should throw for invalid process ID', () => {
       const state = calculator.createDefaultState();
 
       expect(() => calculator.completeProcess(state, 999)).toThrow(
-        "Invalid process ID",
+        'Invalid process ID',
       );
     });
   });
 
-  describe("Step State Building", () => {
-    test("should correctly track work vector through steps", () => {
+  describe('Step State Building', () => {
+    test('should correctly track work vector through steps', () => {
       const state = calculator.createDefaultState();
       const result = calculator.checkSafety(
         state.available,
@@ -318,7 +316,7 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       });
     });
 
-    test("should correctly track finish state through steps", () => {
+    test('should correctly track finish state through steps', () => {
       const state = calculator.createDefaultState();
       const result = calculator.checkSafety(
         state.available,
@@ -335,8 +333,8 @@ describe("useBankersAlgorithm - Logic Validation", () => {
     });
   });
 
-  describe("Data Immutability", () => {
-    test("should not mutate original state on matrix update", () => {
+  describe('Data Immutability', () => {
+    test('should not mutate original state on matrix update', () => {
       const state = calculator.createDefaultState();
       const originalAllocation = JSON.stringify(state.allocation);
 
@@ -347,7 +345,7 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(JSON.stringify(state.allocation)).toBe(originalAllocation);
     });
 
-    test("should not mutate original state on resize", () => {
+    test('should not mutate original state on resize', () => {
       const state = calculator.createDefaultState();
       const originalProcessCount = state.processCount;
 
@@ -357,8 +355,8 @@ describe("useBankersAlgorithm - Logic Validation", () => {
     });
   });
 
-  describe("Edge Cases", () => {
-    test("should handle single process system", () => {
+  describe('Edge Cases', () => {
+    test('should handle single process system', () => {
       const state = calculator.createDefaultState();
       const singleProcessState = calculator.resizeMatrices(state, 1, 3);
 
@@ -371,7 +369,7 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(result.steps.length).toBeGreaterThan(0);
     });
 
-    test("should handle single resource system", () => {
+    test('should handle single resource system', () => {
       const state = calculator.createDefaultState();
       const singleResourceState = calculator.resizeMatrices(state, 2, 1);
 
@@ -384,7 +382,7 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(result.steps.length).toBeGreaterThan(0);
     });
 
-    test("should handle maximum allowed dimensions", () => {
+    test('should handle maximum allowed dimensions', () => {
       const state = calculator.createDefaultState();
       const maxState = calculator.resizeMatrices(state, 10, 10);
 
@@ -394,7 +392,7 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(maxState.allocation[0].length).toBe(10);
     });
 
-    test("should handle zero request vector", () => {
+    test('should handle zero request vector', () => {
       const state = calculator.createDefaultState();
       const request: ResourceRequest = {
         processId: 0,
@@ -406,7 +404,7 @@ describe("useBankersAlgorithm - Logic Validation", () => {
       expect(result.canGrant).toBe(true);
     });
 
-    test("should quickly detect unsafe state with zero available resources", () => {
+    test('should quickly detect unsafe state with zero available resources', () => {
       const state = calculator.createDefaultState();
       state.available = [0, 0, 0];
 
@@ -420,20 +418,20 @@ describe("useBankersAlgorithm - Logic Validation", () => {
 
       expect(result.isSafe).toBe(false);
       expect(result.steps.length).toBeGreaterThan(1); // Should have detailed steps
-      expect(result.steps[0].description).toContain("init: work = available");
+      expect(result.steps[0].description).toContain('init: work = available');
       expect(endTime - startTime).toBeLessThan(10); // Should still be fast
     });
   });
 });
 
-describe("Step Navigation Logic", () => {
+describe('Step Navigation Logic', () => {
   let calculator: BankersAlgorithmCalculator;
 
   beforeEach(() => {
     calculator = new BankersAlgorithmCalculator();
   });
 
-  test("should build correct step states for safety check", () => {
+  test('should build correct step states for safety check', () => {
     const state = calculator.createDefaultState();
     const result = calculator.checkSafety(
       state.available,
@@ -455,7 +453,7 @@ describe("Step Navigation Logic", () => {
         currentWork = [...step.workVector];
       }
       if (step.processChecked && step.canFinish) {
-        const processIndex = parseInt(step.processChecked.replace("P", ""));
+        const processIndex = parseInt(step.processChecked.replace('P', ''));
         if (!isNaN(processIndex)) {
           currentFinish = [...currentFinish];
           currentFinish[processIndex] = true;
@@ -471,7 +469,7 @@ describe("Step Navigation Logic", () => {
     expect(states[0].work).toEqual(state.available);
   });
 
-  test("should restore original state when exiting navigation", () => {
+  test('should restore original state when exiting navigation', () => {
     const state = calculator.createDefaultState();
     const originalAvailable = [...state.available];
     const originalAllocation = state.allocation.map((row) => [...row]);

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useCallback } from "react";
+import {useEffect, useRef, useCallback} from 'react';
 
 interface SwipeGestureOptions {
   onSwipeLeft?: () => void;
@@ -23,7 +23,7 @@ export function useSwipeGesture(options: SwipeGestureOptions) {
     preventScroll = false,
   } = options;
 
-  const touchStartRef = useRef<{ x: number; y: number; time: number } | null>(
+  const touchStartRef = useRef<{x: number; y: number; time: number} | null>(
     null,
   );
   const elementRef = useRef<HTMLElement | null>(null);
@@ -104,21 +104,21 @@ export function useSwipeGesture(options: SwipeGestureOptions) {
     (element: HTMLElement | null) => {
       // Remove previous listeners
       if (elementRef.current) {
-        elementRef.current.removeEventListener("touchstart", handleTouchStart);
-        elementRef.current.removeEventListener("touchmove", handleTouchMove);
-        elementRef.current.removeEventListener("touchend", handleTouchEnd);
+        elementRef.current.removeEventListener('touchstart', handleTouchStart);
+        elementRef.current.removeEventListener('touchmove', handleTouchMove);
+        elementRef.current.removeEventListener('touchend', handleTouchEnd);
       }
 
       // Attach new listeners
       if (element) {
         elementRef.current = element;
-        element.addEventListener("touchstart", handleTouchStart, {
+        element.addEventListener('touchstart', handleTouchStart, {
           passive: !preventScroll,
         });
-        element.addEventListener("touchmove", handleTouchMove, {
+        element.addEventListener('touchmove', handleTouchMove, {
           passive: !preventScroll,
         });
-        element.addEventListener("touchend", handleTouchEnd, { passive: true });
+        element.addEventListener('touchend', handleTouchEnd, {passive: true});
       }
     },
     [handleTouchStart, handleTouchMove, handleTouchEnd, preventScroll],
@@ -128,12 +128,12 @@ export function useSwipeGesture(options: SwipeGestureOptions) {
   useEffect(() => {
     return () => {
       if (elementRef.current) {
-        elementRef.current.removeEventListener("touchstart", handleTouchStart);
-        elementRef.current.removeEventListener("touchmove", handleTouchMove);
-        elementRef.current.removeEventListener("touchend", handleTouchEnd);
+        elementRef.current.removeEventListener('touchstart', handleTouchStart);
+        elementRef.current.removeEventListener('touchmove', handleTouchMove);
+        elementRef.current.removeEventListener('touchend', handleTouchEnd);
       }
     };
   }, [handleTouchStart, handleTouchMove, handleTouchEnd]);
 
-  return { attachToElement };
+  return {attachToElement};
 }

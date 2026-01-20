@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useRef, useCallback } from "react";
-import { AlgorithmStep } from "@/types/bankers-algorithm";
-import { AnimatedFinishBadge } from "./AnimatedFinishBadge";
+import React, {useRef, useCallback} from 'react';
+import {AlgorithmStep} from '@/types/bankers-algorithm';
+import {AnimatedFinishBadge} from './AnimatedFinishBadge';
 
 interface AlgorithmTableProps {
   processCount: number;
@@ -37,7 +37,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
   onAllocationChange,
   onMaxChange,
 }) => {
-  const resourceLabels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+  const resourceLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
   const isDisabled = isCalculating || isProcessingRequest;
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -71,7 +71,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
 
   const handleMouseDown = useCallback(
     (
-      type: "allocation" | "max",
+      type: 'allocation' | 'max',
       processIdx: number,
       resourceIdx: number,
       increment: boolean,
@@ -80,8 +80,8 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
 
       clearTimers();
 
-      const onChange = type === "allocation" ? onAllocationChange : onMaxChange;
-      const currentMatrix = type === "allocation" ? allocationRef : maxRef;
+      const onChange = type === 'allocation' ? onAllocationChange : onMaxChange;
+      const currentMatrix = type === 'allocation' ? allocationRef : maxRef;
 
       // Immediate action
       const initialValue = currentMatrix.current[processIdx][resourceIdx];
@@ -114,28 +114,28 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
       ? algorithmSteps[currentStepIndex].processChecked
       : undefined;
   const currentProcessIndex = currentProcessChecked
-    ? parseInt(currentProcessChecked.replace("P", ""))
+    ? parseInt(currentProcessChecked.replace('P', ''))
     : undefined;
 
   return (
     <div
       className="bg-white rounded-xl overflow-hidden"
       style={{
-        backgroundColor: "var(--table-bg)",
-        border: "1px solid var(--table-border)",
+        backgroundColor: 'var(--table-bg)',
+        border: '1px solid var(--table-border)',
       }}
     >
       <div className="overflow-x-hidden">
         <table
           className="w-full bg-white"
           style={{
-            backgroundColor: "var(--table-bg)",
-            minWidth: "100%",
+            backgroundColor: 'var(--table-bg)',
+            minWidth: '100%',
           }}
         >
           <thead>
             {/* Main header row */}
-            <tr style={{ borderBottom: "1px solid var(--table-border)" }}>
+            <tr style={{borderBottom: '1px solid var(--table-border)'}}>
               <th className="text-left px-6 py-4 font-semibold text-gray-900 dark:text-gray-100 min-w-[100px]">
                 Processes
               </th>
@@ -155,7 +155,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
           </thead>
 
           <tbody>
-            {Array.from({ length: processCount }, (_, processIndex) => {
+            {Array.from({length: processCount}, (_, processIndex) => {
               const isHighlighted = currentProcessIndex === processIndex;
 
               return (
@@ -163,14 +163,14 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                   key={processIndex}
                   className={`transition-all duration-300 ${
                     isHighlighted
-                      ? "bg-gray-100 dark:bg-gray-800 ring-2 ring-gray-300 dark:ring-gray-600 ring-inset"
-                      : ""
+                      ? 'bg-gray-100 dark:bg-gray-800 ring-2 ring-gray-300 dark:ring-gray-600 ring-inset'
+                      : ''
                   }`}
                   style={{
                     borderBottom:
                       processIndex < processCount - 1
-                        ? "1px solid var(--table-border)"
-                        : "none",
+                        ? '1px solid var(--table-border)'
+                        : 'none',
                   }}
                 >
                   {/* Process name */}
@@ -182,7 +182,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                   <td className="px-4 py-6 text-center">
                     <div className="flex flex-wrap gap-3 justify-center max-w-[240px] mx-auto">
                       {Array.from(
-                        { length: resourceCount },
+                        {length: resourceCount},
                         (_, resourceIndex) => (
                           <div
                             key={`alloc-${resourceIndex}`}
@@ -192,7 +192,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                             <div
                               className="text-xs font-medium mb-2"
                               style={{
-                                color: "var(--text-secondary, #6b7280)",
+                                color: 'var(--text-secondary, #6b7280)',
                               }}
                             >
                               {resourceLabels[resourceIndex] ||
@@ -209,7 +209,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                 onChange={(e) => {
                                   const inputValue = e.target.value.replace(
                                     /[^0-9]/g,
-                                    "",
+                                    '',
                                   );
                                   const value = parseInt(inputValue) || 0;
                                   onAllocationChange(
@@ -221,10 +221,10 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                 disabled={isDisabled}
                                 className="w-full h-10 px-3 text-center rounded-full bg-white text-gray-900 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                                 style={{
-                                  border: "1px solid var(--table-border)",
-                                  backgroundColor: "var(--input-bg, #ffffff)",
-                                  color: "var(--foreground)",
-                                  borderRadius: "9999px",
+                                  border: '1px solid var(--table-border)',
+                                  backgroundColor: 'var(--input-bg, #ffffff)',
+                                  color: 'var(--foreground)',
+                                  borderRadius: '9999px',
                                 }}
                                 placeholder="0"
                               />
@@ -234,7 +234,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                   onMouseDown={(e) => {
                                     e.preventDefault();
                                     handleMouseDown(
-                                      "allocation",
+                                      'allocation',
                                       processIndex,
                                       resourceIndex,
                                       true,
@@ -245,7 +245,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                   onTouchStart={(e) => {
                                     e.preventDefault();
                                     handleMouseDown(
-                                      "allocation",
+                                      'allocation',
                                       processIndex,
                                       resourceIndex,
                                       true,
@@ -278,7 +278,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                   onMouseDown={(e) => {
                                     e.preventDefault();
                                     handleMouseDown(
-                                      "allocation",
+                                      'allocation',
                                       processIndex,
                                       resourceIndex,
                                       false,
@@ -289,7 +289,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                   onTouchStart={(e) => {
                                     e.preventDefault();
                                     handleMouseDown(
-                                      "allocation",
+                                      'allocation',
                                       processIndex,
                                       resourceIndex,
                                       false,
@@ -329,7 +329,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                   <td className="px-4 py-6 text-center">
                     <div className="flex flex-wrap gap-3 justify-center max-w-[240px] mx-auto">
                       {Array.from(
-                        { length: resourceCount },
+                        {length: resourceCount},
                         (_, resourceIndex) => (
                           <div
                             key={`max-${resourceIndex}`}
@@ -339,7 +339,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                             <div
                               className="text-xs font-medium mb-2"
                               style={{
-                                color: "var(--text-secondary, #6b7280)",
+                                color: 'var(--text-secondary, #6b7280)',
                               }}
                             >
                               {resourceLabels[resourceIndex] ||
@@ -356,7 +356,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                 onChange={(e) => {
                                   const inputValue = e.target.value.replace(
                                     /[^0-9]/g,
-                                    "",
+                                    '',
                                   );
                                   const value = parseInt(inputValue) || 0;
                                   onMaxChange(
@@ -368,10 +368,10 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                 disabled={isDisabled}
                                 className="w-full h-10 px-3 text-center rounded-full bg-white text-gray-900 font-medium focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                                 style={{
-                                  border: "1px solid var(--table-border)",
-                                  backgroundColor: "var(--input-bg, #ffffff)",
-                                  color: "var(--foreground)",
-                                  borderRadius: "9999px",
+                                  border: '1px solid var(--table-border)',
+                                  backgroundColor: 'var(--input-bg, #ffffff)',
+                                  color: 'var(--foreground)',
+                                  borderRadius: '9999px',
                                 }}
                                 placeholder="0"
                               />
@@ -381,7 +381,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                   onMouseDown={(e) => {
                                     e.preventDefault();
                                     handleMouseDown(
-                                      "max",
+                                      'max',
                                       processIndex,
                                       resourceIndex,
                                       true,
@@ -392,7 +392,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                   onTouchStart={(e) => {
                                     e.preventDefault();
                                     handleMouseDown(
-                                      "max",
+                                      'max',
                                       processIndex,
                                       resourceIndex,
                                       true,
@@ -425,7 +425,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                   onMouseDown={(e) => {
                                     e.preventDefault();
                                     handleMouseDown(
-                                      "max",
+                                      'max',
                                       processIndex,
                                       resourceIndex,
                                       false,
@@ -436,7 +436,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                                   onTouchStart={(e) => {
                                     e.preventDefault();
                                     handleMouseDown(
-                                      "max",
+                                      'max',
                                       processIndex,
                                       resourceIndex,
                                       false,
@@ -476,7 +476,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                   <td className="px-4 py-6 text-center">
                     <div className="flex flex-wrap gap-3 justify-center max-w-[240px] mx-auto">
                       {Array.from(
-                        { length: resourceCount },
+                        {length: resourceCount},
                         (_, resourceIndex) => (
                           <div
                             key={`need-${resourceIndex}`}
@@ -486,7 +486,7 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                             <div
                               className="text-xs font-medium mb-2"
                               style={{
-                                color: "var(--text-secondary, #6b7280)",
+                                color: 'var(--text-secondary, #6b7280)',
                               }}
                             >
                               {resourceLabels[resourceIndex] ||
@@ -497,10 +497,10 @@ export const AlgorithmTable: React.FC<AlgorithmTableProps> = ({
                               <div
                                 className="w-full h-10 px-3 flex items-center justify-center rounded-full text-gray-900 text-sm font-medium"
                                 style={{
-                                  backgroundColor: "var(--need-bg, #f9fafb)",
-                                  color: "var(--foreground)",
-                                  border: "1px solid var(--table-border)",
-                                  borderRadius: "9999px",
+                                  backgroundColor: 'var(--need-bg, #f9fafb)',
+                                  color: 'var(--foreground)',
+                                  border: '1px solid var(--table-border)',
+                                  borderRadius: '9999px',
                                 }}
                               >
                                 {need[processIndex][resourceIndex]}

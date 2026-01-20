@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React from "react";
-import { ProcessControl } from "./ProcessControl";
-import { ResourceControl } from "./ResourceControl";
-import { AvailableResourcesInput } from "./AvailableResourcesInput";
-import { RequestPanel } from "./RequestPanel";
-import { ResourceRequest } from "@/types/bankers-algorithm";
+import React from 'react';
+import {ProcessControl} from './ProcessControl';
+import {ResourceControl} from './ResourceControl';
+import {AvailableResourcesInput} from './AvailableResourcesInput';
+import {RequestPanel} from './RequestPanel';
+import {ResourceRequest} from '@/types/bankers-algorithm';
 
 interface SystemControlsProps {
   processCount: number;

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useRef, useCallback, useEffect } from "react";
+import React, {useRef, useCallback, useEffect} from 'react';
 
 interface CountControlProps {
   label: string;
@@ -112,13 +112,13 @@ export const CountControl: React.FC<CountControlProps> = ({
   }, []);
 
   const handleClick =
-    (action: "increment" | "decrement") => (e: React.MouseEvent) => {
+    (action: 'increment' | 'decrement') => (e: React.MouseEvent) => {
       e.stopPropagation();
       if (disabled) return;
       if (!isHoldingRef.current) {
-        if (action === "decrement" && count > minValue) {
+        if (action === 'decrement' && count > minValue) {
           onCountChange(count - 1);
-        } else if (action === "increment" && count < maxValue) {
+        } else if (action === 'increment' && count < maxValue) {
           onCountChange(count + 1);
         }
       }
@@ -126,11 +126,11 @@ export const CountControl: React.FC<CountControlProps> = ({
     };
 
   const startAutoRepeat = useCallback(
-    (action: "increment" | "decrement") => {
+    (action: 'increment' | 'decrement') => {
       timeoutRef.current = setTimeout(() => {
         isHoldingRef.current = true;
         intervalRef.current = setInterval(() => {
-          if (action === "decrement") {
+          if (action === 'decrement') {
             if (currentCountRef.current > minValue) {
               onCountChange(currentCountRef.current - 1);
             } else {
@@ -150,14 +150,14 @@ export const CountControl: React.FC<CountControlProps> = ({
   );
 
   const handleMouseDown =
-    (action: "increment" | "decrement") =>
+    (action: 'increment' | 'decrement') =>
     (e: React.MouseEvent | React.TouchEvent) => {
       e.preventDefault();
       if (disabled) return;
       isHoldingRef.current = false;
       if (
-        (action === "increment" && count < maxValue) ||
-        (action === "decrement" && count > minValue)
+        (action === 'increment' && count < maxValue) ||
+        (action === 'decrement' && count > minValue)
       ) {
         startAutoRepeat(action);
       }
@@ -181,11 +181,11 @@ export const CountControl: React.FC<CountControlProps> = ({
       </label>
       <div className="flex items-center space-x-3">
         <button
-          onClick={handleClick("decrement")}
-          onMouseDown={handleMouseDown("decrement")}
+          onClick={handleClick('decrement')}
+          onMouseDown={handleMouseDown('decrement')}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
-          onTouchStart={handleMouseDown("decrement")}
+          onTouchStart={handleMouseDown('decrement')}
           onTouchEnd={handleMouseUp}
           className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
           disabled={disabled || count <= minValue}
@@ -201,11 +201,11 @@ export const CountControl: React.FC<CountControlProps> = ({
           {count}
         </span>
         <button
-          onClick={handleClick("increment")}
-          onMouseDown={handleMouseDown("increment")}
+          onClick={handleClick('increment')}
+          onMouseDown={handleMouseDown('increment')}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
-          onTouchStart={handleMouseDown("increment")}
+          onTouchStart={handleMouseDown('increment')}
           onTouchEnd={handleMouseUp}
           className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
           disabled={disabled || count >= maxValue}
@@ -217,12 +217,12 @@ export const CountControl: React.FC<CountControlProps> = ({
       </div>
       <div
         className={`overflow-hidden transition-all duration-500 ${
-          count <= minValue && mountMinWarning ? "max-h-6 mt-1" : "max-h-0 mt-0"
+          count <= minValue && mountMinWarning ? 'max-h-6 mt-1' : 'max-h-0 mt-0'
         }`}
       >
         <p
           className={`text-xs text-red-500 dark:text-red-400 transition-opacity duration-500 ${
-            showMinWarning ? "opacity-100" : "opacity-0"
+            showMinWarning ? 'opacity-100' : 'opacity-0'
           }`}
         >
           {minWarningMessage}
@@ -230,12 +230,12 @@ export const CountControl: React.FC<CountControlProps> = ({
       </div>
       <div
         className={`overflow-hidden transition-all duration-500 ${
-          count >= maxValue && mountMaxWarning ? "max-h-6 mt-1" : "max-h-0 mt-0"
+          count >= maxValue && mountMaxWarning ? 'max-h-6 mt-1' : 'max-h-0 mt-0'
         }`}
       >
         <p
           className={`text-xs text-yellow-500 dark:text-yellow-400 transition-opacity duration-500 ${
-            showMaxWarning ? "opacity-100" : "opacity-0"
+            showMaxWarning ? 'opacity-100' : 'opacity-0'
           }`}
         >
           {maxWarningMessage}

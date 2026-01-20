@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { AlgorithmStep } from "@/types/bankers-algorithm";
-import { BooleanBadge } from "@/components/ui/BooleanBadge";
+import {useState, useEffect, useRef, useCallback} from 'react';
+import {AlgorithmStep} from '@/types/bankers-algorithm';
+import {BooleanBadge} from '@/components/ui/BooleanBadge';
 
 interface StepByStepResultsProps {
   steps: AlgorithmStep[];
@@ -43,7 +43,7 @@ export function StepByStepResults({
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // Exit step navigation mode with Escape key
-      if (e.key === "Escape" && currentStepIndex !== undefined) {
+      if (e.key === 'Escape' && currentStepIndex !== undefined) {
         e.preventDefault();
         onStepChange?.(undefined as any); // Reset to normal view
         return;
@@ -52,26 +52,26 @@ export function StepByStepResults({
       // Only handle navigation keys if in step navigation mode
       if (currentStepIndex === undefined) return;
 
-      if (e.key === "ArrowLeft" && currentStepIndex > 0) {
+      if (e.key === 'ArrowLeft' && currentStepIndex > 0) {
         e.preventDefault();
         onStepChange?.(currentStepIndex - 1);
       } else if (
-        e.key === "ArrowRight" &&
+        e.key === 'ArrowRight' &&
         currentStepIndex < steps.length - 1
       ) {
         e.preventDefault();
         onStepChange?.(currentStepIndex + 1);
-      } else if (e.key === "Home") {
+      } else if (e.key === 'Home') {
         e.preventDefault();
         onStepChange?.(0);
-      } else if (e.key === "End") {
+      } else if (e.key === 'End') {
         e.preventDefault();
         onStepChange?.(steps.length - 1);
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [animationComplete, currentStepIndex, steps.length, onStepChange]);
 
   // Reset all states when starting new calculation
@@ -155,8 +155,8 @@ export function StepByStepResults({
     <div
       className="bg-white rounded-xl overflow-hidden"
       style={{
-        backgroundColor: "var(--table-bg)",
-        border: "1px solid var(--table-border)",
+        backgroundColor: 'var(--table-bg)',
+        border: '1px solid var(--table-border)',
       }}
       onClick={(e) => {
         // Exit navigation mode when clicking anywhere in the Steps box
@@ -178,7 +178,7 @@ export function StepByStepResults({
             Steps
             <span
               className={`ml-1 transition-opacity duration-300 text-gray-400 dark:text-gray-500 ${
-                showCompletionDot ? "opacity-100" : "opacity-0"
+                showCompletionDot ? 'opacity-100' : 'opacity-0'
               }`}
             >
               •
@@ -196,8 +196,8 @@ export function StepByStepResults({
               <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-gray-600 dark:border-gray-600 dark:border-t-gray-300"></div>
               <span className="text-gray-600 dark:text-gray-400">
                 {isProcessingRequest
-                  ? "Processing request..."
-                  : "Analyzing safety..."}
+                  ? 'Processing request...'
+                  : 'Analyzing safety...'}
               </span>
             </div>
           </div>
@@ -219,8 +219,8 @@ export function StepByStepResults({
                   key={index}
                   className={`transition-all duration-500 transform ${
                     isVisible
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-4"
+                      ? 'opacity-100 translate-y-0'
+                      : 'opacity-0 translate-y-4'
                   }`}
                 >
                   <div className="flex items-start space-x-3">
@@ -229,29 +229,29 @@ export function StepByStepResults({
                       disabled={!animationComplete}
                       className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
                         animationComplete
-                          ? "cursor-pointer hover:scale-110 hover:shadow-md"
-                          : "cursor-default"
+                          ? 'cursor-pointer hover:scale-110 hover:shadow-md'
+                          : 'cursor-default'
                       } ${
                         isCurrentStep
-                          ? "ring-2 ring-gray-400 dark:ring-gray-500"
-                          : ""
+                          ? 'ring-2 ring-gray-400 dark:ring-gray-500'
+                          : ''
                       }`}
                       style={{
                         backgroundColor: isCurrentStep
-                          ? "var(--button-bg, #f3f4f6)"
-                          : "var(--button-bg, #f3f4f6)",
+                          ? 'var(--button-bg, #f3f4f6)'
+                          : 'var(--button-bg, #f3f4f6)',
                       }}
                       title={
                         animationComplete
                           ? `Jump to step ${step.stepNumber}`
-                          : ""
+                          : ''
                       }
                     >
                       <span
                         className={`text-sm font-semibold transition-colors duration-200 ${
                           isCurrentStep
-                            ? "text-gray-900 dark:text-gray-100"
-                            : "text-gray-700 dark:text-gray-300"
+                            ? 'text-gray-900 dark:text-gray-100'
+                            : 'text-gray-700 dark:text-gray-300'
                         }`}
                       >
                         {step.stepNumber}
@@ -259,14 +259,14 @@ export function StepByStepResults({
                     </button>
                     <div
                       className={`flex-1 min-w-0 transition-opacity duration-300 ${
-                        isAfterCurrentStep ? "opacity-40" : "opacity-100"
+                        isAfterCurrentStep ? 'opacity-40' : 'opacity-100'
                       }`}
                     >
                       <div
                         className={`text-sm leading-relaxed transition-colors duration-200 ${
                           isAfterCurrentStep
-                            ? "text-gray-500 dark:text-gray-500"
-                            : "text-gray-900 dark:text-gray-100"
+                            ? 'text-gray-500 dark:text-gray-500'
+                            : 'text-gray-900 dark:text-gray-100'
                         }`}
                       >
                         {/* Filter out request result information from step description */}
@@ -282,11 +282,11 @@ export function StepByStepResults({
                         <div
                           className={`mt-1 text-sm font-mono transition-colors duration-200 ${
                             isAfterCurrentStep
-                              ? "text-gray-400 dark:text-gray-600"
-                              : "text-gray-600 dark:text-gray-400"
+                              ? 'text-gray-400 dark:text-gray-600'
+                              : 'text-gray-600 dark:text-gray-400'
                           }`}
                         >
-                          = ({step.workVector.join(", ")})
+                          = ({step.workVector.join(', ')})
                         </div>
                       )}
                       {/* Show boolean badge - prioritize request validation steps first */}
@@ -295,14 +295,14 @@ export function StepByStepResults({
                           // Check if this is a request validation step (steps 1 and 2 with "Check if Request")
                           const isRequestValidationStep =
                             (step.stepNumber === 1 || step.stepNumber === 2) &&
-                            step.description.includes("Check if Request");
+                            step.description.includes('Check if Request');
 
                           // Check if this is a safety algorithm process check (has processChecked and comparison symbols)
                           const isSafetyProcessCheck =
                             step.processChecked &&
-                            step.description.includes("need[P") &&
-                            step.description.includes("≤ work") &&
-                            !step.description.includes("Check if Request");
+                            step.description.includes('need[P') &&
+                            step.description.includes('≤ work') &&
+                            !step.description.includes('Check if Request');
 
                           // Show badge if it's either type of step (but not both)
                           if (isRequestValidationStep || isSafetyProcessCheck) {
@@ -327,7 +327,7 @@ export function StepByStepResults({
             {animationComplete && (
               <div
                 className="mt-6 pt-4"
-                style={{ borderTop: "1px solid var(--table-border)" }}
+                style={{borderTop: '1px solid var(--table-border)'}}
               >
                 <div className="flex items-center space-x-3">
                   <button
@@ -335,14 +335,14 @@ export function StepByStepResults({
                     disabled={!animationComplete}
                     className={`flex-shrink-0 flex items-center justify-center transition-all duration-200 ${
                       animationComplete
-                        ? "cursor-pointer hover:scale-110"
-                        : "cursor-default"
+                        ? 'cursor-pointer hover:scale-110'
+                        : 'cursor-default'
                     } ${
                       currentStepIndex === steps.length - 1
-                        ? "ring-2 ring-gray-400 dark:ring-gray-500 rounded-full p-1"
-                        : ""
+                        ? 'ring-2 ring-gray-400 dark:ring-gray-500 rounded-full p-1'
+                        : ''
                     }`}
-                    title={animationComplete ? "Jump to final result" : ""}
+                    title={animationComplete ? 'Jump to final result' : ''}
                   >
                     <svg
                       width="20"
@@ -352,8 +352,8 @@ export function StepByStepResults({
                       xmlns="http://www.w3.org/2000/svg"
                       className={
                         safeSequence.length > 0 // Result Icon
-                          ? "text-gray-900 dark:text-white" // text-green-600 dark:text-green-400
-                          : "text-red-600 dark:text-red-400"
+                          ? 'text-gray-900 dark:text-white' // text-green-600 dark:text-green-400
+                          : 'text-red-600 dark:text-red-400'
                       }
                     >
                       <path
@@ -368,16 +368,16 @@ export function StepByStepResults({
                     className={`flex-1 min-w-0 transition-opacity duration-300 ${
                       currentStepIndex !== undefined &&
                       currentStepIndex < steps.length - 1
-                        ? "opacity-40"
-                        : "opacity-100"
+                        ? 'opacity-40'
+                        : 'opacity-100'
                     }`}
                   >
                     <div
                       className={`text-sm leading-relaxed transition-colors duration-200 ${
                         currentStepIndex !== undefined &&
                         currentStepIndex < steps.length - 1
-                          ? "text-gray-500 dark:text-gray-500"
-                          : "text-gray-900 dark:text-gray-100"
+                          ? 'text-gray-500 dark:text-gray-500'
+                          : 'text-gray-900 dark:text-gray-100'
                       }`}
                     >
                       {(() => {
@@ -389,11 +389,11 @@ export function StepByStepResults({
                         const hasRequestGranted =
                           (requestResult?.isRequest &&
                             requestResult?.wasGranted === true) ||
-                          lastStep?.description.includes("[REQUEST GRANTED]:");
+                          lastStep?.description.includes('[REQUEST GRANTED]:');
                         const hasRequestDenied =
                           (requestResult?.isRequest &&
                             requestResult?.wasGranted === false) ||
-                          lastStep?.description.includes("[REQUEST DENIED]:");
+                          lastStep?.description.includes('[REQUEST DENIED]:');
 
                         // If this is a request result, show custom message format
                         if (
@@ -406,13 +406,13 @@ export function StepByStepResults({
                               <span className="font-medium text-green-600 dark:text-green-400">
                                 Request GRANTED • Process P
                                 {requestResult.processId} successfully allocated
-                                [{requestResult.requestVector.join(", ")}]
+                                [{requestResult.requestVector.join(', ')}]
                                 resources.
                               </span>
                               <div className="mt-2">
                                 <span className="font-medium">
                                   System remains in SAFE state with execution
-                                  sequence:{" "}
+                                  sequence:{' '}
                                 </span>
                                 <div className="inline-flex items-center space-x-2 mt-1 flex-wrap">
                                   {safeSequence.map((process, index) => (
@@ -445,7 +445,7 @@ export function StepByStepResults({
                               <span className="font-medium text-red-600 dark:text-red-400">
                                 Request DENIED • Process P
                                 {requestResult.processId} request [
-                                {requestResult.requestVector.join(", ")}] cannot
+                                {requestResult.requestVector.join(', ')}] cannot
                                 be granted.
                               </span>
                               <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
@@ -462,7 +462,7 @@ export function StepByStepResults({
                             <>
                               <span className="font-medium">
                                 System is SAFE • Hence, the SAFE Sequence is as
-                                follows:{" "}
+                                follows:{' '}
                               </span>
                               <div className="inline-flex items-center space-x-2 mt-1 flex-wrap">
                                 {safeSequence.map((process, index) => (

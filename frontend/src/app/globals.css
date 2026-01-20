@@ -1,5 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
-@import "../styles/animations.css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import '../styles/animations.css';
 
 @tailwind base;
 @tailwind components;
@@ -82,7 +82,7 @@
 
 body {
   font-family:
-    "Inter",
+    'Inter',
     system-ui,
     -apple-system,
     sans-serif;
@@ -784,8 +784,8 @@ select {
 
   /* Ensure chat input doesn't zoom */
   .chat-input,
-  textarea[placeholder*="Ask"],
-  textarea[placeholder*="anything"] {
+  textarea[placeholder*='Ask'],
+  textarea[placeholder*='anything'] {
     font-size: 16px !important;
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
@@ -931,8 +931,8 @@ button.touch-manipulation {
   }
 
   /* Ensure theme toggle button works correctly on mobile */
-  button[aria-label*="theme"],
-  button[aria-label*="Theme"] {
+  button[aria-label*='theme'],
+  button[aria-label*='Theme'] {
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
   }
@@ -1340,7 +1340,7 @@ button.touch-manipulation {
 
 /* Extreme Zoom Effect for Content Behind Button */
 .magnifying-glass-container::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: -40px;
   border-radius: 50%;
@@ -1460,8 +1460,8 @@ button.touch-manipulation {
   }
 
   /* Mobile-optimized input fields */
-  input[type="number"],
-  input[inputmode="numeric"] {
+  input[type='number'],
+  input[inputmode='numeric'] {
     font-size: 16px !important; /* Prevent iOS zoom */
     -webkit-appearance: none;
     -moz-appearance: textfield;
@@ -1472,8 +1472,8 @@ button.touch-manipulation {
   }
 
   /* Remove number input spinners on mobile */
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button {
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
@@ -1523,7 +1523,7 @@ button.touch-manipulation {
   }
 
   /* Tablet input optimization */
-  input[type="number"] {
+  input[type='number'] {
     padding: 10px 12px;
     min-height: 40px;
   }
