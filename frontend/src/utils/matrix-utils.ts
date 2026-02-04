@@ -276,3 +276,33 @@ export function matricesEqual(a: number[][], b: number[][]): boolean {
   if (a.length !== b.length) return false;
   return a.every((row, i) => vectorsEqual(row, b[i]));
 }
+
+/**
+ * Generates a random integer between min and max (inclusive)
+ */
+export function getRandomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
+ * Generates a random vector with values between 0 and maxVal
+ */
+export function generateRandomVector(length: number, maxVal: number): number[] {
+  return Array(length)
+    .fill(0)
+    .map(() => getRandomInt(0, maxVal));
+}
+
+/**
+ * Generates a random matrix with dimensions rows x cols
+ * Values are between 0 and maxVal
+ */
+export function generateRandomMatrix(
+  rows: number,
+  cols: number,
+  maxVal: number,
+): number[][] {
+  return Array(rows)
+    .fill(null)
+    .map(() => generateRandomVector(cols, maxVal));
+}
