@@ -352,7 +352,7 @@ export function StepByStepResults({
                       xmlns="http://www.w3.org/2000/svg"
                       className={
                         safeSequence.length > 0 // Result Icon
-                          ? 'text-gray-900 dark:text-white' // text-green-600 dark:text-green-400
+                          ? 'text-green-600 dark:text-green-400'
                           : 'text-red-600 dark:text-red-400'
                       }
                     >

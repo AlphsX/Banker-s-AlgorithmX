@@ -5,7 +5,7 @@ import {ShieldCheck, ShieldAlert, X} from 'lucide-react';
 
 export interface ToastMessage {
   id: string;
-  type: 'success' | 'error';
+  type: 'success' | 'error' | 'info';
   title: string;
   message: string;
   duration?: number;
@@ -43,19 +43,34 @@ const Toast: React.FC<ToastProps> = ({toast, onDismiss}) => {
     }
   }, [toast.duration, handleDismiss]);
 
-  const Icon = toast.type === 'success' ? ShieldCheck : ShieldAlert;
-  const bgColor =
-    toast.type === 'success'
-      ? 'bg-green-50/40 dark:bg-green-900/20 border-green-200/50 dark:border-green-800'
-      : 'bg-red-50/40 dark:bg-red-900/20 border-red-200/50 dark:border-red-800';
-  const iconColor =
-    toast.type === 'success'
-      ? 'text-green-500 dark:text-green-400'
-      : 'text-red-500 dark:text-red-400';
-  const textColor =
-    toast.type === 'success'
-      ? 'text-green-800 dark:text-green-200'
-      : 'text-red-800 dark:text-red-200';
+  let Icon = ShieldCheck;
+  let bgColor = '';
+  let iconColor = '';
+  let textColor = '';
+
+  switch (toast.type) {
+    case 'success':
+      Icon = ShieldCheck;
+      bgColor =
+        'bg-green-50/40 dark:bg-green-900/20 border-green-200/50 dark:border-green-800';
+      iconColor = 'text-green-500 dark:text-green-400';
+      textColor = 'text-green-800 dark:text-green-200';
+      break;
+    case 'error':
+      Icon = ShieldAlert;
+      bgColor =
+        'bg-red-50/40 dark:bg-red-900/20 border-red-200/50 dark:border-red-800';
+      iconColor = 'text-red-500 dark:text-red-400';
+      textColor = 'text-red-800 dark:text-red-200';
+      break;
+    case 'info':
+      Icon = ShieldCheck;
+      bgColor =
+        'bg-purple-50/40 dark:bg-purple-900/20 border-purple-200/50 dark:border-purple-800';
+      iconColor = 'text-purple-500 dark:text-purple-400';
+      textColor = 'text-purple-800 dark:text-purple-200';
+      break;
+  }
 
   return (
     <div
@@ -110,7 +125,7 @@ export const useToast = () => {
 
   const showToast = useCallback(
     (
-      type: 'success' | 'error',
+      type: 'success' | 'error' | 'info',
       title: string,
       message: string,
       duration: number = 5000,
@@ -147,10 +162,18 @@ export const useToast = () => {
     [showToast],
   );
 
+  const showInfo = useCallback(
+    (title: string, message: string, duration?: number) => {
+      showToast('info', title, message, duration);
+    },
+    [showToast],
+  );
+
   return {
     toasts,
     showSuccess,
     showError,
+    showInfo,
     dismissToast,
   };
 };

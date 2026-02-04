@@ -49,7 +49,7 @@ const LogoIcon = ({className}: {className?: string}) => (
 export default function BankersAlgorithmPage() {
   const {isDarkMode, toggleDarkMode, isUsingSystemPreference} = useDarkMode();
   const {isLoading: appIsLoading} = useAppLoading();
-  const {toasts, showSuccess, showError, dismissToast} = useToast();
+  const {toasts, showSuccess, showError, showInfo, dismissToast} = useToast();
 
   // Dynamic favicon based on theme
   useDynamicFavicon(isDarkMode);
@@ -75,9 +75,11 @@ export default function BankersAlgorithmPage() {
     resetAlgorithm,
     handleStepChange,
     setRequestResult,
+    randomizeData,
   } = useBankersAlgorithm({
     onSuccess: showSuccess,
     onError: showError,
+    onInfo: showInfo,
     autoPreviewOnMount: true,
   });
 
@@ -435,9 +437,9 @@ export default function BankersAlgorithmPage() {
                 : 'bg-transparent'
             }`}
           >
-            <div className="px-6 py-4">
+            <div className="max-w-7xl mx-auto pl-6 pr-7 py-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4 min-w-0 flex-1">
+                <div className="flex items-center gap-4 min-w-0 flex-1">
                   {/* Mobile Menu Toggle */}
                   <button
                     className="btn-hover md:hidden p-2 rounded-full transition-colors flex items-center justify-center touch-manipulation min-h-[44px] min-w-[44px]"
@@ -457,8 +459,35 @@ export default function BankersAlgorithmPage() {
                   </button>
 
                   {/* Title */}
-                  <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-1">
                     Banker&apos;s Algorithm
+                    <button
+                      onClick={() => {
+                        randomizeData();
+                        setTimeout(() => checkSafety(), 100);
+                      }}
+                      className="btn-hover w-10 h-10 rounded-full transition-colors flex items-center justify-center focus:outline-none group"
+                      title="Randomize Data & Check Safety"
+                    >
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="stroke-[2] text-fg-tertiary size-[18px] flex-shrink-0 dark:text-white group-hover:text-purple-500 transition-colors"
+                      >
+                        <path
+                          d="M6.5 12.5L11.5 17.5M6.5 12.5L11.8349 6.83172C13.5356 5.02464 15.9071 4 18.3887 4H20V5.61135C20 8.09292 18.9754 10.4644 17.1683 12.1651L11.5 17.5M6.5 12.5L2 11L5.12132 7.87868C5.68393 7.31607 6.44699 7 7.24264 7H11M11.5 17.5L13 22L16.1213 18.8787C16.6839 18.3161 17 17.553 17 16.7574V13"
+                          stroke="currentColor"
+                          strokeLinecap="square"
+                        ></path>
+                        <path
+                          d="M4.5 16.5C4.5 16.5 4 18 4 20C6 20 7.5 19.5 7.5 19.5"
+                          stroke="currentColor"
+                        ></path>
+                      </svg>
+                    </button>
                   </h1>
                 </div>
 

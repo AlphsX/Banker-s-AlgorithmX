@@ -20,7 +20,11 @@ import {
   ResourceRequest,
 } from '@/types/bankers-algorithm';
 import {BankersAlgorithmCalculator} from '@/lib/bankers-algorithm-calculator';
-import {calculateNeedMatrix} from '@/utils/matrix-utils';
+import {
+  calculateNeedMatrix,
+  generateRandomMatrix,
+  generateRandomVector,
+} from '@/utils/matrix-utils';
 
 export interface UseBankersAlgorithmReturn {
   algorithmState: BankersAlgorithmState;
@@ -48,6 +52,7 @@ export interface UseBankersAlgorithmReturn {
   resetAlgorithm: () => void;
   loadDefaultExample: () => void;
   completeProcess: (processId: number) => void;
+  randomizeData: () => void;
   handleStepChange: (stepIndex: number | undefined) => void;
   setRequestResult: React.Dispatch<React.SetStateAction<RequestResultState>>;
 }
@@ -80,6 +85,7 @@ export interface StepNavigationState {
 export interface UseBankersAlgorithmOptions {
   onSuccess?: (title: string, message: string, duration?: number) => void;
   onError?: (title: string, message: string, duration?: number) => void;
+  onInfo?: (title: string, message: string, duration?: number) => void;
   autoPreviewOnMount?: boolean;
 }
 
@@ -89,7 +95,7 @@ const RESOURCE_COUNT_LIMITS = {min: 1, max: 10} as const;
 export function useBankersAlgorithm(
   options: UseBankersAlgorithmOptions = {},
 ): UseBankersAlgorithmReturn {
-  const {onSuccess, onError, autoPreviewOnMount = true} = options;
+  const {onSuccess, onError, onInfo, autoPreviewOnMount = true} = options;
 
   // Memoized calculator instance
   const calculator = useMemo(() => new BankersAlgorithmCalculator(), []);
@@ -358,6 +364,55 @@ export function useBankersAlgorithm(
     },
     [algorithmState, calculator, onSuccess, onError],
   );
+
+  /**
+   * Randomizes algorithm data for testing
+   */
+  const randomizeData = useCallback(() => {
+    setAlgorithmState((prev) => {
+      const processCount = prev.processCount;
+      const resourceCount = prev.resourceCount;
+
+      // 1. Generate random Max matrix (values 1-9)
+      const max = generateRandomMatrix(processCount, resourceCount, 9);
+
+      // 2. Generate random Allocation matrix where Allocation <= Max
+      const allocation = max.map((row) =>
+        row.map((maxVal) => Math.floor(Math.random() * (maxVal + 1))),
+      );
+
+      // 3. Generate random Available resources (values 1-10)
+      const available = generateRandomVector(resourceCount, 10);
+
+      const need = calculateNeedMatrix(max, allocation);
+
+      return {
+        ...prev,
+        allocation,
+        max,
+        available,
+        need,
+        finish: Array(processCount).fill(false),
+        safeSequence: [],
+        algorithmSteps: [],
+        isCalculating: false,
+        isSafe: undefined,
+        lastUpdated: new Date(),
+      };
+    });
+
+    // Reset any active steps
+    setCurrentStepIndex(undefined);
+    setStepStates([]);
+    setRequestResult({isRequest: false});
+
+    const notify = onInfo || onSuccess;
+    notify?.(
+      'Data Randomized',
+      'Generated new random values for Available, Max, and Allocation matrices.',
+      2000,
+    );
+  }, [onSuccess, onInfo]);
 
   /**
    * Handles step navigation changes
@@ -667,6 +722,7 @@ export function useBankersAlgorithm(
     resetAlgorithm,
     loadDefaultExample,
     completeProcess,
+    randomizeData,
     handleStepChange,
     setRequestResult,
   };
