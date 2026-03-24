@@ -53,3 +53,5 @@ jobs:
           VALIDATE_JSCPD: false
           # Disable zizmor - false positives on standard checkout
           VALIDATE_GITHUB_ACTIONS_ZIZMOR: false
+          # Exclude next-env.d.ts from Prettier as it is auto-generated
+          PRETTIER_FILTER_REGEX_EXCLUDE: ".*next-env\\.d\\.ts$"
