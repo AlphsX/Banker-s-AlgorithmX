@@ -135,6 +135,7 @@ export function LoadingScreen({
         ></div>
       </div>
 
+      {/* eslint-disable-next-line react/no-unknown-property */}
       <style jsx>{`
         .loading-container {
           min-height: 100vh;
