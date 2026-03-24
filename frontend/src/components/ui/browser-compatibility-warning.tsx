@@ -20,7 +20,6 @@ export const BrowserCompatibilityWarning = ({
 }: BrowserCompatibilityWarningProps) => {
   const [browserInfo, setBrowserInfo] = useState<BrowserInfo | null>(null);
   const [isVisible, setIsVisible] = useState(false);
-  const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
     const browser = detectBrowser();
@@ -28,7 +27,6 @@ export const BrowserCompatibilityWarning = ({
 
     // Check if user has previously dismissed the warning
     const dismissed = localStorage.getItem('browser-warning-dismissed');
-    setIsDismissed(dismissed === 'true');
 
     // Show warning if browser is not supported and not dismissed
     if (!browser.isSupported && (!dismissed || showAlways)) {
@@ -38,7 +36,6 @@ export const BrowserCompatibilityWarning = ({
 
   const handleDismiss = () => {
     setIsVisible(false);
-    setIsDismissed(true);
     localStorage.setItem('browser-warning-dismissed', 'true');
     onDismiss?.();
   };

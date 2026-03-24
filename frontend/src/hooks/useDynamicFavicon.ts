@@ -33,7 +33,7 @@ export function useDynamicFavicon(isDarkMode: boolean) {
     }
 
     // Generate SVG favicon based on theme
-    const faviconDataUri = generateFaviconSvg(isDarkMode);
+    const faviconDataUri = generateFaviconSvg();
 
     // Update favicon type if needed
     if (faviconLink.type !== 'image/svg+xml') {
