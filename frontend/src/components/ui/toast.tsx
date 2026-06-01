@@ -47,6 +47,7 @@ const Toast: React.FC<ToastProps> = ({toast, onDismiss}) => {
   let bgColor = '';
   let iconColor = '';
   let textColor = '';
+  let hoverBgColor = '';
 
   switch (toast.type) {
     case 'success':
@@ -55,6 +56,7 @@ const Toast: React.FC<ToastProps> = ({toast, onDismiss}) => {
         'bg-green-50/40 dark:bg-green-900/20 border-green-200/50 dark:border-green-800';
       iconColor = 'text-green-500 dark:text-green-400';
       textColor = 'text-green-800 dark:text-green-200';
+      hoverBgColor = 'hover:bg-green-500/10 dark:hover:bg-green-400/10';
       break;
     case 'error':
       Icon = ShieldAlert;
@@ -62,6 +64,7 @@ const Toast: React.FC<ToastProps> = ({toast, onDismiss}) => {
         'bg-red-50/40 dark:bg-red-900/20 border-red-200/50 dark:border-red-800';
       iconColor = 'text-red-500 dark:text-red-400';
       textColor = 'text-red-800 dark:text-red-200';
+      hoverBgColor = 'hover:bg-red-500/10 dark:hover:bg-red-400/10';
       break;
     case 'info':
       Icon = ShieldCheck;
@@ -69,13 +72,14 @@ const Toast: React.FC<ToastProps> = ({toast, onDismiss}) => {
         'bg-purple-50/40 dark:bg-purple-900/20 border-purple-200/50 dark:border-purple-800';
       iconColor = 'text-purple-500 dark:text-purple-400';
       textColor = 'text-purple-800 dark:text-purple-200';
+      hoverBgColor = 'hover:bg-purple-500/10 dark:hover:bg-purple-400/10';
       break;
   }
 
   return (
     <div
       className={`
-        relative flex items-start space-x-3 p-4 rounded-lg border shadow-lg backdrop-blur-sm
+        relative flex items-start space-x-3 p-4 rounded-2xl border shadow-lg backdrop-blur-sm
         transition-all duration-300 ease-out
         ${bgColor}
         ${isVisible && !isExiting ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}
@@ -91,7 +95,7 @@ const Toast: React.FC<ToastProps> = ({toast, onDismiss}) => {
       </div>
       <button
         onClick={handleDismiss}
-        className={`flex-shrink-0 p-1 rounded-md hover:bg-black/5 dark:hover:bg-white/5 transition-colors ${textColor}`}
+        className={`flex-shrink-0 flex items-center justify-center h-7 w-7 rounded-full active:scale-95 transition-all duration-200 ${textColor} ${hoverBgColor}`}
       >
         <X className="h-4 w-4" />
       </button>

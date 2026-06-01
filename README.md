@@ -923,6 +923,6 @@ SOFTWARE.
 
 Made with ❣️ for the computer science education community
 
-© 2025 AlphsX, Inc.
+© 2026 AlphsX, Inc.
 
 </div>

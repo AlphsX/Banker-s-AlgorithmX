@@ -170,7 +170,7 @@ export default function BankersAlgorithmPage() {
 
       <div
         ref={mainContainerRef}
-        className="swipe-container flex h-screen bg-gray-50 text-gray-900 dark:text-gray-50 transition-all duration-300"
+        className="swipe-container flex h-screen overflow-hidden bg-gray-50 text-gray-900 dark:text-gray-50 transition-all duration-300"
         style={{backgroundColor: 'var(--page-bg, #f9fafb)'}}
       >
         {/* Mobile Sidebar Overlay */}
@@ -182,7 +182,7 @@ export default function BankersAlgorithmPage() {
           }`}
         >
           <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-out"
+            className="absolute inset-0 bg-black/50 transition-opacity duration-300 ease-out"
             onClick={(e) => {
               if (e.target === e.currentTarget) {
                 setIsSidebarOpen(false);
@@ -217,7 +217,7 @@ export default function BankersAlgorithmPage() {
             </div>
 
             {/* Mobile System Controls */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden sidebar-scroll">
               <SystemControls
                 processCount={algorithmState.processCount}
                 resourceCount={algorithmState.resourceCount}
@@ -320,7 +320,7 @@ export default function BankersAlgorithmPage() {
           </div>
 
           {/* Desktop System Controls */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto overflow-x-hidden sidebar-scroll">
             <SystemControls
               processCount={algorithmState.processCount}
               resourceCount={algorithmState.resourceCount}
@@ -408,7 +408,7 @@ export default function BankersAlgorithmPage() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col relative">
+        <div className="flex-1 flex flex-col relative min-w-0 overflow-hidden">
           {/* Top Bar */}
           <header
             className={`absolute top-0 inset-x-0 z-20 transition-all duration-700 ease-in-out ${
