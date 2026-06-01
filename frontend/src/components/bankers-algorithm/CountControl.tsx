@@ -1,6 +1,7 @@
 'use client';
 
 import React, {useRef, useCallback, useEffect} from 'react';
+import {Plus, Minus} from 'lucide-react';
 
 interface CountControlProps {
   label: string;
@@ -187,12 +188,12 @@ export const CountControl: React.FC<CountControlProps> = ({
           onMouseLeave={handleMouseLeave}
           onTouchStart={handleMouseDown('decrement')}
           onTouchEnd={handleMouseUp}
-          className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
+          className="btn-control w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
           disabled={disabled || count <= minValue}
           title={`Decrease ${accessibleLabel} count (hold to repeat)`}
           aria-label={`Decrease ${accessibleLabel} count`}
         >
-          −
+          <Minus className="h-4 w-4" strokeWidth={2.5} />
         </button>
         <span
           className="w-8 text-center text-lg font-semibold text-gray-900 dark:text-gray-100"
@@ -207,12 +208,12 @@ export const CountControl: React.FC<CountControlProps> = ({
           onMouseLeave={handleMouseLeave}
           onTouchStart={handleMouseDown('increment')}
           onTouchEnd={handleMouseUp}
-          className="btn-control w-8 h-8 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
+          className="btn-control w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation hover:scale-105 hover:shadow-md"
           disabled={disabled || count >= maxValue}
           title={`Increase ${accessibleLabel} count (hold to repeat)`}
           aria-label={`Increase ${accessibleLabel} count`}
         >
-          +
+          <Plus className="h-4 w-4" strokeWidth={2.5} />
         </button>
       </div>
       <div

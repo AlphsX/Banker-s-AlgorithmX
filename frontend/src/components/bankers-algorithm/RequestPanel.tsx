@@ -393,32 +393,20 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({
                 borderColor: 'var(--input-border, #e1e1e1)',
               }}
             >
-              <div className="max-h-64 overflow-y-auto py-1">
+              <div className="max-h-64 overflow-y-auto p-1.5 space-y-0.5">
                 {processOptions.map((option, index) => (
                   <button
                     key={option.value}
                     type="button"
                     onClick={() => handleProcessSelect(option.value)}
-                    className="w-full px-5 py-3 text-left flex items-center justify-between transition-colors duration-150 animate-item-slide-in"
+                    className={`w-full px-4 py-2.5 text-left flex items-center justify-between transition-all duration-150 animate-item-slide-in rounded-2xl ${
+                      selectedProcess === option.value
+                        ? 'bg-[var(--button-hover-bg,#f3f4f6)] font-semibold'
+                        : 'hover:bg-[var(--button-hover-bg,#f3f4f6)]'
+                    }`}
                     style={{
-                      backgroundColor:
-                        selectedProcess === option.value
-                          ? 'var(--need-bg, #f9fafb)'
-                          : 'transparent',
                       color: 'var(--foreground)',
                       animationDelay: `${index * 30}ms`,
-                    }}
-                    onMouseEnter={(e) => {
-                      if (selectedProcess !== option.value) {
-                        e.currentTarget.style.backgroundColor =
-                          'var(--button-hover-bg, #f3f4f6)';
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor =
-                        selectedProcess === option.value
-                          ? 'var(--need-bg, #f9fafb)'
-                          : 'transparent';
                     }}
                   >
                     <span className="text-base font-medium">
